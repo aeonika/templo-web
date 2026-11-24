@@ -9,6 +9,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.perfiles (
   id uuid primary key references auth.users (id) on delete cascade,
   nombre text not null default '',
+  es_admin boolean not null default false,
   creado timestamptz not null default now()
 );
 
