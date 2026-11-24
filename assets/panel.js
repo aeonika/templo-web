@@ -34,6 +34,9 @@
     if (user) {
       var r = await TW.sb.from("sitios").select("*").eq("dueno_id", user.id).maybeSingle();
       sitio = r.data || null;
+      var rp = await TW.sb.from("perfiles").select("es_admin").eq("id", user.id).maybeSingle();
+      var la = $("#link-admin");
+      if (la) la.hidden = !(rp.data && rp.data.es_admin);
       pintarTab(tabActual);
     }
   }
@@ -336,29 +339,94 @@
       return;
     }
     var mods = sitio.modulos || {};
-    var modulosDefs = [["quienes", "Quién soy"], ["destacados", "Destacados"], ["productos", "Productos y servicios"], ["cursos", "Cursos"], ["articulos", "Artículos"], ["documentos", "Documentos"], ["promociones", "Promociones"], ["feed", "Feed de novedades"]];
-    cont.innerHTML = "<h2>Mi sitio</h2><p class='bajada'>Tu dirección: <a href='sitio.html?s=" + esc(sitio.slug) + "' target='_blank'>sitio.html?s=" + esc(sitio.slug) + "</a> · Plan: <strong>" + esc(sitio.plan) + "</strong></p>" +
-      "<div class='p-bloque'><form id='f-sitio'>" +
+    var modulosDefs = [
+      ["quienes", "Quién soy", "Tu presentación, tu foto y tu historia"],
+      ["destacados", "Destacados", "La vidriera con lo que querés empujar primero"],
+      ["productos", "Productos y servicios", "Tu catálogo con precios y tu link de cobro"],
+      ["cursos", "Cursos", "Cursos y talleres en video y audio"],
+      ["articulos", "Artículos", "Tu blog, sin depender de ninguna red social"],
+      ["documentos", "Documentos", "Tu repositorio de archivos gratis y pagos"],
+      ["promociones", "Promociones", "Avisos, lanzamientos y ofertas"],
+      ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"]
+    ];
+    var temasDefs = [
+      ["crepusculo", "Crepúsculo", "#030305", "#00e5ff", "Oscuro azul, neón cian"],
+      ["pergamino", "Pergamino", "#f6f1e7", "#9a6a1f", "Claro cálido, editorial"],
+      ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
+      ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"]
+    ];
+    var urlSitio = "sitio.html?s=" + sitio.slug;
+    var urlAbsoluta = new URL(urlSitio, location.href).href;
+    cont.innerHTML =
+      "<div class='p-bloque c-resumen'>" +
+        "<div class='c-url'><span class='c-url-texto'>" + esc(urlAbsoluta) + "</span>" +
+        "<button class='btn btn-fantasma btn-chico' type='button' id='c-copiar'>Copiar</button>" +
+        "<a class='btn btn-fantasma btn-chico' href='" + urlSitio + "' target='_blank' rel='noopener'>Abrir</a>" +
+        "<span class='c-plan" + (sitio.plan === "premium" ? " c-plan-premium" : "") + "'>Plan " + esc(sitio.plan) + "</span>" +
+        (sitio.publicado ? "" : "<span class='c-plan'>Sin publicar</span>") + "</div>" +
+        "<div class='c-stats' id='c-stats'><span class='c-chip'>Cargando tu contenido…</span></div>" +
+      "</div>" +
+      "<div class='constructor'>" +
+      "<form id='f-sitio' class='c-form'>" +
+      "<div class='p-bloque'><h3>Identidad</h3>" +
       "<label>Nombre <input type='text' name='nombre' value='" + esc(sitio.nombre) + "'></label>" +
       "<label>Descripción corta <textarea name='descripcion'>" + esc(sitio.descripcion) + "</textarea></label>" +
-      "<label>Quién soy / quiénes somos (Markdown simple) <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label>" +
-      "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' value='" + esc(sitio.logo_url || "") + "'></label>" +
-      "<label>URL de tu foto <input type='text' name='foto_url' value='" + esc(sitio.foto_url || "") + "'></label></div>" +
+      "<label>Quién soy / quiénes somos (Markdown simple) <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label></div>" +
+      "<div class='p-bloque'><h3>Apariencia</h3>" +
+      "<div class='temas'>" + temasDefs.map(function (td) {
+        return "<label class='tema-card'><input type='radio' name='tema' value='" + td[0] + "'" + (sitio.tema === td[0] ? " checked" : "") + ">" +
+          "<span class='tema-prev' style='--tp-fondo:" + td[2] + ";--tp-acento:" + td[3] + "'><span class='tema-barra'></span><span class='tema-linea'></span><span class='tema-linea corta'></span></span>" +
+          "<span class='tema-nombre'>" + td[1] + "</span><span class='tema-desc'>" + td[4] + "</span></label>";
+      }).join("") + "</div>" +
+      "<div class='p-dos'><label>Color de acento (opcional) <span class='c-acento'><input type='text' name='acento' id='c-acento-texto' value='" + esc(sitio.acento || "") + "' placeholder='#00e5ff'><input type='color' id='c-acento-color' value='" + esc(sitio.acento || "#00e5ff") + "'></span></label>" +
+      "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label></div>" +
+      "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
+      "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div></div>" +
+      "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
-      "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div>" +
-      "<div class='p-dos'><label>Tema visual <select name='tema'>" +
-      [["crepusculo", "Crepúsculo (oscuro azul)"], ["pergamino", "Pergamino (claro cálido)"], ["bosque", "Bosque (oscuro verde)"], ["obsidiana", "Obsidiana (negro y dorado)"]].map(function (o) {
-        return "<option value='" + o[0] + "'" + (sitio.tema === o[0] ? " selected" : "") + ">" + o[1] + "</option>";
-      }).join("") + "</select></label>" +
-      "<label>Color de acento (opcional, ej. #7ea0ff) <input type='text' name='acento' value='" + esc(sitio.acento || "") + "'></label></div>" +
-      "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label>" +
-      "<h3>Módulos visibles</h3>" +
+      "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
+      "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
-        return '<label class="check"><input type="checkbox" name="mod_' + m[0] + '"' + (mods[m[0]] !== false ? " checked" : "") + "> " + m[1] + "</label>";
-      }).join("") +
-      '<label class="check"><input type="checkbox" name="publicado"' + (sitio.publicado ? " checked" : "") + "> Sitio publicado (visible para visitantes)</label>" +
-      "<button class='btn btn-primario' type='submit'>Guardar cambios</button>" +
-      "<p class='p-ok' id='ok-sitio'></p><p class='p-error' id='e-sitio'></p></form></div>";
+        return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
+          "<input type='checkbox' class='mod-switch' name='mod_" + m[0] + "'" + (mods[m[0]] !== false ? " checked" : "") + "></label>";
+      }).join("") + "</div>" +
+      "<div class='p-bloque'><label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Sitio publicado</span><span class='mod-desc'>Visible para tus visitantes; si lo apagás, solo vos lo ves al editar</span></span>" +
+      "<input type='checkbox' class='mod-switch' name='publicado'" + (sitio.publicado ? " checked" : "") + "></label>" +
+      "<button class='btn btn-primario btn-bloque' type='submit'>Guardar cambios</button>" +
+      "<p class='p-ok' id='ok-sitio'></p><p class='p-error' id='e-sitio'></p></div>" +
+      "</form>" +
+      "<aside class='c-previa'><div class='c-marco'>" +
+      "<div class='c-marco-barra'><span class='c-puntos'><i></i><i></i><i></i></span><span class='c-marco-url'>" + esc(urlSitio) + "</span>" +
+      "<button class='btn btn-fantasma btn-chico' type='button' id='c-recargar'>Recargar</button></div>" +
+      "<iframe id='c-iframe' src='" + urlSitio + "' title='Vista previa de tu sitio' loading='lazy'></iframe></div>" +
+      "<p class='p-nota'>Vista previa de tu sitio: se actualiza sola cuando guardás.</p></aside>" +
+      "</div>";
+    // resumen de contenido
+    (async function () {
+      var tablas = [["productos", "productos"], ["cursos", "cursos"], ["articulos", "artículos"], ["documentos", "documentos"], ["publicaciones", "publicaciones"]];
+      var partes = await Promise.all(tablas.map(async function (tb) {
+        var r = await TW.sb.from(tb[0]).select("id", { count: "exact", head: true }).eq("sitio_id", sitio.id);
+        return "<span class='c-chip'>" + (r.count || 0) + " " + tb[1] + "</span>";
+      }));
+      var caja = $("#c-stats");
+      if (caja) caja.innerHTML = partes.join("");
+    })();
+    $("#c-copiar").addEventListener("click", async function () {
+      try { await navigator.clipboard.writeText(urlAbsoluta); $("#c-copiar").textContent = "Copiado"; }
+      catch (e) { $("#c-copiar").textContent = "Copiá la dirección de arriba"; }
+      setTimeout(function () { var b = $("#c-copiar"); if (b) b.textContent = "Copiar"; }, 2000);
+    });
+    function recargarPrevia() {
+      var ifr = $("#c-iframe");
+      if (ifr) ifr.src = urlSitio + "&t=" + Date.now();
+    }
+    $("#c-recargar").addEventListener("click", recargarPrevia);
+    var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
+    if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
+    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {
+      var inp = $(par[0]), img = $(par[1]);
+      if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; });
+    });
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);
@@ -374,7 +442,8 @@
       }).eq("id", sitio.id).select().maybeSingle();
       if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; return; }
       sitio = r.data;
-      $("#ok-sitio").textContent = "Guardado.";
+      $("#ok-sitio").textContent = "Guardado. La vista previa ya muestra los cambios.";
+      recargarPrevia();
     });
   }
 

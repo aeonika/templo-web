@@ -169,3 +169,15 @@ frena el enlace compartido y la descarga casual, e identifica al filtrador.
   transaccionales (bienvenida, vencimiento).
 - **Fase 3**: analíticas por sitio, certificados de finalización, app
   móvil (PWA instalable), comentarios en lecciones.
+
+## Administración de la plataforma
+
+El perfil con `perfiles.es_admin = true` es el dueño de la plataforma.
+`admin.html` le da el control total: resumen con contadores, gestión de
+sitios (plan gratis/premium, publicado sí/no), usuarios (con su email,
+vía la función `admin_usuarios()`, porque `auth.users` no se expone por
+la API) y suscripciones (cambiar el estado de cualquier alumno).
+La seguridad la pone la base: la función `es_admin_actual()` y una
+política `admin_total` por tabla que se suma a las del dueño de cada
+sitio (migración en `supabase/admin.sql`, incluida en `esquema.sql`).
+El panel muestra el enlace «Administración» solo a ese perfil.

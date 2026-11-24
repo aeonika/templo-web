@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administración · TemploWeb</title>
+<meta name="description" content="Administración de la plataforma TemploWeb: sitios, usuarios, planes y suscripciones.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+<header class="p-nav">
+  <a class="p-marca" href="index.html">TemploWeb</a>
+  <span class="p-nav-titulo">Administración de la plataforma</span>
+  <span class="p-nav-usuario" id="a-usuario"></span>
+  <a class="btn btn-fantasma" href="panel.html">Mi panel</a>
+  <button class="btn btn-fantasma" id="btn-salir" hidden>Salir</button>
+</header>
+
+<main class="p-main">
+  <p class="s-cargando" id="a-cargando">Cargando…</p>
+
+  <section id="a-denegado" hidden>
+    <div class="p-bloque">
+      <h2>Sin acceso</h2>
+      <p class="bajada">Esta pantalla es solo para el dueño de la plataforma. Si sos vos, ingresá con tu cuenta de administrador y volvé.</p>
+      <a class="btn btn-primario" href="panel.html">Ir al panel</a>
+    </div>
+  </section>
+
+  <section id="a-panel" class="p-panel" hidden>
+    <nav class="p-tabs" id="a-tabs">
+      <button data-tab="resumen" class="activa">Resumen</button>
+      <button data-tab="sitios">Sitios</button>
+      <button data-tab="usuarios">Usuarios</button>
+      <button data-tab="suscripciones">Suscripciones</button>
+    </nav>
+    <div id="a-contenido" class="p-contenido"></div>
+  </section>
+  <p class="p-ok" id="a-ok"></p>
+  <p class="p-error" id="a-error"></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="assets/supabase.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>
