@@ -25,7 +25,7 @@
       <h2>Ingresar</h2>
       <form id="form-login">
         <label>Email <input type="email" name="email" required autocomplete="email"></label>
-        <label>Contraseña <input type="password" name="password" required autocomplete="current-password"></label>
+        <label>Contraseña <span class="p-pass"><input type="password" name="password" required autocomplete="current-password"><button type="button" class="p-ojo" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
         <button class="btn btn-primario btn-bloque" type="submit">Ingresar</button>
         <p class="p-error" id="error-login"></p>
       </form>
@@ -35,7 +35,7 @@
       <form id="form-registro">
         <label>Tu nombre <input type="text" name="nombre" required autocomplete="name"></label>
         <label>Email <input type="email" name="email" required autocomplete="email"></label>
-        <label>Contraseña <input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+        <label>Contraseña <span class="p-pass"><input type="password" name="password" required minlength="6" autocomplete="new-password"><button type="button" class="p-ojo" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
         <button class="btn btn-primario btn-bloque" type="submit">Crear cuenta y mi sitio</button>
         <p class="p-error" id="error-registro"></p>
         <p class="p-nota">Con la cuenta creada, el panel te guía para crear tu sitio.</p>

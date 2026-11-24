@@ -10,6 +10,19 @@
   function $(s) { return document.querySelector(s); }
   function esc(s) { return TW.esc(s); }
 
+  // Ojito para mostrar u ocultar la contraseña (login y registro).
+  document.querySelectorAll(".p-ojo").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var inp = b.parentElement.querySelector("input");
+      var ver = inp.type === "password";
+      inp.type = ver ? "text" : "password";
+      b.classList.toggle("viendo", ver);
+      b.setAttribute("aria-pressed", ver ? "true" : "false");
+      b.setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
+      inp.focus();
+    });
+  });
+
   // ============================================================ auth
   async function refrescar() {
     user = await TW.usuario();
