@@ -277,3 +277,32 @@ html[data-tema="premium"] .btn-acento:hover { filter: brightness(1.07); color: v
   .s-rasgo { flex-basis: 42%; }
   .s-rasgo + .s-rasgo { border-left: none; }
 }
+
+/* ============================== tema Premium · la escena manda ==============================
+   Como la referencia: la foto ES la pagina. Sin cajas: marcos dorados,
+   texto crema centrado sobre la escena y barra flotante con placas. */
+html[data-tema="premium"] body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; box-shadow: inset 0 0 190px color-mix(in srgb, var(--negro) 62%, transparent); }
+html[data-tema="premium"] .s-nav { background: transparent; border-bottom: none; backdrop-filter: none; }
+html[data-tema="premium"] .s-nav.con-sombra { background: color-mix(in srgb, var(--fondo) 88%, transparent); backdrop-filter: blur(14px); }
+html[data-tema="premium"] .s-marca { color: var(--texto); }
+html[data-tema="premium"] .s-links a { background: linear-gradient(180deg, color-mix(in srgb, var(--acento) 30%, var(--fondo)), color-mix(in srgb, var(--acento) 15%, var(--fondo))); border: 1px solid color-mix(in srgb, var(--acento) 60%, transparent); border-radius: 6px; color: var(--texto); font-family: var(--fuente-titulos); font-size: 13.5px; padding: 8px 14px; }
+html[data-tema="premium"] .s-links a:hover { background: linear-gradient(180deg, color-mix(in srgb, var(--acento) 42%, var(--fondo)), color-mix(in srgb, var(--acento) 22%, var(--fondo))); color: var(--texto); }
+html[data-tema="premium"] .s-links a.activo { border-color: var(--acento); color: var(--acento); }
+html[data-tema="premium"] .s-hero--portada .s-hero-in { align-items: center; text-align: center; }
+html[data-tema="premium"] .s-hero-texto h1 { font-size: clamp(46px, 7.2vw, 84px); letter-spacing: 0.05em; }
+html[data-tema="premium"] .s-hero-texto h1::after { margin-inline: auto; }
+html[data-tema="premium"] .s-hero-texto p { margin-inline: auto; }
+html[data-tema="premium"] .s-contacto { justify-content: center; }
+html[data-tema="premium"] .s-seccion h2 { letter-spacing: 0.13em; }
+html[data-tema="premium"] .s-tarjeta, html[data-tema="premium"] .s-articulo { background: transparent; border: none; box-shadow: none; backdrop-filter: none; overflow: visible; }
+html[data-tema="premium"] .s-tarjeta:hover { transform: none; box-shadow: none; }
+html[data-tema="premium"] .s-tarjeta-cuerpo { padding: 18px 8px 0; }
+html[data-tema="premium"] .s-tarjeta img { padding: 0; background: none; border: 1px solid color-mix(in srgb, var(--acento) 75%, transparent); outline: 1px solid color-mix(in srgb, var(--acento) 40%, transparent); outline-offset: 5px; border-radius: 3px; }
+html[data-tema="premium"] .s-tarjeta h3 { letter-spacing: 0.09em; }
+html[data-tema="premium"] .s-tarjeta h3::before { display: none; }
+html[data-tema="premium"] .s-articulo { padding: 6px 0; }
+html[data-tema="premium"] .s-articulo-img { padding: 0; background: none; border: 1px solid color-mix(in srgb, var(--acento) 65%, transparent); outline: 1px solid color-mix(in srgb, var(--acento) 35%, transparent); outline-offset: 5px; border-radius: 3px; }
+html[data-tema="premium"] .s-doc, html[data-tema="premium"] .s-feed-item { background: transparent; border: none; border-bottom: 1px solid color-mix(in srgb, var(--borde) 55%, transparent); border-radius: 0; box-shadow: none; backdrop-filter: none; }
+html[data-tema="premium"] .s-hero { background: transparent; }
+html[data-tema="premium"] .s-pie { background: color-mix(in srgb, var(--fondo) 72%, transparent); }
+html[data-tema="premium"] .s-rasgo-titulo { letter-spacing: 0.05em; }
