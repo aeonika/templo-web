@@ -322,3 +322,22 @@ html[data-tema="premium"] .s-links a:hover { background: color-mix(in srgb, var(
 html[data-tema="premium"] .s-links a.activo { background: none; color: var(--acento); }
 html[data-tema="premium"] .s-links a.s-nav-cta { background: var(--acento); border: none; color: var(--acento-texto); font-weight: 600; border-radius: 999px; padding: 9px 16px; box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--acento) 60%, transparent); }
 html[data-tema="premium"] .s-links a.s-nav-cta:hover { background: var(--acento); color: var(--acento-texto); filter: brightness(1.07); }
+
+/* ============================== tema Premium · marcos de etiqueta con esquinas ==============================
+   Identidad propia: esquinas doradas que respiran al hover, resplandor
+   de vela sobre la foto y precio en placa. */
+html[data-tema="premium"] .s-tarjeta, html[data-tema="premium"] .s-articulo { position: relative; }
+html[data-tema="premium"] .s-tarjeta { padding: 16px 16px 20px; }
+html[data-tema="premium"] .s-articulo { padding: 16px; }
+html[data-tema="premium"] .s-tarjeta::before, html[data-tema="premium"] .s-tarjeta::after, html[data-tema="premium"] .s-articulo::before, html[data-tema="premium"] .s-articulo::after, html[data-tema="premium"] .s-tarjeta-cuerpo::before, html[data-tema="premium"] .s-tarjeta-cuerpo::after, html[data-tema="premium"] .s-articulo-cuerpo::before, html[data-tema="premium"] .s-articulo-cuerpo::after { content: ""; position: absolute; width: 22px; height: 22px; border: 0 solid color-mix(in srgb, var(--acento) 80%, transparent); pointer-events: none; transition: width 0.3s ease, height 0.3s ease; }
+html[data-tema="premium"] .s-tarjeta::before, html[data-tema="premium"] .s-articulo::before { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+html[data-tema="premium"] .s-tarjeta::after, html[data-tema="premium"] .s-articulo::after { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+html[data-tema="premium"] .s-tarjeta-cuerpo::before, html[data-tema="premium"] .s-articulo-cuerpo::before { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+html[data-tema="premium"] .s-tarjeta-cuerpo::after, html[data-tema="premium"] .s-articulo-cuerpo::after { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+html[data-tema="premium"] .s-tarjeta:hover::before, html[data-tema="premium"] .s-tarjeta:hover::after, html[data-tema="premium"] .s-articulo:hover::before, html[data-tema="premium"] .s-articulo:hover::after, html[data-tema="premium"] .s-tarjeta:hover .s-tarjeta-cuerpo::before, html[data-tema="premium"] .s-tarjeta:hover .s-tarjeta-cuerpo::after, html[data-tema="premium"] .s-articulo:hover .s-articulo-cuerpo::before, html[data-tema="premium"] .s-articulo:hover .s-articulo-cuerpo::after { width: 32px; height: 32px; }
+html[data-tema="premium"] .s-tarjeta:hover img { border-color: var(--acento); box-shadow: 0 0 46px color-mix(in srgb, var(--acento) 32%, transparent); }
+html[data-tema="premium"] .s-articulo:hover .s-articulo-img { border-color: var(--acento); box-shadow: 0 0 34px color-mix(in srgb, var(--acento) 26%, transparent); }
+html[data-tema="premium"] .s-precio { display: inline-block; padding: 5px 16px; border: 1px solid color-mix(in srgb, var(--acento) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--acento) 13%, transparent); }
+html[data-tema="premium"] .s-tarjeta.destacada img { animation: premium-resplandor 3.2s ease-in-out infinite; }
+@keyframes premium-resplandor { 0%, 100% { box-shadow: 0 0 18px color-mix(in srgb, var(--acento) 18%, transparent); } 50% { box-shadow: 0 0 42px color-mix(in srgb, var(--acento) 38%, transparent); } }
+@media (prefers-reduced-motion: reduce) { html[data-tema="premium"] .s-tarjeta.destacada img { animation: none; } }
