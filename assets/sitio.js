@@ -47,6 +47,7 @@
     (sitio.logo_url ? '<img src="' + TW.esc(sitio.logo_url) + '" alt="">' : "") +
     "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
     '<button class="s-burger" id="s-burger" type="button" aria-label="Abrir el menú" aria-expanded="false"><span></span><span></span><span></span></button>' +
+    (sitio.whatsapp ? '<a class="s-wa-movil" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></a>' : "") +
     '<nav class="s-links" id="s-links">' +
     enlaces.map(function (e) { return '<a href="' + e[1] + '">' + e[0] + "</a>"; }).join("") +
     (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener">WhatsApp</a>' : "") +
@@ -116,6 +117,19 @@
       titulo + "</h2>" + (bajada ? '<p class="bajada">' + bajada + "</p>" : "") + contenido + "</div></section>";
   }
 
+  var ICONOS = {
+    vela: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.2 1.6 2 2.7 2 4a2 2 0 1 1-4 0c0-1.3.8-2.4 2-4z"/><path d="M7 21v-5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"/><path d="M4.5 21h15"/></svg>',
+    luna: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z"/></svg>',
+    estrella: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
+    carta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8.2l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13l-1.85 1-.35-2.1-1.5-1.5 2.1-.3z"/></svg>',
+    libro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v13c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-13c-3.5 0-6 .5-8 2z"/><path d="M12 6.5v13"/></svg>',
+    cristal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l3 5-8 11L4 9z"/><path d="M4 9h16"/><path d="M12 20L9.2 9 12 4l2.8 5z"/></svg>',
+    ojo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    llave: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14.5" r="4.5"/><path d="M11.3 11.2L20 2.5"/><path d="M16.8 5.7l2.7 2.7"/></svg>',
+    pocion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4"/><path d="M11 3v5.2L6.6 15a3 3 0 0 0 2.7 4.5h5.4a3 3 0 0 0 2.7-4.5L13 8.2V3"/><path d="M8.2 15h7.6"/></svg>',
+    planta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><path d="M12 14c0-3.8 2.8-5.8 6.5-5.8 0 3.8-2.3 6-6.5 5.8z"/><path d="M12 11.5c0-3.2-2.4-4.9-5.5-4.9 0 3.2 2 5.1 5.5 4.9z"/></svg>'
+  };
+  var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
   var html = "";
 
   // Quien soy: con foto, el hero es una portada a pantalla completa
@@ -142,6 +156,13 @@
         botonesContacto +
         "</div></div></section>";
     }
+  }
+
+  // Rasgos con iconos, bajo la presentacion
+  if (rasgosSitio.length) {
+    html += '<div class="contenedor"><div class="s-rasgos">' + rasgosSitio.map(function (r) {
+      return '<div class="s-rasgo"><span class="s-rasgo-ico">' + (ICONOS[r.icono] || ICONOS.estrella) + '</span><span class="s-rasgo-titulo">' + TW.esc(r.titulo || "") + "</span></div>";
+    }).join("") + "</div></div>";
   }
 
   // Promociones

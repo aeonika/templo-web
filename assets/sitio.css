@@ -260,3 +260,20 @@ html[data-tema="premium"] .s-tarjeta img { aspect-ratio: 4 / 5; border-radius: 6
 html[data-tema="premium"] .s-articulo-img { border: 1px solid color-mix(in srgb, var(--acento) 45%, transparent); padding: 5px; background: color-mix(in srgb, var(--fondo) 55%, transparent); box-sizing: border-box; }
 html[data-tema="premium"] .btn-acento, html[data-tema="premium"] .s-links a.s-nav-cta { background: linear-gradient(180deg, color-mix(in srgb, var(--acento) 88%, var(--blanco)), color-mix(in srgb, var(--acento) 76%, var(--negro))); border: 1px solid color-mix(in srgb, var(--acento) 65%, var(--blanco)); color: var(--acento-texto); font-family: var(--fuente-titulos); box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--acento) 55%, transparent); }
 html[data-tema="premium"] .btn-acento:hover { filter: brightness(1.07); color: var(--acento-texto); }
+
+/* ============================== rasgos con iconos y WhatsApp móvil ============================== */
+.s-wa-movil { display: none; }
+@media (max-width: 860px) {
+  .s-wa-movil { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--acento); color: var(--acento-texto); flex: none; }
+  .s-wa-movil svg { width: 20px; height: 20px; }
+}
+.s-rasgos { display: flex; flex-wrap: wrap; margin-top: 36px; border-top: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); }
+.s-rasgo { flex: 1 1 150px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 24px 14px; }
+.s-rasgo + .s-rasgo { border-left: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); }
+.s-rasgo-ico { color: var(--acento); display: inline-flex; }
+.s-rasgo-ico svg { width: 30px; height: 30px; }
+.s-rasgo-titulo { font: 600 15px var(--fuente-titulos); color: var(--texto); }
+@media (max-width: 640px) {
+  .s-rasgo { flex-basis: 42%; }
+  .s-rasgo + .s-rasgo { border-left: none; }
+}

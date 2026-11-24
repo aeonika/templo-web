@@ -358,6 +358,14 @@
     ];
     var urlSitio = "sitio.html?s=" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
+    var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"]];
+    var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
+    function filaRasgo(r) {
+      return "<div class='c-rasgo-fila'><label>Icono <select class='c-rasgo-icono'>" +
+        iconosPanel.map(function (o) { return "<option value='" + o[0] + "'" + (r && r.icono === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") +
+        "</select></label><label class='c-rasgo-texto'>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(r ? (r.titulo || "") : "") + "' placeholder='Servicios de hechicería'></label>" +
+        "<button type='button' class='btn btn-fantasma c-rasgo-quitar'>Quitar</button></div>";
+    }
     cont.innerHTML =
       "<div class='p-bloque c-resumen'>" +
         "<div class='c-url'><span class='c-url-texto'>" + esc(urlAbsoluta) + "</span>" +
@@ -395,6 +403,9 @@
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
           "<input type='checkbox' class='mod-switch' name='mod_" + m[0] + "'" + (mods[m[0]] !== false ? " checked" : "") + "></label>";
       }).join("") + "</div>" +
+      "<div class='p-bloque'><h3>Rasgos con iconos</h3><p class='p-ayuda'>Las cajitas con icono bajo tu presentación, como las de las webs de referencia. Agregá o quitá las que quieras (hasta 6).</p><div id='c-rasgos'>" +
+      (rasgosSitio.length ? rasgosSitio.map(filaRasgo).join("") : filaRasgo(null)) +
+      "</div><button type='button' class='btn btn-fantasma' id='c-rasgo-agregar'>+ Agregar rasgo</button></div>" +
       "<div class='p-bloque'><label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Sitio publicado</span><span class='mod-desc'>Visible para tus visitantes; si lo apagás, solo vos lo ves al editar</span></span>" +
       "<input type='checkbox' class='mod-switch' name='publicado'" + (sitio.publicado ? " checked" : "") + "></label>" +
       "<button class='btn btn-primario btn-bloque' type='submit'>Guardar cambios</button>" +
@@ -444,11 +455,26 @@
       }).catch(function (e2) { fEst.textContent = "No se pudo subir: " + e2.message; });
     });
     if (fUrl && fMini) fUrl.addEventListener("input", function () { fMini.src = fUrl.value; fMini.hidden = !fUrl.value; });
+    var contRasgos = $("#c-rasgos"), btnRasgo = $("#c-rasgo-agregar");
+    if (btnRasgo && contRasgos) btnRasgo.addEventListener("click", function () {
+      if (contRasgos.querySelectorAll(".c-rasgo-fila").length >= 6) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = filaRasgo(null);
+      contRasgos.appendChild(tmp.firstChild);
+    });
+    if (contRasgos) contRasgos.addEventListener("click", function (ev) {
+      if (ev.target.classList.contains("c-rasgo-quitar")) ev.target.closest(".c-rasgo-fila").remove();
+    });
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);
       var nuevosMods = {};
       modulosDefs.forEach(function (m) { nuevosMods[m[0]] = !!f.get("mod_" + m[0]); });
+      var rasgosNuevos = [];
+      document.querySelectorAll(".c-rasgo-fila").forEach(function (fila) {
+        var ti = fila.querySelector(".c-rasgo-titulo").value.trim();
+        if (ti) rasgosNuevos.push({ icono: fila.querySelector(".c-rasgo-icono").value, titulo: ti });
+      });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
         quienes_somos: f.get("quienes_somos") || "", logo_url: f.get("logo_url") || null,
@@ -456,6 +482,7 @@
         email: f.get("email") || null, tema: f.get("tema"),
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
         fondo_url: f.get("fondo_url") || null,
+        rasgos: rasgosNuevos,
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();
       if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; return; }
