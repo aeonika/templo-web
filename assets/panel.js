@@ -354,7 +354,7 @@
       ["pergamino", "Pergamino", "#f6f1e7", "#9a6a1f", "Claro cálido, editorial"],
       ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
       ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"],
-      ["premium", "Premium", "#0d0b0b", "#e5484d", "Corporativo: negro y rojo"]
+      ["premium", "Premium", "#0d0906", "#c9a45c", "Velas y oro: cálido y premium"]
     ];
     var urlSitio = "sitio.html?s=" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
