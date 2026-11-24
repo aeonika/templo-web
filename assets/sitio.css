@@ -113,6 +113,7 @@ h1, h2, h3 { font-family: var(--fuente-titulos); font-weight: 600; line-height: 
 .s-articulo h3 a { color: var(--texto); text-decoration: none; }
 .s-articulo p { margin: 0; color: var(--muted); }
 .s-articulo .fecha { font-size: 13px; color: var(--muted); }
+.s-articulo-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; margin-bottom: 12px; display: block; }
 
 .s-doc { display: flex; gap: 16px; align-items: center; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px 20px; }
 .s-doc h3 { margin: 0 0 2px; font-size: 18px; }
@@ -189,11 +190,21 @@ html[data-tema="arcano"] .s-tarjeta img { width: 42%; aspect-ratio: auto; min-he
 html[data-tema="arcano"] .s-tarjeta-cuerpo { justify-content: center; padding: 26px; }
 html[data-tema="arcano"] .s-tarjeta h3 { color: var(--acento); letter-spacing: 0.02em; }
 html[data-tema="arcano"] .s-tipo { color: var(--acento); font-size: 12.5px; font-weight: 600; }
-html[data-tema="arcano"] .s-articulo { padding: 26px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--acento) 35%, transparent); }
+html[data-tema="arcano"] .s-lista { gap: 22px; counter-reset: carta; }
+html[data-tema="arcano"] .s-articulo { display: flex; align-items: stretch; padding: 0; overflow: clip; position: relative; counter-increment: carta; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--acento) 35%, transparent); }
+html[data-tema="arcano"] .s-lista .s-articulo:nth-child(even) { flex-direction: row-reverse; }
+html[data-tema="arcano"] .s-articulo-img { width: 42%; aspect-ratio: auto; min-height: 230px; margin: 0; border-radius: 0; flex: none; }
+html[data-tema="arcano"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 26px; min-width: 0; }
+html[data-tema="arcano"] .s-articulo::after { content: counter(carta); position: absolute; top: 4px; inset-inline-end: 16px; font-family: var(--fuente-titulos); font-size: 58px; line-height: 1; color: var(--acento); opacity: 0.26; text-shadow: 0 0 22px color-mix(in srgb, var(--acento) 45%, transparent); pointer-events: none; }
+html[data-tema="arcano"] .s-grilla { counter-reset: carta; }
+html[data-tema="arcano"] .s-tarjeta { position: relative; counter-increment: carta; }
+html[data-tema="arcano"] .s-tarjeta::after { content: counter(carta); position: absolute; top: 4px; inset-inline-end: 16px; font-family: var(--fuente-titulos); font-size: 58px; line-height: 1; color: var(--acento); opacity: 0.26; text-shadow: 0 0 22px color-mix(in srgb, var(--acento) 45%, transparent); pointer-events: none; z-index: 1; }
 html[data-tema="arcano"] .s-articulo h3 { color: var(--acento); }
 html[data-tema="arcano"] .s-articulo .fecha { color: var(--acento); font-size: 12.5px; }
 @media (max-width: 720px) {
   html[data-tema="arcano"] body { background-size: 620px; }
   html[data-tema="arcano"] .s-tarjeta, html[data-tema="arcano"] .s-grilla .s-tarjeta:nth-child(even) { flex-direction: column; }
   html[data-tema="arcano"] .s-tarjeta img { width: 100%; min-height: 0; aspect-ratio: 16 / 10; }
+  html[data-tema="arcano"] .s-articulo, html[data-tema="arcano"] .s-lista .s-articulo:nth-child(even) { flex-direction: column; }
+  html[data-tema="arcano"] .s-articulo-img { width: 100%; min-height: 0; aspect-ratio: 16 / 10; }
 }

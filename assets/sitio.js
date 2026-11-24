@@ -152,10 +152,12 @@
   if (mod.articulos !== false && (rArt.data || []).length) {
     html += seccion("articulos", "Artículos", "", '<div class="s-lista">' +
       rArt.data.map(function (a2) {
-        return '<article class="s-articulo"><p class="fecha">' +
+        return '<article class="s-articulo">' +
+          (a2.imagen_url ? '<img class="s-articulo-img" src="' + TW.esc(a2.imagen_url) + '" alt="">' : "") +
+          '<div class="s-articulo-cuerpo"><p class="fecha">' +
           new Date(a2.creado).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
           '<h3><a href="' + base + "&a=" + encodeURIComponent(a2.slug) + '">' + TW.esc(a2.titulo) + "</a></h3>" +
-          "<p>" + TW.esc(a2.extracto) + "</p></article>";
+          "<p>" + TW.esc(a2.extracto) + "</p></div></article>";
       }).join("") + "</div>");
   }
 
