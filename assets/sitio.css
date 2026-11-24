@@ -45,12 +45,21 @@
   --t-premium-borde: #3a2c1c;
   --t-premium-acento: #c9a45c;
   --t-premium-acento-texto: #1d1405;
+  --t-marfil-fondo: #f7f2e9;
+  --t-marfil-fondo-2: #efe8da;
+  --t-marfil-tarjeta: #fffdf7;
+  --t-marfil-texto: #241d14;
+  --t-marfil-muted: #7d7261;
+  --t-marfil-borde: #ddd2bd;
+  --t-marfil-acento: #8a3324;
+  --t-marfil-acento-texto: #fff8ee;
 }
 html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: var(--t-crepusculo-fondo-2); --tarjeta: var(--t-crepusculo-tarjeta); --texto: var(--t-crepusculo-texto); --muted: var(--t-crepusculo-muted); --borde: var(--t-crepusculo-borde); --acento: var(--t-crepusculo-acento); --acento-texto: var(--t-crepusculo-acento-texto); }
 html[data-tema="pergamino"] { --fondo: var(--t-pergamino-fondo); --fondo-2: var(--t-pergamino-fondo-2); --tarjeta: var(--t-pergamino-tarjeta); --texto: var(--t-pergamino-texto); --muted: var(--t-pergamino-muted); --borde: var(--t-pergamino-borde); --acento: var(--t-pergamino-acento); --acento-texto: var(--t-pergamino-acento-texto); }
 html[data-tema="bosque"] { --fondo: var(--t-bosque-fondo); --fondo-2: var(--t-bosque-fondo-2); --tarjeta: var(--t-bosque-tarjeta); --texto: var(--t-bosque-texto); --muted: var(--t-bosque-muted); --borde: var(--t-bosque-borde); --acento: var(--t-bosque-acento); --acento-texto: var(--t-bosque-acento-texto); }
 html[data-tema="obsidiana"] { --fondo: var(--t-obsidiana-fondo); --fondo-2: var(--t-obsidiana-fondo-2); --tarjeta: var(--t-obsidiana-tarjeta); --texto: var(--t-obsidiana-texto); --muted: var(--t-obsidiana-muted); --borde: var(--t-obsidiana-borde); --acento: var(--t-obsidiana-acento); --acento-texto: var(--t-obsidiana-acento-texto); }
 html[data-tema="premium"] { --fondo: var(--t-premium-fondo); --fondo-2: var(--t-premium-fondo-2); --tarjeta: var(--t-premium-tarjeta); --texto: var(--t-premium-texto); --muted: var(--t-premium-muted); --borde: var(--t-premium-borde); --acento: var(--t-premium-acento); --acento-texto: var(--t-premium-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
+html[data-tema="marfil"] { --fondo: var(--t-marfil-fondo); --fondo-2: var(--t-marfil-fondo-2); --tarjeta: var(--t-marfil-tarjeta); --texto: var(--t-marfil-texto); --muted: var(--t-marfil-muted); --borde: var(--t-marfil-borde); --acento: var(--t-marfil-acento); --acento-texto: var(--t-marfil-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 10px; }
 
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
@@ -341,3 +350,27 @@ html[data-tema="premium"] .s-precio { display: inline-block; padding: 5px 16px; 
 html[data-tema="premium"] .s-tarjeta.destacada img { animation: premium-resplandor 3.2s ease-in-out infinite; }
 @keyframes premium-resplandor { 0%, 100% { box-shadow: 0 0 18px color-mix(in srgb, var(--acento) 18%, transparent); } 50% { box-shadow: 0 0 42px color-mix(in srgb, var(--acento) 38%, transparent); } }
 @media (prefers-reduced-motion: reduce) { html[data-tema="premium"] .s-tarjeta.destacada img { animation: none; } }
+
+/* ============================== tema Marfil · editorial claro ==============================
+   Papel y tinta: hojas con sombra suave, texto a la izquierda, un solo
+   acento terracota. La contracara diurna del Premium. */
+html[data-tema="marfil"] .s-seccion h2 { color: var(--texto); }
+html[data-tema="marfil"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: 0 10px 26px -18px color-mix(in srgb, var(--texto) 45%, transparent); text-align: left; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+html[data-tema="marfil"] .s-tarjeta:hover { transform: translateY(-4px); box-shadow: 0 22px 38px -20px color-mix(in srgb, var(--texto) 50%, transparent); }
+html[data-tema="marfil"] .s-tarjeta img { aspect-ratio: 16 / 10; border-radius: 0; transition: transform 0.5s ease; }
+html[data-tema="marfil"] .s-tarjeta:hover img { transform: scale(1.04); }
+html[data-tema="marfil"] .s-tarjeta-cuerpo { text-align: left; padding: 18px 20px 20px; }
+html[data-tema="marfil"] .s-tarjeta h3 { color: var(--texto); }
+html[data-tema="marfil"] .s-tarjeta h3::before { background: var(--acento); margin-inline: 0; }
+html[data-tema="marfil"] .s-precio { color: var(--acento); }
+html[data-tema="marfil"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: 0 10px 26px -18px color-mix(in srgb, var(--texto) 45%, transparent); padding: 14px; }
+html[data-tema="marfil"] .s-articulo:nth-child(even) { flex-direction: row-reverse; }
+html[data-tema="marfil"] .s-articulo-img { border-radius: 6px; }
+html[data-tema="marfil"] .btn-acento { background: var(--acento); color: var(--acento-texto); border-radius: 8px; box-shadow: none; }
+html[data-tema="marfil"] .btn-acento:hover { background: var(--acento); filter: brightness(1.08); }
+html[data-tema="marfil"] .s-nav-cta { border-radius: 999px; }
+html[data-tema="marfil"] .revelar { opacity: 1; transform: none; }
+html[data-tema="marfil"] .revelar:not(.visible) { @starting-style { opacity: 0; transform: translateY(14px); } }
+html[data-tema="marfil"] .revelar.visible { opacity: 1; transform: none; transition: opacity 0.6s ease, transform 0.6s ease; }
+@media (max-width: 700px) { html[data-tema="marfil"] .s-articulo:nth-child(even) { flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { html[data-tema="marfil"] .s-tarjeta, html[data-tema="marfil"] .s-tarjeta img { transition: none; } }
