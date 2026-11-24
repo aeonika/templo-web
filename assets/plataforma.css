@@ -53,7 +53,7 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
 .hero-bajada { font-size: 19px; line-height: 1.5; color: var(--color-day-ink); max-width: 46ch; margin: 0 0 28px; }
 .hero-acciones { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
 
-.hero-vidrio { background: var(--glass); backdrop-filter: blur(var(--glass-blur)); box-shadow: var(--glass-hi), var(--shadow-card), 0 0 70px oklch(84% 0.145 198 / 0.10); border-radius: var(--radius-card); padding: 20px; color: var(--color-ink); }
+.hero-vidrio { background: var(--glass); backdrop-filter: blur(var(--glass-blur)); box-shadow: var(--glass-hi), var(--shadow-card), var(--glow-vidrio); border-radius: var(--radius-card); padding: 20px; color: var(--color-ink); }
 .vidrio-barra { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--glass-linea); }
 .vidrio-nombre { font-family: var(--font-display); font-weight: 600; }
 .vidrio-link { color: var(--color-muted); font-size: 13px; }

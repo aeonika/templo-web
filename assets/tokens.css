@@ -19,7 +19,7 @@
   --color-well: oklch(95.5% 0.008 75); --color-well-2: oklch(92% 0.010 75); --color-well-ink: oklch(21% 0.016 268); --color-well-muted: oklch(47% 0.016 265); --color-well-rule: oklch(87.5% 0.009 75); --color-card: oklch(99.5% 0.003 75);
   --glass: oklch(15% 0.013 272 / 0.62); --glass-blur: 22px;
   --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.10), inset 0 0 0 1px oklch(100% 0 0 / 0.06);
-  --shadow-card: 0 1px 0 oklch(100% 0 0 / 0.06) inset, 0 40px 80px -32px oklch(8% 0.02 272 / 0.7); --glow-accent: 0 0 18px oklch(84% 0.145 198 / 0.35), 0 0 44px oklch(84% 0.145 198 / 0.14); --glow-dorado: 0 0 18px oklch(86% 0.185 92 / 0.35), 0 0 44px oklch(86% 0.185 92 / 0.14);
+  --shadow-card: 0 1px 0 oklch(100% 0 0 / 0.06) inset, 0 40px 80px -32px oklch(8% 0.02 272 / 0.7); --glow-accent: 0 0 18px oklch(84% 0.145 198 / 0.35), 0 0 44px oklch(84% 0.145 198 / 0.14); --glow-dorado: 0 0 18px oklch(86% 0.185 92 / 0.35), 0 0 44px oklch(86% 0.185 92 / 0.14); --glow-vidrio: 0 0 70px oklch(84% 0.145 198 / 0.10);
   --font-display: "Cinzel", "Times New Roman", serif; --font-body: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --radius-card: 18px; --radius-inner: 10px; --radius-pill: 999px; --rule-hair: 1px;
   --tracking-display: 0.01em; --display-weight: 600;
