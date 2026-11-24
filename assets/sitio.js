@@ -259,7 +259,7 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
-  if ((sitio.tema || "crepusculo") === "premium" && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (["premium", "marfil"].indexOf(sitio.tema || "crepusculo") !== -1 && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
     var io = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
