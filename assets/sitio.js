@@ -45,9 +45,20 @@
   if (mod.feed) enlaces.push(["Novedades", "#novedades"]);
   nav.innerHTML = '<div class="s-nav-in"><a class="s-marca" href="' + base + '">' +
     (sitio.logo_url ? '<img src="' + TW.esc(sitio.logo_url) + '" alt="">' : "") +
-    TW.esc(sitio.nombre) + '</a><nav class="s-links">' +
+    "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
+    '<button class="s-burger" id="s-burger" type="button" aria-label="Abrir el menú" aria-expanded="false"><span></span><span></span><span></span></button>' +
+    '<nav class="s-links" id="s-links">' +
     enlaces.map(function (e) { return '<a href="' + e[1] + '">' + e[0] + "</a>"; }).join("") +
+    (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener">WhatsApp</a>' : "") +
     '<a href="panel.html">Ingresar</a></nav></div>';
+  var burger = document.getElementById("s-burger");
+  if (burger) burger.addEventListener("click", function () {
+    burger.setAttribute("aria-expanded", nav.classList.toggle("abierta") ? "true" : "false");
+  });
+  nav.querySelectorAll(".s-links a").forEach(function (a) {
+    a.addEventListener("click", function () { nav.classList.remove("abierta"); if (burger) burger.setAttribute("aria-expanded", "false"); });
+  });
+  window.addEventListener("scroll", function () { nav.classList.toggle("con-sombra", window.scrollY > 8); }, { passive: true });
 
   // ---------- footer
   var redes = sitio.redes || {};
@@ -222,6 +233,19 @@
     }, { threshold: 0.12 });
     revelables.forEach(function (el, i) { el.classList.add("revelar"); el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
     setTimeout(function () { revelables.forEach(function (el) { el.classList.add("visible"); }); }, 3000);
+  }
+  if ("IntersectionObserver" in window) {
+    var porId = {};
+    nav.querySelectorAll('.s-links a[href^="#"]').forEach(function (a) { porId[a.getAttribute("href").slice(1)] = a; });
+    var spy = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting && porId[e.target.id]) {
+          Object.keys(porId).forEach(function (k) { porId[k].classList.remove("activo"); });
+          porId[e.target.id].classList.add("activo");
+        }
+      });
+    }, { rootMargin: "-38% 0px -55% 0px" });
+    Object.keys(porId).forEach(function (id) { var sec = document.getElementById(id); if (sec) spy.observe(sec); });
   }
 
   // Acciones de documentos
