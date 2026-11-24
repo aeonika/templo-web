@@ -1,3 +1,4 @@
-config.js
+# config.js SÍ se versiona: contiene solo valores públicos (URL + clave anon).
+# Los secretos (service role, API secret de Cloudinary) viven solo en Vercel.
 node_modules/
 .hallmark/
