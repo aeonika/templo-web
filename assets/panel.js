@@ -354,7 +354,7 @@
       ["pergamino", "Pergamino", "#f6f1e7", "#9a6a1f", "Claro cálido, editorial"],
       ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
       ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"],
-      ["arcano", "Arcano", "#060404", "#d9a441", "Negro, dorado y símbolos"]
+      ["premium", "Premium", "#0a0c11", "#5b8cff", "Corporativo: grafito y azul"]
     ];
     var urlSitio = "sitio.html?s=" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
@@ -381,6 +381,7 @@
       }).join("") + "</div>" +
       "<div class='p-dos'><label>Color de acento (opcional) <span class='c-acento'><input type='text' name='acento' id='c-acento-texto' value='" + esc(sitio.acento || "") + "' placeholder='#00e5ff'><input type='color' id='c-acento-color' value='" + esc(sitio.acento || "#00e5ff") + "'></span></label>" +
       "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label></div>" +
+      "<label>Imagen de fondo (URL, opcional) <input type='text' name='fondo_url' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…'></label>" +
       "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
       "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
@@ -439,6 +440,7 @@
         foto_url: f.get("foto_url") || null, whatsapp: f.get("whatsapp") || null,
         email: f.get("email") || null, tema: f.get("tema"),
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
+        fondo_url: f.get("fondo_url") || null,
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();
       if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; return; }
