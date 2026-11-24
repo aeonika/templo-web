@@ -8,7 +8,7 @@ a { color: var(--color-accent-hi); }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 9px 16px; border-radius: var(--radius-pill); font: 600 14px var(--font-body); border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background-color .18s ease; }
-.btn-primario { background: var(--color-accent); color: var(--color-accent-ink); }
+.btn-primario { background: var(--color-accent); color: var(--color-accent-ink); box-shadow: var(--glow-accent); }
 .btn-primario:hover { background: var(--color-accent-hi); }
 .btn-fantasma { background: transparent; color: var(--color-ink); border-color: var(--color-rule); }
 .btn-peligro { background: transparent; color: var(--color-dusk); border-color: var(--color-rule); }

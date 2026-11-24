@@ -41,3 +41,16 @@ registro de decisiones de la corrida.
 - **El panel** es una pantalla de trabajo: usa los tokens de Dusk sin la
   fotografía ni el vidrio, con la densidad que pide una herramienta de
   uso diario.
+
+## Restyle «Biblioteca» (2026-11-24)
+
+A pedido de Cristian, la plataforma adopta la estética de la Biblioteca
+Magia del Caos: fondo negro azulado (#030305), superficies de vidrio,
+acento cian neón #00e5ff con brillo suave, dorado #ffd700 SOLO en
+Premium (botón, anillo y precio del plan), y las tipografías de la
+Biblioteca: Cinzel para títulos y Poppins para el texto. El panel hereda
+la paleta por los mismos tokens. El tema por defecto de los sitios de
+maestros («crepúsculo») pasa a la misma clave; pergamino, bosque y
+obsidiana quedan como alternativas. También se definieron los velos del
+hero (--velo-1/2, --scrim-niebla, --glass-linea/fila), que el scaffold
+había dejado autorreferenciados y sin efecto.

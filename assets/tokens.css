@@ -9,18 +9,18 @@
   --color-error: oklch(72% 0.15 27); --color-success: oklch(76% 0.13 150);
   --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
   --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
-  --color-paper: oklch(17.5% 0.014 268); --color-paper-2: oklch(21% 0.016 268); --color-paper-3: oklch(25% 0.017 268);
-  --color-ink: oklch(96% 0.006 75); --color-ink-2: oklch(85% 0.010 262); --color-muted: oklch(70% 0.016 262);
-  --color-rule: oklch(30% 0.016 266); --color-light: oklch(100% 0 0); --color-shade: oklch(10% 0.022 268);
-  --color-accent: oklch(77% 0.10 274); --color-accent-ink: oklch(19% 0.035 274); --color-accent-hi: oklch(84% 0.085 274);
-  --color-accent-deep: oklch(44% 0.13 274); --color-accent-soft: oklch(91% 0.038 274); --color-focus: oklch(80% 0.10 274);
-  --color-accent-2: oklch(83% 0.095 62); --color-dusk: oklch(70% 0.12 330);
+  --color-paper: oklch(9% 0.008 272); --color-paper-2: oklch(13% 0.011 272); --color-paper-3: oklch(16.5% 0.013 272);
+  --color-ink: oklch(96% 0.004 280); --color-ink-2: oklch(86% 0.008 272); --color-muted: oklch(68% 0.012 272);
+  --color-rule: oklch(25% 0.011 272); --color-light: oklch(100% 0 0); --color-shade: oklch(6% 0.006 272);
+  --color-accent: oklch(84% 0.145 198); --color-accent-ink: oklch(16% 0.035 210); --color-accent-hi: oklch(90% 0.10 195);
+  --color-accent-deep: oklch(52% 0.11 215); --color-accent-soft: oklch(93% 0.03 200); --color-focus: oklch(84% 0.145 198);
+  --color-accent-2: oklch(86% 0.185 92); --color-dusk: oklch(64% 0.21 12);
   --color-day-ink: oklch(22% 0.022 268); --color-day-muted: oklch(38% 0.022 266); --color-fog: oklch(94% 0.012 70);
   --color-well: oklch(95.5% 0.008 75); --color-well-2: oklch(92% 0.010 75); --color-well-ink: oklch(21% 0.016 268); --color-well-muted: oklch(47% 0.016 265); --color-well-rule: oklch(87.5% 0.009 75); --color-card: oklch(99.5% 0.003 75);
-  --glass: oklch(22% 0.018 268 / 0.58); --glass-blur: 22px;
+  --glass: oklch(15% 0.013 272 / 0.62); --glass-blur: 22px;
   --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.10), inset 0 0 0 1px oklch(100% 0 0 / 0.06);
-  --shadow-card: 0 1px 0 oklch(100% 0 0 / 0.06) inset, 0 40px 80px -32px oklch(8% 0.02 268 / 0.7);
-  --font-display: "Wix Madefor Display", ui-sans-serif, system-ui, sans-serif; --font-body: "Wix Madefor Text", ui-sans-serif, system-ui, sans-serif;
+  --shadow-card: 0 1px 0 oklch(100% 0 0 / 0.06) inset, 0 40px 80px -32px oklch(8% 0.02 272 / 0.7); --glow-accent: 0 0 18px oklch(84% 0.145 198 / 0.35), 0 0 44px oklch(84% 0.145 198 / 0.14); --glow-dorado: 0 0 18px oklch(86% 0.185 92 / 0.35), 0 0 44px oklch(86% 0.185 92 / 0.14);
+  --font-display: "Cinzel", "Times New Roman", serif; --font-body: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --radius-card: 18px; --radius-inner: 10px; --radius-pill: 999px; --rule-hair: 1px;
-  --tracking-display: -0.022em; --display-weight: 500;
+  --tracking-display: 0.01em; --display-weight: 600;
 }
