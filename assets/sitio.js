@@ -52,7 +52,7 @@
     (sitio.whatsapp ? '<a class="s-wa-movil" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></a>' : "") +
     '<nav class="s-links" id="s-links">' +
     enlaces.map(function (e) { return '<a href="' + e[1] + '">' + e[0] + "</a>"; }).join("") +
-    (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener">WhatsApp</a>' : "") +
+    (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>WhatsApp</a>' : "") +
     '<a href="panel.html">Ingresar</a></nav></div>';
   var burger = document.getElementById("s-burger");
   if (burger) burger.addEventListener("click", function () {
@@ -72,6 +72,16 @@
     (sitio.footer_texto ? "<p>" + TW.esc(sitio.footer_texto) + "</p>" : "") +
     (redesHtml ? "<p>" + redesHtml + "</p>" : "") +
     '<p class="credito">Sitio creado con <a href="index.html">TemploWeb</a></p></div>';
+  if (wa) {
+    var flot = document.createElement("a");
+    flot.className = "s-wa-flotante";
+    flot.href = wa;
+    flot.target = "_blank";
+    flot.rel = "noopener";
+    flot.setAttribute("aria-label", "Escribir por WhatsApp");
+    flot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path fill="currentColor" stroke="none" transform="translate(6.4 6.4) scale(0.48)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>';
+    document.body.appendChild(flot);
+  }
 
   // ---------- vista de un articulo
   if (artSlug) {

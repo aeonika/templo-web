@@ -306,3 +306,19 @@ html[data-tema="premium"] .s-doc, html[data-tema="premium"] .s-feed-item { backg
 html[data-tema="premium"] .s-hero { background: transparent; }
 html[data-tema="premium"] .s-pie { background: color-mix(in srgb, var(--fondo) 72%, transparent); }
 html[data-tema="premium"] .s-rasgo-titulo { letter-spacing: 0.05em; }
+
+/* ============================== WhatsApp: píldora con icono y botón flotante ============================== */
+.s-links a.s-nav-cta { display: inline-flex; align-items: center; gap: 7px; }
+.s-links a.s-nav-cta svg { width: 15px; height: 15px; flex: none; }
+.s-wa-flotante { position: fixed; right: 18px; bottom: 18px; z-index: 60; width: 54px; height: 54px; border-radius: 50%; background: var(--acento); color: var(--acento-texto); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px -10px color-mix(in srgb, var(--negro) 65%, transparent); transition: transform 0.2s ease; }
+.s-wa-flotante:hover { transform: translateY(-2px) scale(1.04); }
+.s-wa-flotante svg { width: 27px; height: 27px; }
+
+/* ============================== tema Premium · barra moderna y sutil ==============================
+   Sin placas: texto limpio, un solo elemento de color (WhatsApp). */
+html[data-tema="premium"] .s-marca { font-family: inherit; font-size: 16.5px; }
+html[data-tema="premium"] .s-links a { background: none; border: none; border-radius: 8px; font-family: inherit; font-size: 14.5px; font-weight: 500; color: var(--muted); padding: 8px 11px; }
+html[data-tema="premium"] .s-links a:hover { background: color-mix(in srgb, var(--texto) 7%, transparent); color: var(--texto); }
+html[data-tema="premium"] .s-links a.activo { background: none; color: var(--acento); }
+html[data-tema="premium"] .s-links a.s-nav-cta { background: var(--acento); border: none; color: var(--acento-texto); font-weight: 600; border-radius: 999px; padding: 9px 16px; box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--acento) 60%, transparent); }
+html[data-tema="premium"] .s-links a.s-nav-cta:hover { background: var(--acento); color: var(--acento-texto); filter: brightness(1.07); }
