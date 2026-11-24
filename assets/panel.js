@@ -381,7 +381,10 @@
       }).join("") + "</div>" +
       "<div class='p-dos'><label>Color de acento (opcional) <span class='c-acento'><input type='text' name='acento' id='c-acento-texto' value='" + esc(sitio.acento || "") + "' placeholder='#00e5ff'><input type='color' id='c-acento-color' value='" + esc(sitio.acento || "#00e5ff") + "'></span></label>" +
       "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label></div>" +
-      "<label>Imagen de fondo (URL, opcional) <input type='text' name='fondo_url' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…'></label>" +
+      "<div class='c-fondo'><label>Imagen de fondo (opcional) <input type='text' name='fondo_url' id='c-fondo-url' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…'></label>" +
+      "<div class='c-fondo-fila'><img class='c-mini c-fondo-mini' id='c-fondo-mini' alt='Fondo actual' src='" + esc(sitio.fondo_url || "") + "'" + (sitio.fondo_url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='c-fondo-file' accept='image/*' hidden></label>" +
+      "<span class='c-ayuda' id='c-fondo-estado'>Se muestra detrás de todo tu sitio, con un velo para que el texto se lea. Subí una imagen o pegá una URL.</span></div></div>" +
       "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
       "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
@@ -429,6 +432,18 @@
       var inp = $(par[0]), img = $(par[1]);
       if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; });
     });
+    var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
+    if (fFile) fFile.addEventListener("change", function () {
+      var arch = fFile.files[0];
+      if (!arch) return;
+      fEst.textContent = "Subiendo la imagen…";
+      subirCloudinary(arch, false).then(function (datos) {
+        fUrl.value = datos.secure_url;
+        if (fMini) { fMini.src = datos.secure_url; fMini.hidden = false; }
+        fEst.textContent = "Imagen subida. Tocá «Guardar sitio» para aplicarla.";
+      }).catch(function (e2) { fEst.textContent = "No se pudo subir: " + e2.message; });
+    });
+    if (fUrl && fMini) fUrl.addEventListener("input", function () { fMini.src = fUrl.value; fMini.hidden = !fUrl.value; });
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);
