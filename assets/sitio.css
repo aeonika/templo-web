@@ -188,10 +188,10 @@ html[data-tema="arcano"] .s-grilla .s-tarjeta:nth-child(even) { flex-direction: 
 html[data-tema="arcano"] .s-tarjeta img { width: 42%; aspect-ratio: auto; min-height: 230px; }
 html[data-tema="arcano"] .s-tarjeta-cuerpo { justify-content: center; padding: 26px; }
 html[data-tema="arcano"] .s-tarjeta h3 { color: var(--acento); letter-spacing: 0.02em; }
-html[data-tema="arcano"] .s-tipo { color: var(--acento); text-transform: uppercase; letter-spacing: 0.14em; font-size: 12px; }
+html[data-tema="arcano"] .s-tipo { color: var(--acento); font-size: 12.5px; font-weight: 600; }
 html[data-tema="arcano"] .s-articulo { padding: 26px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--acento) 35%, transparent); }
 html[data-tema="arcano"] .s-articulo h3 { color: var(--acento); }
-html[data-tema="arcano"] .s-articulo .fecha { text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; }
+html[data-tema="arcano"] .s-articulo .fecha { color: var(--acento); font-size: 12.5px; }
 @media (max-width: 720px) {
   html[data-tema="arcano"] body { background-size: 620px; }
   html[data-tema="arcano"] .s-tarjeta, html[data-tema="arcano"] .s-grilla .s-tarjeta:nth-child(even) { flex-direction: column; }
