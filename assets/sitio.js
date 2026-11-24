@@ -215,6 +215,14 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
+  if ((sitio.tema || "crepusculo") === "premium" && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
+    var io = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    revelables.forEach(function (el, i) { el.classList.add("revelar"); el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
+    setTimeout(function () { revelables.forEach(function (el) { el.classList.add("visible"); }); }, 3000);
+  }
 
   // Acciones de documentos
   main.addEventListener("click", async function (ev) {

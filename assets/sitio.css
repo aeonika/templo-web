@@ -37,13 +37,13 @@
   --t-obsidiana-borde: #2b2b31;
   --t-obsidiana-acento: #d9a441;
   --t-obsidiana-acento-texto: #0a0a0c;
-  --t-premium-fondo: #0a0c11;
-  --t-premium-fondo-2: #0e1118;
-  --t-premium-tarjeta: #131722;
-  --t-premium-texto: #eef1f6;
-  --t-premium-muted: #98a2b3;
-  --t-premium-borde: #232936;
-  --t-premium-acento: #5b8cff;
+  --t-premium-fondo: #0d0b0b;
+  --t-premium-fondo-2: #131010;
+  --t-premium-tarjeta: #171313;
+  --t-premium-texto: #f6f1ee;
+  --t-premium-muted: #a89c96;
+  --t-premium-borde: #2c2323;
+  --t-premium-acento: #e5484d;
   --t-premium-acento-texto: #ffffff;
 }
 html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: var(--t-crepusculo-fondo-2); --tarjeta: var(--t-crepusculo-tarjeta); --texto: var(--t-crepusculo-texto); --muted: var(--t-crepusculo-muted); --borde: var(--t-crepusculo-borde); --acento: var(--t-crepusculo-acento); --acento-texto: var(--t-crepusculo-acento-texto); }
@@ -201,4 +201,25 @@ html[data-tema="premium"] .s-precio { color: var(--texto); }
   html[data-tema="premium"] .s-articulo { flex-direction: column; }
   html[data-tema="premium"] .s-articulo:nth-child(even) { flex-direction: column; }
   html[data-tema="premium"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; }
+}
+
+/* ============================== tema Premium · diseño y movimiento ==============================
+   Cajas con oficio: imagen que respira al hover, filete rojo sobre el
+   título, aparición suave al hacer scroll y portada con zoom lento. */
+html[data-tema="premium"] .s-tarjeta, html[data-tema="premium"] .s-articulo, html[data-tema="premium"] .s-doc { overflow: clip; }
+html[data-tema="premium"] .s-tarjeta img { transition: transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1); }
+html[data-tema="premium"] .s-tarjeta:hover img { transform: scale(1.045); }
+html[data-tema="premium"] .s-tarjeta h3::before, html[data-tema="premium"] .s-articulo h3::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 2px; background: var(--acento); margin-bottom: 10px; }
+html[data-tema="premium"] .s-nav a { position: relative; }
+html[data-tema="premium"] .s-nav a::after { content: ""; position: absolute; left: 0; bottom: -3px; width: 100%; height: 2px; background: var(--acento); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+html[data-tema="premium"] .s-nav a:hover::after { transform: scaleX(1); }
+html[data-tema="premium"] .s-portada-img { animation: premium-zoom 22s ease-in-out infinite alternate; }
+@keyframes premium-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+html[data-tema="premium"] .s-hero-texto { animation: premium-subir 0.8s ease both; }
+@keyframes premium-subir { from { opacity: 0; transform: translateY(14px); } }
+html[data-tema="premium"] .revelar { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1); }
+@starting-style { html[data-tema="premium"] .revelar.visible { opacity: 0; transform: translateY(16px); } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-tema="premium"] .s-portada-img, html[data-tema="premium"] .s-hero-texto { animation: none; }
+  html[data-tema="premium"] .revelar { transition: none; }
 }
