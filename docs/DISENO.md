@@ -54,3 +54,21 @@ maestros («crepúsculo») pasa a la misma clave; pergamino, bosque y
 obsidiana quedan como alternativas. También se definieron los velos del
 hero (--velo-1/2, --scrim-niebla, --glass-linea/fila), que el scaffold
 había dejado autorreferenciados y sin efecto.
+
+## Rediseño full con Hallmark (2026-11-24)
+
+A pedido de Cristian («se ve muy mal, hacelo nuevamente»): rediseño full
+(contenido y wiring intactos; cambian sistema y composición), marca
+Biblioteca como dirección custom. Antes: el hero no comunicaba (texto
+oscuro sobre la foto, velos autorreferenciados sin efecto), los módulos
+eran filas de libro mayor y los planes tarjetas claras sobre fondo negro.
+Ahora: hero oscuro con scrim localizado tras el texto, titular Cinzel con
+una sola palabra en cian con brillo, un único botón primario por pantalla,
+módulos en grilla de tarjetas con iconos de trazo, planes oscuros de
+vidrio (Premium con anillo y brillo dorados), panel con pestaña activa en
+cian y foco visible en los campos, y el sitio del maestro con resplandor
+del acento en el hero y tarjetas con hover. Revisión del hero en contexto
+fresco: aplicadas sus 3 correcciones (scrim tras el texto, fuera el marco
+de luz inset, dirección de la muestra con formato real) y la jerarquía de
+brillo (el neón vive en el botón, la palabra acento y el borde de la
+vidriera). Sloplint: 0 FAIL en index, panel, sitio y curso.

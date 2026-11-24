@@ -13,7 +13,7 @@
 <body>
 
 <header class="nav">
-  <a class="marca" href="index.html">TemploWeb</a>
+  <a class="marca" href="index.html"><svg class="marca-signo" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"/></svg>TemploWeb</a>
   <nav class="nav-links">
     <a href="#herramientas">Herramientas</a>
     <a href="#como">Cómo funciona</a>
@@ -22,7 +22,7 @@
   </nav>
   <div class="nav-acciones">
     <a class="btn btn-fantasma" href="panel.html">Ingresar</a>
-    <a class="btn btn-primario" href="panel.html#registro">Crear mi sitio</a>
+    <a class="btn btn-fantasma" href="panel.html#registro">Crear mi sitio</a>
   </div>
 </header>
 
@@ -33,7 +33,7 @@
   <div class="hero-velo"></div>
   <div class="hero-contenido">
     <div class="hero-texto">
-      <h1>Tu enseñanza, en tu propio sitio</h1>
+      <h1>Tu enseñanza, en tu propio <span class="h1-acento">sitio</span></h1>
       <p class="hero-bajada">Productos, cursos en video, blog y alumnos en un solo lugar, sin saber programar.</p>
       <div class="hero-acciones">
         <a class="btn btn-primario btn-grande" href="panel.html#registro">Crear mi sitio gratis</a>
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="hero-vidrio" aria-hidden="true">
-      <div class="vidrio-barra"><span class="vidrio-nombre">Templo de la Mantis</span><span class="vidrio-link">templo-web / mantis</span></div>
+      <div class="vidrio-barra"><span class="vidrio-nombre">Templo de la Mantis</span><span class="vidrio-link">templo-web.app/mantis</span></div>
       <div class="vidrio-cuerpo">
         <p class="vidrio-titulo">Curso de servidores mágicos</p>
         <p class="vidrio-linea">12 lecciones en video · acceso de por vida</p>
@@ -59,15 +59,47 @@
     <div class="contenedor">
       <h2>Todo lo que tu sitio incluye</h2>
       <p class="banda-bajada">Cada módulo se enciende o se apaga desde tu panel. Empezás con lo que tenés y sumás cuando crece.</p>
-      <div class="libro-mayor">
-        <div class="fila"><h3>Productos y servicios</h3><p>Físicos, digitales o sesiones: precio, foto y tu propio link de cobro.</p></div>
-        <div class="fila"><h3>Cursos y talleres</h3><p>Lecciones en video y audio con acceso solo para tus alumnos suscriptos.</p></div>
-        <div class="fila"><h3>Repositorio de documentos</h3><p>Tus PDFs y textos, gratis o pagos, entregados de forma segura.</p></div>
-        <div class="fila"><h3>Artículos y blog</h3><p>Escribí y publicá sin depender del algoritmo de una red social.</p></div>
-        <div class="fila"><h3>Promociones</h3><p>Avisos y ofertas de tu sitio, en el orden que vos elijas.</p></div>
-        <div class="fila"><h3>Feed de novedades</h3><p>Actualizaciones públicas para tus seguidores y privadas para cada curso.</p></div>
-        <div class="fila"><h3>Quién soy</h3><p>Tu presentación, tu foto y tus canales de contacto directos.</p></div>
-        <div class="fila"><h3>Vidriera de destacados</h3><p>Lo que quieras empujar primero, en una vista propia.</p></div>
+      <div class="modulos">
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+          <h3>Productos y servicios</h3>
+          <p>Físicos, digitales o sesiones: precio, foto y tu propio link de cobro.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/></svg>
+          <h3>Cursos y talleres</h3>
+          <p>Lecciones en video y audio con acceso solo para tus alumnos suscriptos.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+          <h3>Repositorio de documentos</h3>
+          <p>Tus PDFs y textos, gratis o pagos, entregados de forma segura.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <h3>Artículos y blog</h3>
+          <p>Escribí y publicá sin depender del algoritmo de una red social.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6L21.4 11.4a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6z"/><circle cx="7.5" cy="7.5" r="1.4"/></svg>
+          <h3>Promociones</h3>
+          <p>Avisos y ofertas de tu sitio, en el orden que vos elijas.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.6"/></svg>
+          <h3>Feed de novedades</h3>
+          <p>Actualizaciones públicas para tus seguidores y privadas para cada curso.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+          <h3>Quién soy</h3>
+          <p>Tu presentación, tu foto y tus canales de contacto directos.</p>
+        </article>
+        <article class="modulo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8L12 3z"/></svg>
+          <h3>Vidriera de destacados</h3>
+          <p>Lo que quieras empujar primero, en una vista propia.</p>
+        </article>
       </div>
     </div>
   </section>
