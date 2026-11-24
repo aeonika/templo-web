@@ -353,7 +353,8 @@
       ["crepusculo", "Crepúsculo", "#030305", "#00e5ff", "Oscuro azul, neón cian"],
       ["pergamino", "Pergamino", "#f6f1e7", "#9a6a1f", "Claro cálido, editorial"],
       ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
-      ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"]
+      ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"],
+      ["arcano", "Arcano", "#060404", "#d9a441", "Negro, dorado y símbolos"]
     ];
     var urlSitio = "sitio.html?s=" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
