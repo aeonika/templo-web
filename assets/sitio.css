@@ -223,3 +223,12 @@ html[data-tema="premium"] .revelar { transition: opacity 0.6s ease, transform 0.
   html[data-tema="premium"] .s-portada-img, html[data-tema="premium"] .s-hero-texto { animation: none; }
   html[data-tema="premium"] .revelar { transition: none; }
 }
+
+/* ============================== tema Premium · transparencias ==============================
+   Vidrio ahumado: las tarjetas, la barra y el pie dejan ver el fondo
+   (velas y cartas) a través, con un desenfoque suave. Todo se funde. */
+html[data-tema="premium"] .s-tarjeta, html[data-tema="premium"] .s-articulo, html[data-tema="premium"] .s-doc, html[data-tema="premium"] .s-feed-item, html[data-tema="premium"] .aula-leccion { background: color-mix(in srgb, var(--tarjeta) 72%, transparent); backdrop-filter: blur(8px) saturate(1.15); border-color: color-mix(in srgb, var(--borde) 65%, transparent); }
+html[data-tema="premium"] .s-nav { background: color-mix(in srgb, var(--fondo) 66%, transparent); }
+html[data-tema="premium"] .s-hero { background: color-mix(in srgb, var(--fondo-2) 72%, transparent); }
+html[data-tema="premium"] .s-pie { background: color-mix(in srgb, var(--fondo-2) 78%, transparent); }
+html[data-tema="premium"] .s-promo { background: color-mix(in srgb, var(--acento) 13%, transparent); backdrop-filter: blur(8px); }

@@ -24,7 +24,7 @@
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();
     if (!fondoHex || fondoHex.indexOf("var(") === 0) fondoHex = "#0a0c11";
-    document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " 88%, transparent), color-mix(in srgb, " + fondoHex + " 93%, transparent)), url(\"" + String(sitio.fondo_url).replace(/"/g, "") + "\")";
+    document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " 84%, transparent), color-mix(in srgb, " + fondoHex + " 90%, transparent)), url(\"" + String(sitio.fondo_url).replace(/"/g, "") + "\")";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center top";
     document.body.style.backgroundAttachment = "fixed";
