@@ -1,0 +1,1 @@
+{"rewrites":[{"destination":"/sitio.html?s=:slug","source":"/s/:slug"}]}

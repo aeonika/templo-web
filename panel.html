@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel · TemploWeb</title>
+<meta name="description" content="Panel de TemploWeb: creá tu sitio, cargá productos, cursos, artículos y documentos, y administrá a tus alumnos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@500;600&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/panel.css">
+</head>
+<body>
+<header class="p-nav">
+  <a class="p-marca" href="index.html">TemploWeb</a>
+  <span class="p-nav-titulo">Panel</span>
+  <span class="p-nav-usuario" id="p-usuario"></span>
+  <button class="btn btn-fantasma" id="btn-salir" hidden>Salir</button>
+</header>
+
+<main class="p-main">
+  <!-- ======================= acceso ======================= -->
+  <section id="vista-auth" class="p-auth" hidden>
+    <div class="p-tarjeta">
+      <h2>Ingresar</h2>
+      <form id="form-login">
+        <label>Email <input type="email" name="email" required autocomplete="email"></label>
+        <label>Contraseña <input type="password" name="password" required autocomplete="current-password"></label>
+        <button class="btn btn-primario btn-bloque" type="submit">Ingresar</button>
+        <p class="p-error" id="error-login"></p>
+      </form>
+    </div>
+    <div class="p-tarjeta" id="tarjeta-registro">
+      <h2>Crear mi cuenta</h2>
+      <form id="form-registro">
+        <label>Tu nombre <input type="text" name="nombre" required autocomplete="name"></label>
+        <label>Email <input type="email" name="email" required autocomplete="email"></label>
+        <label>Contraseña <input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+        <button class="btn btn-primario btn-bloque" type="submit">Crear cuenta y mi sitio</button>
+        <p class="p-error" id="error-registro"></p>
+        <p class="p-nota">Con la cuenta creada, el panel te guía para crear tu sitio.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ======================= panel ======================= -->
+  <section id="vista-panel" class="p-panel" hidden>
+    <nav class="p-tabs" id="p-tabs">
+      <button data-tab="sitio" class="activa">Mi sitio</button>
+      <button data-tab="productos">Productos</button>
+      <button data-tab="articulos">Artículos</button>
+      <button data-tab="promociones">Promociones</button>
+      <button data-tab="cursos">Cursos y lecciones</button>
+      <button data-tab="documentos">Documentos</button>
+      <button data-tab="feed">Feed</button>
+      <button data-tab="alumnos">Alumnos</button>
+      <button data-tab="aprendizaje">Mi aprendizaje</button>
+    </nav>
+    <div id="p-contenido" class="p-contenido"></div>
+  </section>
+
+  <p class="s-cargando" id="p-cargando">Cargando…</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="assets/supabase.js"></script>
+<script src="assets/panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TemploWeb: tu enseñanza, en tu propio sitio</title>
+<meta name="description" content="Cada maestro con su propio sitio web: productos, cursos en video protegidos, blog, documentos y alumnos. Sin saber programar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@500;600&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/plataforma.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="marca" href="index.html">TemploWeb</a>
+  <nav class="nav-links">
+    <a href="#herramientas">Herramientas</a>
+    <a href="#como">Cómo funciona</a>
+    <a href="#novedades">Novedades</a>
+    <a href="#planes">Planes</a>
+  </nav>
+  <div class="nav-acciones">
+    <a class="btn btn-fantasma" href="panel.html">Ingresar</a>
+    <a class="btn btn-primario" href="panel.html#registro">Crear mi sitio</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-fondo" data-slot="hero">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/1920px-Vallee-brouillard.jpg" alt="Mar de niebla llenando un valle bajo colinas oscuras al atardecer">
+  </div>
+  <div class="hero-velo"></div>
+  <div class="hero-contenido">
+    <div class="hero-texto">
+      <h1>Tu enseñanza, en tu propio sitio</h1>
+      <p class="hero-bajada">Productos, cursos en video, blog y alumnos en un solo lugar, sin saber programar.</p>
+      <div class="hero-acciones">
+        <a class="btn btn-primario btn-grande" href="panel.html#registro">Crear mi sitio gratis</a>
+        <a class="hero-link" href="#novedades">Ver sitios y novedades</a>
+      </div>
+    </div>
+    <div class="hero-vidrio" aria-hidden="true">
+      <div class="vidrio-barra"><span class="vidrio-nombre">Templo de la Mantis</span><span class="vidrio-link">templo-web / mantis</span></div>
+      <div class="vidrio-cuerpo">
+        <p class="vidrio-titulo">Curso de servidores mágicos</p>
+        <p class="vidrio-linea">12 lecciones en video · acceso de por vida</p>
+        <div class="vidrio-fila"><span>Manual de sigilos (PDF)</span><span class="vidrio-precio">$ 9.900</span></div>
+        <div class="vidrio-fila"><span>Lectura de tarot, 30 min</span><span class="vidrio-precio">$ 15.000</span></div>
+        <div class="vidrio-fila"><span>Amuleto consagrado</span><span class="vidrio-precio-premium">Premium</span></div>
+      </div>
+      <div class="vidrio-pie">Así se ve un sitio de maestro en TemploWeb</div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section id="herramientas" class="banda">
+    <div class="contenedor">
+      <h2>Todo lo que tu sitio incluye</h2>
+      <p class="banda-bajada">Cada módulo se enciende o se apaga desde tu panel. Empezás con lo que tenés y sumás cuando crece.</p>
+      <div class="libro-mayor">
+        <div class="fila"><h3>Productos y servicios</h3><p>Físicos, digitales o sesiones: precio, foto y tu propio link de cobro.</p></div>
+        <div class="fila"><h3>Cursos y talleres</h3><p>Lecciones en video y audio con acceso solo para tus alumnos suscriptos.</p></div>
+        <div class="fila"><h3>Repositorio de documentos</h3><p>Tus PDFs y textos, gratis o pagos, entregados de forma segura.</p></div>
+        <div class="fila"><h3>Artículos y blog</h3><p>Escribí y publicá sin depender del algoritmo de una red social.</p></div>
+        <div class="fila"><h3>Promociones</h3><p>Avisos y ofertas de tu sitio, en el orden que vos elijas.</p></div>
+        <div class="fila"><h3>Feed de novedades</h3><p>Actualizaciones públicas para tus seguidores y privadas para cada curso.</p></div>
+        <div class="fila"><h3>Quién soy</h3><p>Tu presentación, tu foto y tus canales de contacto directos.</p></div>
+        <div class="fila"><h3>Vidriera de destacados</h3><p>Lo que quieras empujar primero, en una vista propia.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como" class="banda banda-suave">
+    <div class="contenedor">
+      <h2>En marcha en tres pasos</h2>
+      <div class="pasos">
+        <div class="paso"><p class="paso-num">1</p><h3>Registrate</h3><p>Creás tu cuenta y elegís la dirección de tu sitio. Sin instalar nada.</p></div>
+        <div class="paso"><p class="paso-num">2</p><h3>Cargá tu contenido</h3><p>Productos, cursos, artículos y documentos, desde un panel simple.</p></div>
+        <div class="paso"><p class="paso-num">3</p><h3>Compartí tu enlace</h3><p>Tus alumnos entran, se suscriben y miran tus clases cuando quieran.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="novedades" class="banda">
+    <div class="contenedor">
+      <h2>Novedades de los maestros</h2>
+      <p class="banda-bajada">Lo último que publicaron los sitios de la plataforma.</p>
+      <div id="feed-global" class="feed">
+        <p class="feed-vacio">Las novedades aparecen acá cuando los maestros empiecen a publicar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="planes" class="banda banda-suave">
+    <div class="contenedor">
+      <h2>Planes</h2>
+      <div class="planes">
+        <div class="plan">
+          <h3>Gratis</h3>
+          <p class="plan-precio">$ 0</p>
+          <ul>
+            <li>Tu sitio con todos los módulos</li>
+            <li>Productos, servicios y blog</li>
+            <li>Cursos con lecciones públicas</li>
+            <li>Documentos gratuitos</li>
+            <li>Feed público de novedades</li>
+          </ul>
+          <a class="btn btn-fantasma" href="panel.html#registro">Empezar gratis</a>
+        </div>
+        <div class="plan plan-premium">
+          <h3>Premium</h3>
+          <p class="plan-precio">Para enseñar en serio</p>
+          <ul>
+            <li>Todo lo del plan gratis</li>
+            <li>Video y audio protegidos: acceso solo con suscripción activa</li>
+            <li>Enlaces de acceso que vencen en minutos, no para siempre</li>
+            <li>Documentos pagos con entrega segura</li>
+            <li>Feed privado para cada curso</li>
+          </ul>
+          <a class="btn btn-premium" href="panel.html#registro">Crear mi sitio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cierre">
+    <div class="contenedor">
+      <h2>Tu sitio te está esperando</h2>
+      <a class="btn btn-primario btn-grande" href="panel.html#registro">Crear mi sitio gratis</a>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="contenedor pie-contenido">
+    <p class="marca">TemploWeb</p>
+    <p class="pie-linea">Una plataforma de Aeonika para maestros y practicantes.</p>
+    <p class="pie-creditos">Fotografía del encabezado: <a href="https://commons.wikimedia.org/wiki/File:Vallee-brouillard.jpg" target="_blank" rel="noopener">Thomas Bresson</a> (CC BY 3.0, Wikimedia Commons).</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="assets/supabase.js"></script>
+<script>
+(async function () {
+  if (!window.TW || !TW.sb) return;
+  var caja = document.getElementById("feed-global");
+  var r = await TW.sb.from("publicaciones")
+    .select("texto, imagen_url, creada, sitios(nombre, slug)")
+    .eq("alcance", "publico")
+    .order("creada", { ascending: false })
+    .limit(8);
+  if (r.error || !r.data || !r.data.length) return;
+  caja.innerHTML = r.data.map(function (p) {
+    var s = p.sitios || {};
+    var fecha = new Date(p.creada).toLocaleDateString("es-AR", { day: "numeric", month: "short" });
+    return '<article class="feed-item">' +
+      (p.imagen_url ? '<img class="feed-img" src="' + TW.esc(p.imagen_url) + '" alt="">' : "") +
+      '<div class="feed-cuerpo"><p class="feed-meta"><a href="sitio.html?s=' + TW.esc(s.slug || "") + '">' +
+      TW.esc(s.nombre || "Un maestro") + '</a> · ' + fecha + '</p>' +
+      '<p class="feed-texto">' + TW.esc(p.texto) + "</p></div></article>";
+  }).join("");
+})();
+</script>
+</body>
+</html>

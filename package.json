@@ -1,0 +1,1 @@
+{"dependencies":{"@supabase/supabase-js":"^2.45.0","cloudinary":"^2.5.0"},"description":"TemploWeb: plataforma multitenant para que cada maestro tenga su sitio con productos, cursos protegidos, blog y documentos. Frontend estatico CDN-first + Supabase + Cloudinary.","name":"templo-web","private":true,"version":"0.1.0"}
