@@ -99,18 +99,30 @@
 
   var html = "";
 
-  // Quien soy
+  // Quien soy: con foto, el hero es una portada a pantalla completa
   if (mod.quienes !== false) {
-    html += '<section class="s-hero" id="quienes"><div class="contenedor s-hero-in"><div>' +
-      "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
-      "<p>" + TW.esc(sitio.descripcion) + "</p>" +
-      (sitio.quienes_somos ? '<div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div>" : "") +
+    var botonesContacto =
       '<div class="s-contacto">' +
       (wa ? '<a class="btn btn-acento" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : "") +
       (sitio.email ? '<a class="btn" href="mailto:' + TW.esc(sitio.email) + '">Email</a>' : "") +
-      "</div></div>" +
-      (sitio.foto_url ? '<img class="s-foto" src="' + TW.esc(sitio.foto_url) + '" alt="Foto de ' + TW.esc(sitio.nombre) + '">' : "") +
-      "</div></section>";
+      "</div>";
+    if (sitio.foto_url) {
+      html += '<section class="s-hero s-hero--portada" id="quienes">' +
+        '<img class="s-portada-img" src="' + TW.esc(sitio.foto_url) + '" alt="">' +
+        '<div class="contenedor s-hero-in"><div class="s-hero-texto">' +
+        "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
+        "<p>" + TW.esc(sitio.descripcion) + "</p>" +
+        botonesContacto +
+        "</div></div></section>" +
+        (sitio.quienes_somos ? '<div class="contenedor s-quienes"><div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div></div>" : "");
+    } else {
+      html += '<section class="s-hero" id="quienes"><div class="contenedor s-hero-in"><div>' +
+        "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
+        "<p>" + TW.esc(sitio.descripcion) + "</p>" +
+        (sitio.quienes_somos ? '<div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div>" : "") +
+        botonesContacto +
+        "</div></div></section>";
+    }
   }
 
   // Promociones
