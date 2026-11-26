@@ -53,7 +53,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .p-nav-titulo { color: var(--color-muted); }
 .p-nav-usuario { color: var(--color-muted); font-size: 14px; }
 .p-nav-menu { display: flex; align-items: center; gap: var(--space-md); margin-left: auto; }
-.p-burger { display: none; margin-left: auto; width: 40px; height: 40px; padding: 0; background: transparent; border: 1px solid var(--color-rule); border-radius: var(--radius-inner); cursor: pointer; gap: 4px; align-content: center; justify-items: center; }
+.p-burger { display: none; margin-left: auto; width: 40px; height: 40px; padding: 0; background: transparent; border: 1px solid var(--color-rule); border-radius: var(--radius-inner); cursor: pointer; gap: var(--space-2xs); align-content: center; justify-items: center; }
 .p-burger span { display: block; width: 18px; height: 2px; border-radius: 2px; background: var(--color-ink); transition: transform .18s ease, opacity .18s ease; }
 .p-burger.abierta span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
 .p-burger.abierta span:nth-child(2) { opacity: 0; }
