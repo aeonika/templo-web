@@ -16,6 +16,7 @@
   if (!rs.data) { error("Este sitio no existe."); return; }
   var sitio = rs.data;
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
+  document.documentElement.dataset.maqueta = ["premium", "onix", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo");
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
   document.getElementById("s-nav").innerHTML =
     '<div class="s-nav-in"><a class="s-marca" href="sitio.html?s=' + encodeURIComponent(slug) + '">' +

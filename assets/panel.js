@@ -355,6 +355,11 @@
       ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
       ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"],
       ["premium", "Premium", "#0d0906", "#c9a45c", "Velas y oro: cálido y premium"],
+      ["onix", "Ónix y Oro", "#100d09", "#c9a45c", "Maqueta Premium · negro cálido y dorado viejo"],
+      ["medianoche", "Medianoche Cyan", "#030305", "#00e5ff", "Maqueta Premium · negro y cyan, como tu Biblioteca"],
+      ["violeta", "Violeta Arcano", "#0d0a14", "#a78bfa", "Maqueta Premium · violeta profundo, noche y ritual"],
+      ["esmeralda", "Bosque Esmeralda", "#0a120d", "#63b995", "Maqueta Premium · verde bosque y esmeralda"],
+      ["terracota", "Marfil y Terracota", "#f7f2e9", "#8a3324", "Maqueta Premium · claro editorial, papel y terracota"],
       ["marfil", "Marfil", "#f7f2e9", "#8a3324", "Claro editorial: papel, tinta y terracota"]
     ];
     var urlSitio = "sitio.html?s=" + sitio.slug;

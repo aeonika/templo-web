@@ -21,11 +21,14 @@
   var mod = sitio.modulos || {};
   document.title = sitio.nombre + " · TemploWeb";
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
+  var MAQUETA_PREMIUM = ["premium", "onix", "medianoche", "violeta", "esmeralda", "terracota"];
+  var esPremium = MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
+  document.documentElement.dataset.maqueta = esPremium ? "premium" : (sitio.tema || "crepusculo");
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();
     if (!fondoHex || fondoHex.indexOf("var(") === 0) fondoHex = "#0a0c11";
-    var veloA = (sitio.tema || "") === "premium" ? "58%" : "84%";
-    var veloB = (sitio.tema || "") === "premium" ? "74%" : "90%";
+    var veloA = esPremium ? "58%" : "84%";
+    var veloB = esPremium ? "74%" : "90%";
     document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " " + veloA + ", transparent), color-mix(in srgb, " + fondoHex + " " + veloB + ", transparent)), url(\"" + String(sitio.fondo_url).replace(/"/g, "") + "\")";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center top";
@@ -259,7 +262,7 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
-  if (["premium", "marfil"].indexOf(sitio.tema || "crepusculo") !== -1 && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if ((esPremium || (sitio.tema || "") === "marfil") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
     var io = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
