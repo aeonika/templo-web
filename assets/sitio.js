@@ -119,16 +119,49 @@
   var productos = rProd.data || [];
   var destacados = productos.filter(function (p) { return p.destacado; });
 
+  function stockTotal(p) {
+    if (Array.isArray(p.variantes) && p.variantes.length) {
+      return p.variantes.reduce(function (a, v) { return a + (Number(v.s) || 0); }, 0);
+    }
+    return p.stock === null || p.stock === undefined ? null : Number(p.stock);
+  }
   function tarjetaProducto(p) {
     var tipo = { fisico: "Producto físico", digital: "Producto digital", servicio: "Servicio" }[p.tipo] || "";
-    var boton = p.link_pago
-      ? '<a class="btn btn-acento" href="' + TW.esc(p.link_pago) + '" target="_blank" rel="noopener">Comprar</a>'
-      : (wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : "");
-    return '<article class="s-tarjeta">' +
+    var ahora = Date.now();
+    var finOferta = p.oferta_hasta ? new Date(p.oferta_hasta).getTime() : null;
+    var enOferta = p.precio != null && p.precio_oferta != null && Number(p.precio_oferta) < Number(p.precio) && (!finOferta || finOferta > ahora);
+    var precioHtml = "";
+    if (p.precio != null) {
+      if (enOferta) {
+        var dto = Math.round((1 - Number(p.precio_oferta) / Number(p.precio)) * 100);
+        precioHtml = '<p class="s-precio"><span class="s-tachado">' + TW.precio(p.precio, p.moneda) + '</span> <span class="s-oferta">' + TW.precio(p.precio_oferta, p.moneda) + '</span> <span class="s-badge s-badge-oferta">−' + dto + '%</span></p>' +
+          (finOferta ? '<p class="s-cuenta" data-hasta="' + TW.esc(p.oferta_hasta) + '">Oferta flash</p>' : "");
+      } else {
+        precioHtml = '<p class="s-precio">' + TW.precio(p.precio, p.moneda) + "</p>";
+      }
+    }
+    var st = stockTotal(p);
+    var umbral = (sitio.config && Number(sitio.config.stock_bajo)) || 3;
+    var agotado = st !== null && st <= 0;
+    var stockHtml = "";
+    if (agotado) stockHtml = '<p><span class="s-badge s-badge-agotado">Agotado</span></p>';
+    else if (st !== null && st <= umbral) stockHtml = '<p><span class="s-badge s-badge-ultimas">¡Últimas ' + st + '!</span></p>';
+    var tallesHtml = "";
+    if (Array.isArray(p.variantes) && p.variantes.length) {
+      tallesHtml = '<div class="s-talles" aria-label="Talles">' + p.variantes.map(function (v) {
+        return '<span class="s-talle' + (Number(v.s) > 0 ? "" : " s-talle-sin") + '">' + TW.esc(v.t) + "</span>";
+      }).join("") + "</div>";
+    }
+    var boton = agotado
+      ? '<span class="btn s-btn-agotado">Sin stock</span>'
+      : (p.link_pago
+        ? '<a class="btn btn-acento" href="' + TW.esc(p.link_pago) + '" target="_blank" rel="noopener">Comprar</a>'
+        : (wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : ""));
+    return '<article class="s-tarjeta' + (agotado ? " s-agotada" : "") + '" data-categoria="' + TW.esc(p.categoria || "") + '">' +
       (p.imagen_url ? '<img src="' + TW.esc(p.imagen_url) + '" alt="">' : "") +
       '<div class="s-tarjeta-cuerpo"><p class="s-tipo">' + tipo + "</p><h3>" + TW.esc(p.nombre) + "</h3>" +
       "<p>" + TW.esc(p.descripcion) + "</p>" +
-      (p.precio != null ? '<p class="s-precio">' + TW.precio(p.precio, p.moneda) + "</p>" : "") +
+      precioHtml + stockHtml + tallesHtml +
       boton + "</div></article>";
   }
   function seccion(id, titulo, bajada, contenido) {
@@ -204,7 +237,13 @@
 
   // Productos y servicios
   if (mod.productos !== false && productos.length) {
-    html += seccion("productos", "Productos y servicios", "", '<div class="s-grilla">' + productos.map(tarjetaProducto).join("") + "</div>");
+    var cats = [];
+    productos.forEach(function (p) { if (p.categoria && cats.indexOf(p.categoria) < 0) cats.push(p.categoria); });
+    var filtrosHtml = cats.length > 1
+      ? '<div class="s-filtros"><button type="button" class="s-filtro activo" data-filtro="">Todas</button>' +
+        cats.map(function (c) { return '<button type="button" class="s-filtro" data-filtro="' + TW.esc(c) + '">' + TW.esc(c) + "</button>"; }).join("") + "</div>"
+      : "";
+    html += seccion("productos", "Productos y servicios", "", filtrosHtml + '<div class="s-grilla">' + productos.map(tarjetaProducto).join("") + "</div>");
   }
 
   // Cursos
@@ -267,6 +306,38 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
+  // Filtros por categoria del catalogo
+  main.querySelectorAll(".s-filtro").forEach(function (b) {
+    b.addEventListener("click", function () {
+      main.querySelectorAll(".s-filtro").forEach(function (x) { x.classList.remove("activo"); });
+      b.classList.add("activo");
+      var f = b.dataset.filtro;
+      main.querySelectorAll("#productos .s-tarjeta").forEach(function (t) {
+        t.style.display = !f || t.dataset.categoria === f ? "" : "none";
+      });
+    });
+  });
+  // Cuenta regresiva de ofertas flash
+  var cuentas = main.querySelectorAll(".s-cuenta[data-hasta]");
+  if (cuentas.length) {
+    var tick = function () {
+      var quedan = false;
+      cuentas.forEach(function (el) {
+        var falta = new Date(el.dataset.hasta).getTime() - Date.now();
+        if (falta <= 0) { el.textContent = "Oferta terminada"; return; }
+        quedan = true;
+        var s = Math.floor(falta / 1000);
+        var d = Math.floor(s / 86400); s -= d * 86400;
+        var h = Math.floor(s / 3600); s -= h * 3600;
+        var m = Math.floor(s / 60); s -= m * 60;
+        var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+        el.textContent = "Oferta flash · termina en " + (d > 0 ? d + " d " : "") + pad(h) + ":" + pad(m) + ":" + pad(s);
+      });
+      if (!quedan) clearInterval(reloj);
+    };
+    var reloj = setInterval(tick, 1000);
+    tick();
+  }
   if ((esPremium || (sitio.tema || "") === "marfil") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
     var io = new IntersectionObserver(function (entradas) {

@@ -136,19 +136,33 @@
   var CFG = {
     productos: {
       titulo: "Productos y servicios", tabla: "productos", orden: "orden",
-      bajada: "Físicos, digitales o servicios. El botón de compra usa tu link de pago; sin link, el visitante consulta por WhatsApp.",
+      bajada: "Físicos, digitales o servicios. El botón de compra usa tu link de pago; sin link, el visitante consulta por WhatsApp. Con categoría, tu catálogo gana filtros; con stock, el sitio avisa «últimas unidades» y «agotado» solo; con precio de oferta y fecha de fin, la oferta es flash y muestra cuenta regresiva.",
       campos: [
         { k: "nombre", et: "Nombre", tipo: "text" },
         { k: "tipo", et: "Tipo", tipo: "select", opciones: [["fisico", "Físico"], ["digital", "Digital"], ["servicio", "Servicio"]] },
+        { k: "categoria", et: "Categoría (ej: Vestidos, Calzado, Básicos)", tipo: "text" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
         { k: "precio", et: "Precio (vacío = a consultar)", tipo: "number" },
+        { k: "precio_oferta", et: "Precio de oferta (opcional)", tipo: "number" },
+        { k: "oferta_hasta", et: "La oferta termina (opcional: la vuelve oferta flash)", tipo: "fecha" },
+        { k: "stock", et: "Stock total (vacío = sin control de stock)", tipo: "number" },
+        { k: "variantes", et: "Talles con su stock (si cargás talles, el stock total sale de ellos)", tipo: "talles" },
         { k: "imagen_url", et: "URL de la imagen", tipo: "text" },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "destacado", et: "Destacado en la vidriera", tipo: "check" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
-      resumen: function (x) { return TW.precio(x.precio, x.moneda) + (x.destacado ? " · destacado" : "") + (x.publicado ? "" : " · borrador"); }
+      resumen: function (x) {
+        var st = Array.isArray(x.variantes) && x.variantes.length
+          ? x.variantes.reduce(function (a, v) { return a + (Number(v.s) || 0); }, 0)
+          : (x.stock === null || x.stock === undefined ? null : Number(x.stock));
+        return TW.precio(x.precio_oferta != null && x.precio != null && Number(x.precio_oferta) < Number(x.precio) ? x.precio_oferta : x.precio, x.moneda) +
+          (x.precio_oferta != null && x.precio != null && Number(x.precio_oferta) < Number(x.precio) ? " · OFERTA" : "") +
+          (x.categoria ? " · " + x.categoria : "") +
+          (st !== null ? (st <= 0 ? " · SIN STOCK" : " · stock " + st) : "") +
+          (x.destacado ? " · destacado" : "") + (x.publicado ? "" : " · borrador");
+      }
     },
     articulos: {
       titulo: "Artículos", tabla: "articulos", orden: "creado",
@@ -234,6 +248,14 @@
     if (c.tipo === "textarea" || c.tipo === "textarea-grande") {
       return "<label>" + c.et + '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea></label>";
     }
+    if (c.tipo === "fecha") {
+      var fv = v ? String(v).slice(0, 16) : "";
+      return "<label>" + c.et + '<input type="datetime-local" name="' + c.k + '" value="' + esc(fv) + '"></label>';
+    }
+    if (c.tipo === "talles") {
+      var tv = Array.isArray(v) ? v.map(function (x) { return x.t + ":" + x.s; }).join(", ") : "";
+      return "<label>" + c.et + '<input type="text" name="' + c.k + '" value="' + esc(tv) + '" placeholder="S:5, M:3, L:0"></label>';
+    }
     return "<label>" + c.et + '<input type="' + (c.tipo === "number" ? "number" : "text") + '" name="' + c.k + '" value="' + esc(v) + '"' + (c.tipo === "number" ? ' step="any" min="0"' : "") + "></label>";
   }
   function leerCampos(form, campos) {
@@ -242,6 +264,14 @@
     campos.forEach(function (c) {
       if (c.tipo === "check") obj[c.k] = form.querySelector('[name="' + c.k + '"]').checked;
       else if (c.tipo === "number") { var n = f.get(c.k); obj[c.k] = n === "" || n === null ? null : Number(n); }
+      else if (c.tipo === "fecha") { var fv = (f.get(c.k) || "").toString().trim(); obj[c.k] = fv ? new Date(fv).toISOString() : null; }
+      else if (c.tipo === "talles") {
+        var txt = (f.get(c.k) || "").toString().trim();
+        obj[c.k] = txt ? txt.split(",").map(function (par) {
+          var p = par.split(":");
+          return { t: (p[0] || "").trim(), s: parseInt(p[1], 10) || 0 };
+        }).filter(function (x) { return x.t; }) : [];
+      }
       else obj[c.k] = (f.get(c.k) || "").toString().trim();
     });
     return obj;
@@ -274,6 +304,10 @@
         '<div class="p-acciones"><button class="btn btn-primario" type="submit">Guardar</button>' +
         (editando ? '<button class="btn btn-fantasma" type="button" id="cr-cancelar">Cancelar</button>' : "") +
         "</div><p class='p-error' id='cr-error'></p></form>";
+      if (cfg.tabla === "productos" && sitio.config && sitio.config.talle_sistema === "ninguno") {
+        var inpV = caja.querySelector('[name="variantes"]');
+        if (inpV && inpV.closest("label")) inpV.closest("label").style.display = "none";
+      }
       $("#cr-f").addEventListener("submit", async function (ev) {
         ev.preventDefault();
         var obj = leerCampos(ev.target, cfg.campos);
@@ -380,6 +414,9 @@
     var urlAbsoluta = new URL(urlSitio, location.href).href;
     var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"]];
     var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
+    var configSitio = sitio.config || {};
+    var rubrosDefs = [["general", "General"], ["ropa", "Indumentaria / ropa"], ["calzado", "Calzado"], ["comida", "Comida y bebidas"], ["servicios", "Servicios"], ["digital", "Productos digitales"]];
+    var tallesDefs = [["letras", "En letras (XS, S, M, L, XL…)"], ["numeros", "En números (38, 40, 42…)"], ["ninguno", "Mi tienda no usa talles"]];
     function filaRasgo(r) {
       return "<div class='c-rasgo-fila'><label>Icono <select class='c-rasgo-icono'>" +
         iconosPanel.map(function (o) { return "<option value='" + o[0] + "'" + (r && r.icono === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") +
@@ -437,6 +474,15 @@
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
       "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
+      "<div class='p-bloque'><h3>Tienda</h3>" +
+      "<p class='p-ayuda'>El rubro y el sistema de talles ajustan tu catálogo: en cada producto podés cargar talles con su stock, categorías, precio de oferta y ofertas flash con cuenta regresiva.</p>" +
+      "<div class='p-dos'><label>Rubro <select name='rubro'>" +
+      rubrosDefs.map(function (r) { return "<option value='" + r[0] + "'" + (sitio.rubro === r[0] ? " selected" : "") + ">" + r[1] + "</option>"; }).join("") +
+      "</select></label>" +
+      "<label>Sistema de talles <select name='talle_sistema'>" +
+      tallesDefs.map(function (t) { return "<option value='" + t[0] + "'" + ((configSitio.talle_sistema || "letras") === t[0] ? " selected" : "") + ">" + t[1] + "</option>"; }).join("") +
+      "</select></label></div>" +
+      "<label>Avisar «últimas unidades» cuando el stock sea de <input type='number' name='stock_bajo' min='0' step='1' value='" + esc(configSitio.stock_bajo !== undefined ? configSitio.stock_bajo : 3) + "'> o menos</label></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
@@ -552,6 +598,11 @@
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
         fondo_url: f.get("fondo_url") || null,
         rasgos: rasgosNuevos,
+        rubro: f.get("rubro") || "general",
+        config: Object.assign({}, sitio.config || {}, {
+          talle_sistema: f.get("talle_sistema") || "letras",
+          stock_bajo: Number(f.get("stock_bajo")) || 0
+        }),
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();
       if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; return; }

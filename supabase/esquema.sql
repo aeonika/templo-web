@@ -407,3 +407,15 @@ create policy config_admin on public.config_plataforma
 -- Dirección anterior del sitio: al cambiar el slug, la dirección vieja redirige a la nueva
 -- (sitio.js y curso.js buscan por slug_anterior cuando el slug no existe).
 alter table public.sitios add column if not exists slug_anterior text;
+
+-- ============================================================ actualización 2026-11-26: utilidades de tienda
+-- Rubro del sitio y configuración (sistema de talles, umbral de stock bajo),
+-- y en productos: categoría, stock, talles con stock, precio de oferta y fin
+-- de oferta (ofertas flash con cuenta regresiva en el sitio).
+alter table public.sitios add column if not exists rubro text not null default 'general';
+alter table public.sitios add column if not exists config jsonb not null default '{}'::jsonb;
+alter table public.productos add column if not exists categoria text not null default '';
+alter table public.productos add column if not exists stock integer;
+alter table public.productos add column if not exists variantes jsonb not null default '[]'::jsonb;
+alter table public.productos add column if not exists precio_oferta numeric(12, 2);
+alter table public.productos add column if not exists oferta_hasta timestamptz;
