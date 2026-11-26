@@ -31,6 +31,7 @@
   --glass-linea: oklch(24% 0.02 260 / 0.10);
   --glass-fila: oklch(24% 0.02 260 / 0.08);
   --premium-ink: oklch(27% 0.045 80);
+  --sombra-nav: 0 10px 30px -12px oklch(24% 0.02 260 / 0.16);
 }
 
 body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); }
@@ -133,6 +134,27 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
 .pie-linea { color: var(--color-ink-2); margin: var(--space-xs) 0 var(--space-2xs); }
 .pie-creditos { color: var(--color-muted); font-size: 13px; margin: 0; }
 
+/* ============================== movimiento ==============================
+ * Patrón de las webs SaaS actuales: entrada suave del hero, secciones que
+ * aparecen al hacer scroll (IntersectionObserver en index.html; sin JS el
+ * contenido se ve igual, porque el estado oculto vive solo en @starting-style),
+ * barra que gana sombra al bajar y micro-interacciones en tarjetas y botones. */
+html { scroll-behavior: smooth; }
+.hero { background-image: radial-gradient(color-mix(in oklab, var(--color-ink) 4.5%, transparent) 1px, transparent 1.4px); background-size: 22px 22px; }
+.hero-texto { animation: subir 0.7s ease both; }
+.hero-lado { animation: subir 0.7s ease 0.12s both; }
+@keyframes subir { from { opacity: 0; transform: translateY(14px); } }
+.revelar { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+@starting-style { .revelar.visible { opacity: 0; transform: translateY(14px); } }
+.nav { transition: box-shadow 0.25s ease; }
+.nav.con-scroll { box-shadow: var(--sombra-nav); }
+.btn { transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.paso { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+.paso:hover, .modulo:hover { transform: translateY(-3px); }
+.feed-item { animation: subir 0.5s ease both; }
+
 @media (max-width: 1020px) {
   .modulos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -153,5 +175,7 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
   .vidrio-fila { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .btn, .modulo, .feed-item, .nav-links a { transition: none; }
+  .btn, .modulo, .feed-item, .nav-links a, .revelar, .paso, .nav { transition: none; }
+  .hero-texto, .hero-lado, .feed-item { animation: none; }
+  html { scroll-behavior: auto; }
 }

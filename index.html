@@ -216,5 +216,19 @@
   }).join("");
 })();
 </script>
+<script>
+(function () {
+  var nav = document.querySelector(".nav");
+  function alScroll() { if (nav) nav.classList.toggle("con-scroll", window.scrollY > 8); }
+  window.addEventListener("scroll", alScroll, { passive: true });
+  alScroll();
+  if (!("IntersectionObserver" in window)) return;
+  var els = document.querySelectorAll(".cabecera, .paso, .modulo, .plan, .cierre .container");
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("visible"); io.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(function (el, i) { el.classList.add("revelar"); el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
+})();
+</script>
 </body>
 </html>
