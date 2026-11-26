@@ -21,7 +21,7 @@ h3 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
 a { color: var(--color-accent-hi); }
 a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: 4px; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; padding: 11px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 11px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 .btn:active { transform: translateY(1px); }
 .btn-primario { background: var(--color-accent); color: var(--color-accent-ink); box-shadow: var(--glow-accent); }
 .btn-primario:hover { background: var(--color-accent-hi); }
@@ -54,7 +54,7 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
 .hero-link:hover { color: var(--color-accent-hi); }
 
 .hero-vidrio { background: var(--glass); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-linea); box-shadow: var(--glass-hi), var(--shadow-card), var(--glow-vidrio); border-radius: var(--radius-card); padding: 22px; color: var(--color-ink); }
-.vidrio-barra { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--glass-linea); }
+.vidrio-barra { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-sm); flex-wrap: wrap; padding-bottom: var(--space-sm); border-bottom: 1px solid var(--glass-linea); }
 .vidrio-nombre { font-family: var(--font-display); font-weight: 600; }
 .vidrio-link { color: var(--color-muted); font-size: 13px; }
 .vidrio-cuerpo { padding-top: 14px; display: grid; gap: var(--space-3xs); }
@@ -118,7 +118,11 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
   .modulos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 860px) {
+  .nav { gap: var(--space-sm); padding: var(--space-xs) var(--space-md); }
+  .marca { font-size: 18px; }
   .nav-links { display: none; }
+  .nav-acciones { gap: var(--space-2xs); margin-left: auto; }
+  .nav-acciones .btn { padding: var(--space-xs) var(--space-sm); font-size: 14px; }
   .hero-contenido { grid-template-columns: minmax(0, 1fr); padding-top: 112px; gap: 36px; }
   .pasos, .planes { grid-template-columns: minmax(0, 1fr); }
   .banda { padding: var(--space-2xl) 0; }
@@ -126,6 +130,9 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--color-focus); out
 @media (max-width: 560px) {
   .modulos { grid-template-columns: minmax(0, 1fr); }
   .hero h1 { font-size: 38px; }
+  .nav-acciones .btn { padding: var(--space-xs); font-size: 13.5px; }
+  .hero-texto { padding: var(--space-md); margin: calc(var(--space-md) * -1); }
+  .vidrio-fila { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .btn, .modulo, .feed-item, .nav-links a { transition: none; }
