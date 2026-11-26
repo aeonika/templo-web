@@ -427,3 +427,47 @@ alter table public.productos add column if not exists oferta_hasta timestamptz;
 alter table public.sitios add column if not exists maqueta text not null default 'clasica';
 update public.sitios set maqueta = 'premium' where tema in ('premium','onix','medianoche','violeta','esmeralda','terracota');
 update public.sitios set tema = 'dorado' where tema = 'premium';
+
+-- ============================================================ miembros por sitio (2026-11-26)
+-- La cuenta es de la plataforma, pero la membresía es de cada sitio: una
+-- persona es miembro SOLO de los sitios donde se unió, se suscribió a un
+-- curso o compró un documento. Los triggers la crean solos al suscribirse
+-- o al recibir acceso a un documento.
+create table if not exists public.miembros (
+  sitio_id uuid not null references public.sitios (id) on delete cascade,
+  usuario_id uuid not null references public.perfiles (id) on delete cascade,
+  origen text not null default 'manual' check (origen in ('manual','suscripcion','compra')),
+  creado timestamptz not null default now(),
+  primary key (sitio_id, usuario_id)
+);
+alter table public.miembros enable row level security;
+create policy miembros_lectura on public.miembros for select to authenticated
+  using (usuario_id = auth.uid() or public.es_dueno(sitio_id));
+create policy miembros_unirse on public.miembros for insert to authenticated
+  with check (usuario_id = auth.uid());
+create policy miembros_salir on public.miembros for delete to authenticated
+  using (usuario_id = auth.uid() or public.es_dueno(sitio_id));
+create policy admin_total on public.miembros for all to authenticated
+  using (public.es_admin_actual()) with check (public.es_admin_actual());
+
+create or replace function public.registrar_miembro()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.miembros (sitio_id, usuario_id, origen)
+  values (new.sitio_id, new.alumno_id,
+          case when tg_table_name = 'suscripciones' then 'suscripcion' else 'compra' end)
+  on conflict (sitio_id, usuario_id) do nothing;
+  return new;
+end $$;
+drop trigger if exists al_suscribir on public.suscripciones;
+create trigger al_suscribir after insert on public.suscripciones
+  for each row execute function public.registrar_miembro();
+drop trigger if exists al_comprar on public.accesos_documentos;
+create trigger al_comprar after insert on public.accesos_documentos
+  for each row execute function public.registrar_miembro();
+insert into public.miembros (sitio_id, usuario_id, origen, creado)
+  select sitio_id, alumno_id, 'suscripcion', min(creada) from public.suscripciones
+  group by sitio_id, alumno_id on conflict do nothing;
+insert into public.miembros (sitio_id, usuario_id, origen, creado)
+  select sitio_id, alumno_id, 'compra', min(creada) from public.accesos_documentos
+  group by sitio_id, alumno_id on conflict do nothing;

@@ -707,7 +707,8 @@
 
   // ============================================================ alumnos
   async function vistaAlumnos(cont) {
-    cont.innerHTML = "<h2>Alumnos</h2><p class='bajada'>Solicitudes y suscripciones a tus cursos. Cuando un alumno paga por tu link, activalo acá.</p>" +
+    cont.innerHTML = "<h2>Alumnos</h2><p class='bajada'>La gente de tu sitio: miembros, solicitudes y suscripciones a tus cursos. Cuando un alumno paga por tu link, activalo acá.</p>" +
+      "<div class='p-bloque'><h3>Miembros del sitio</h3><p class='p-ayuda'>Las personas registradas en TU sitio solamente: se suman solas cuando se suscriben a un curso o compran un documento, o cuando tocan «Unirse al sitio» en tu página. No quedan conectadas con otros sitios. Quitar a alguien de esta lista no cancela sus suscripciones ni sus accesos.</p><div id='mi-lista'></div></div>" +
       "<div class='p-bloque'><h3>Suscripciones</h3><div id='al-lista'></div></div>" +
       "<div class='p-bloque'><h3>Acceso a documentos pagos</h3><div id='doc-lista'></div>" +
       "<form id='f-doc'><div class='p-dos'><label>ID del alumno (su usuario) <input type='text' name='alumno_id' required></label>" +
@@ -718,6 +719,20 @@
       return "<option value='" + d.id + "'>" + esc(d.titulo) + "</option>";
     }).join("") || "<option value=''>Sin documentos pagos</option>";
     async function pintar() {
+      var rm = await TW.sb.from("miembros").select("*, perfiles(nombre)")
+        .eq("sitio_id", sitio.id).order("creado", { ascending: false });
+      var rAct = await TW.sb.from("suscripciones").select("alumno_id").eq("sitio_id", sitio.id).eq("estado", "activa");
+      var cursosPorAlumno = {};
+      (rAct.data || []).forEach(function (x) { cursosPorAlumno[x.alumno_id] = (cursosPorAlumno[x.alumno_id] || 0) + 1; });
+      var viaTexto = { manual: "se unió desde el sitio", suscripcion: "llegó por un curso", compra: "llegó por un documento" };
+      $("#mi-lista").innerHTML = (rm.data || []).length ? rm.data.map(function (m) {
+        var n = cursosPorAlumno[m.usuario_id] || 0;
+        return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' +
+          esc((m.perfiles && m.perfiles.nombre) || m.usuario_id) + '</span><div class="detalle">' +
+          "Miembro desde el " + new Date(m.creado).toLocaleDateString("es-AR") + " · " + (viaTexto[m.origen] || m.origen) +
+          (n ? " · " + n + (n === 1 ? " curso activo" : " cursos activos") : "") + "</div></div>" +
+          '<button class="btn btn-peligro btn-chico" data-miembro-quitar="' + m.usuario_id + '">Quitar</button></div>';
+      }).join("") : '<p class="p-vacio">Todavía no hay miembros. Se suman cuando alguien se une, se suscribe a un curso o compra un documento.</p>';
       var r = await TW.sb.from("suscripciones").select("*, perfiles(nombre), cursos(titulo)")
         .eq("sitio_id", sitio.id).order("creada", { ascending: false });
       $("#al-lista").innerHTML = (r.data || []).length ? r.data.map(function (s) {
@@ -745,6 +760,8 @@
     cont.addEventListener("click", async function (ev) {
       var b = ev.target.closest("[data-quitar]");
       if (b) { await TW.sb.from("accesos_documentos").delete().eq("id", b.dataset.quitar); pintar(); }
+      var bm = ev.target.closest("[data-miembro-quitar]");
+      if (bm) { await TW.sb.from("miembros").delete().eq("sitio_id", sitio.id).eq("usuario_id", bm.dataset.miembroQuitar); pintar(); }
     });
     $("#f-doc").addEventListener("submit", async function (ev) {
       ev.preventDefault();

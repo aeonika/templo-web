@@ -191,6 +191,7 @@
       '<div class="s-contacto">' +
       (wa ? '<a class="btn btn-acento" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : "") +
       (sitio.email ? '<a class="btn" href="mailto:' + TW.esc(sitio.email) + '">Email</a>' : "") +
+      '<span id="s-miembro"></span>' +
       "</div>";
     if (sitio.foto_url) {
       html += '<section class="s-hero s-hero--portada" id="quienes">' +
@@ -306,6 +307,38 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
+  // Membresia del sitio: unirse, o chip de miembro (la membresia es de
+  // este sitio solamente; no conecta con otros sitios de la plataforma)
+  var zonaMiembro = document.getElementById("s-miembro");
+  if (zonaMiembro) {
+    (async function () {
+      var u = await TW.usuario();
+      if (!u) {
+        zonaMiembro.innerHTML = '<a class="btn" href="panel.html">Unirse al sitio</a>';
+        return;
+      }
+      if (sitio.dueno_id && u.id === sitio.dueno_id) return;
+      var pintarMiembro = async function () {
+        var rm = await TW.sb.from("miembros").select("origen").eq("sitio_id", sitio.id).eq("usuario_id", u.id).maybeSingle();
+        if (rm.data) {
+          zonaMiembro.innerHTML = '<span class="s-miembro-chip">Sos miembro de este sitio</span>' +
+            (rm.data.origen === "manual" ? ' <button class="btn btn-chico" id="s-salir" type="button">Dejar de serlo</button>' : "");
+          var bs = document.getElementById("s-salir");
+          if (bs) bs.addEventListener("click", async function () {
+            await TW.sb.from("miembros").delete().eq("sitio_id", sitio.id).eq("usuario_id", u.id);
+            pintarMiembro();
+          });
+        } else {
+          zonaMiembro.innerHTML = '<button class="btn" id="s-unirse" type="button">Unirse al sitio</button>';
+          document.getElementById("s-unirse").addEventListener("click", async function () {
+            await TW.sb.from("miembros").insert({ sitio_id: sitio.id, usuario_id: u.id, origen: "manual" });
+            pintarMiembro();
+          });
+        }
+      };
+      pintarMiembro();
+    })();
+  }
   // Filtros por categoria del catalogo
   main.querySelectorAll(".s-filtro").forEach(function (b) {
     b.addEventListener("click", function () {
