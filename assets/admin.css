@@ -26,3 +26,4 @@ a.titulo:hover { color: var(--color-accent-hi); }
 .a-url { flex: 1; min-width: 220px; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-inner); border: 1px solid var(--color-rule); background: var(--color-paper-3); color: var(--color-ink); font: inherit; font-size: 14px; }
 
 #a-ok, #a-error { position: sticky; bottom: 14px; }
+.a-marca-img { height: 44px; width: auto; max-width: 180px; object-fit: contain; display: block; margin-bottom: var(--space-sm); }

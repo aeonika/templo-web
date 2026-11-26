@@ -40,6 +40,11 @@
     document.body.style.backgroundAttachment = "fixed";
   }
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
+  if (sitio.logo_url) {
+    var favS = document.querySelector('link[rel="icon"]');
+    if (!favS) { favS = document.createElement("link"); favS.rel = "icon"; document.head.appendChild(favS); }
+    favS.href = sitio.logo_url;
+  }
 
   var base = "sitio.html?s=" + encodeURIComponent(slug);
   var wa = sitio.whatsapp ? "https://wa.me/" + String(sitio.whatsapp).replace(/[^0-9]/g, "") : null;

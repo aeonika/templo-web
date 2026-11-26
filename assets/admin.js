@@ -21,6 +21,7 @@
     user = await TW.usuario();
     $("#a-cargando").hidden = true;
     if (!user) { $("#a-denegado").hidden = false; return; }
+    TW.aplicarMarca();
     $("#a-usuario").textContent = user.email;
     $("#btn-salir").hidden = false;
     $("#p-burger").hidden = false;
@@ -65,7 +66,7 @@
 
   // ============================================================ resumen
   async function vistaResumen(cont) {
-    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-portada'></div>";
+    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div>";
     var r = await TW.sb.rpc("admin_estadisticas");
     if (r.error || !r.data) { $("#a-stats").innerHTML = "<p class='p-error'>No se pudieron cargar las estadísticas.</p>"; return; }
     var d = r.data;
@@ -78,7 +79,55 @@
     $("#a-stats").innerHTML = stats.map(function (s) {
       return "<div class='a-stat" + (s[0] === "Sitios Premium" ? " a-stat-dorada" : "") + "'><p class='a-stat-num'>" + s[1] + "</p><p class='a-stat-nombre'>" + s[0] + "</p></div>";
     }).join("");
+    cargarMarca();
     cargarPortada();
+  }
+
+  // ============================================================ marca de la plataforma
+  async function cargarMarca() {
+    var caja = $("#a-marca");
+    if (!caja) return;
+    var r = await TW.sb.from("config_plataforma").select("clave, valor").in("clave", ["marca_nombre", "marca_logo_url"]);
+    var datos = {};
+    (r.data || []).forEach(function (x) { datos[x.clave] = x.valor; });
+    var nombre = datos.marca_nombre || "";
+    var logo = datos.marca_logo_url || "";
+    caja.innerHTML = "<div class='a-portada'>" +
+      "<h3>Marca de la plataforma</h3>" +
+      "<p class='bajada'>El nombre y el logo que se ven en la página principal, el panel y la administración. El logo se ajusta solo al alto de la barra y también queda como icono de la pestaña; si no cargás logo, se usa el signo de siempre.</p>" +
+      (logo ? "<img class='a-marca-img' src='" + esc(logo) + "' alt='Logo actual'>" : "") +
+      "<div class='a-portada-form'>" +
+      "<input type='text' id='a-marca-nombre' class='a-url' placeholder='Nombre de la plataforma' value='" + esc(nombre) + "'>" +
+      "<input type='url' id='a-marca-logo' class='a-url' placeholder='Dirección del logo (https://…) o subilo →' value='" + esc(logo) + "'>" +
+      "<label class='btn btn-fantasma'>Subir logo<input type='file' id='a-marca-file' accept='image/*' hidden></label>" +
+      "<button class='btn btn-primario' id='a-marca-guardar' type='button'>Guardar marca</button>" +
+      ((nombre || logo) ? "<button class='btn btn-fantasma' id='a-marca-quitar' type='button'>Usar la original</button>" : "") +
+      "</div></div>";
+    $("#a-marca-file").addEventListener("change", async function (ev) {
+      var f = ev.target.files[0];
+      if (!f) return;
+      try {
+        aviso(true, "Subiendo logo…");
+        var datos2 = await subirCloudinary(f, false);
+        $("#a-marca-logo").value = datos2.secure_url;
+        aviso(true, "Logo subido. Tocá «Guardar marca» para aplicarlo.");
+      } catch (e) { aviso(false, "No se pudo subir: " + e.message); }
+    });
+    $("#a-marca-guardar").addEventListener("click", async function () {
+      var n = $("#a-marca-nombre").value.trim();
+      var l = $("#a-marca-logo").value.trim();
+      var r1 = await TW.sb.from("config_plataforma").upsert({ clave: "marca_nombre", valor: n }, { onConflict: "clave" });
+      var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "marca_logo_url", valor: l }, { onConflict: "clave" });
+      if (r1.error || r2.error) aviso(false, "No se pudo guardar: " + (r1.error || r2.error).message);
+      else { aviso(true, "Marca guardada. Se ve al recargar las páginas."); cargarMarca(); TW.aplicarMarca(); }
+    });
+    var quitar = $("#a-marca-quitar");
+    if (quitar) quitar.addEventListener("click", async function () {
+      await TW.sb.from("config_plataforma").upsert({ clave: "marca_nombre", valor: "" }, { onConflict: "clave" });
+      var r3 = await TW.sb.from("config_plataforma").upsert({ clave: "marca_logo_url", valor: "" }, { onConflict: "clave" });
+      if (r3.error) aviso(false, "No se pudo guardar: " + r3.error.message);
+      else { aviso(true, "Listo: vuelve la marca original."); cargarMarca(); }
+    });
   }
 
   // ============================================================ portada de la plataforma

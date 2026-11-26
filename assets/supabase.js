@@ -87,6 +87,42 @@
       var b = document.getElementById("s-salir-nav");
       if (b) b.addEventListener("click", async function () { await sb.auth.signOut(); location.reload(); });
     },
+    // Marca de la plataforma (nombre y logo) que el Master guarda en
+    // config_plataforma: pinta el nombre en .marca-nombre, reemplaza el
+    // signo de fabrica (.marca-signo) por el logo si hay uno cargado y lo
+    // usa como icono de la pestaña. Sin valores guardados, no toca nada.
+    aplicarMarca: async function () {
+      if (!sb) return;
+      var r = await sb.from("config_plataforma").select("clave, valor").in("clave", ["marca_nombre", "marca_logo_url"]);
+      var datos = {};
+      (r.data || []).forEach(function (x) { datos[x.clave] = x.valor; });
+      var nombre = (datos.marca_nombre || "").trim();
+      var logo = (datos.marca_logo_url || "").trim();
+      if (nombre) {
+        document.querySelectorAll(".marca-nombre").forEach(function (el) { el.textContent = nombre; });
+        document.title = document.title.replace("TemploWeb", nombre);
+      }
+      if (logo) {
+        document.querySelectorAll(".marca-signo").forEach(function (el) {
+          var img = document.createElement("img");
+          img.src = logo;
+          img.alt = "";
+          img.className = "marca-logo";
+          el.replaceWith(img);
+        });
+        document.querySelectorAll(".p-marca").forEach(function (el) {
+          if (el.querySelector(".marca-logo")) return;
+          var img2 = document.createElement("img");
+          img2.src = logo;
+          img2.alt = "";
+          img2.className = "marca-logo";
+          el.prepend(img2);
+        });
+        var fav = document.querySelector('link[rel="icon"]');
+        if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
+        fav.href = logo;
+      }
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {

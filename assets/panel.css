@@ -193,3 +193,4 @@ textarea.grande { min-height: 200px; }
 .paleta input { accent-color: var(--color-accent); }
 .paleta-muestra { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--color-rule); flex: none; }
 .paleta:has(input:checked) { border-color: var(--color-accent); }
+.p-marca .marca-logo { height: 26px; width: auto; max-width: 110px; object-fit: contain; vertical-align: middle; }

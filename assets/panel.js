@@ -29,6 +29,7 @@
     $("#p-cargando").hidden = true;
     $("#btn-salir").hidden = !user;
     $("#p-burger").hidden = !user;
+    TW.aplicarMarca();
     $("#p-usuario").textContent = user ? user.email : "";
     $("#vista-auth").hidden = !!user;
     $("#vista-panel").hidden = !user;
@@ -488,7 +489,9 @@
       "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='c-fondo-file' accept='image/*' hidden></label>" +
       "<span class='c-ayuda' id='c-fondo-estado'>Se muestra detrás de todo tu sitio, con un velo para que el texto se lea. Subí una imagen o pegá una URL.</span></div></div>" +
       "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
-      "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div></div>" +
+      "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div>" +
+      "<div class='c-fondo-fila'><label class='btn btn-fantasma c-subir'>Subir logo<input type='file' id='c-logo-file' accept='image/*' hidden></label>" +
+      "<span class='c-ayuda' id='c-logo-estado'>Tu logo va en la barra de tu sitio y como icono de la pestaña. Se ajusta solo al alto de la barra: puede ser ancho, cuadrado o con fondo transparente, y no se recorta.</span></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
       "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
@@ -589,6 +592,17 @@
     [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {
       var inp = $(par[0]), img = $(par[1]);
       if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; });
+    });
+    var lFile = $("#c-logo-file"), lUrl = $("#c-logo"), lEst = $("#c-logo-estado"), lImg = $("#c-logo-img");
+    if (lFile) lFile.addEventListener("change", function () {
+      var arch = lFile.files[0];
+      if (!arch) return;
+      if (lEst) lEst.textContent = "Subiendo el logo…";
+      subirCloudinary(arch, false).then(function (datos) {
+        lUrl.value = datos.secure_url;
+        if (lImg) { lImg.src = datos.secure_url; lImg.hidden = false; }
+        if (lEst) lEst.textContent = "Logo subido. Tocá «Guardar sitio» para aplicarlo.";
+      }).catch(function (e2) { if (lEst) lEst.textContent = "No se pudo subir: " + e2.message; });
     });
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
