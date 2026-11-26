@@ -397,19 +397,27 @@
       ["promociones", "Promociones", "Avisos, lanzamientos y ofertas"],
       ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"]
     ];
-    var temasDefs = [
-      ["crepusculo", "Crepúsculo", "#030305", "#00e5ff", "Oscuro azul, neón cian"],
-      ["pergamino", "Pergamino", "#f6f1e7", "#9a6a1f", "Claro cálido, editorial"],
-      ["bosque", "Bosque", "#0e1a14", "#7fc98f", "Oscuro verde, sereno"],
-      ["obsidiana", "Obsidiana", "#0a0a0c", "#d9a441", "Negro y dorado"],
-      ["premium", "Premium", "#0d0906", "#c9a45c", "Velas y oro: cálido y premium"],
-      ["onix", "Ónix y Oro", "#100d09", "#c9a45c", "Maqueta Premium · negro cálido y dorado viejo"],
-      ["medianoche", "Medianoche Cyan", "#030305", "#00e5ff", "Maqueta Premium · negro y cyan, como tu Biblioteca"],
-      ["violeta", "Violeta Arcano", "#0d0a14", "#a78bfa", "Maqueta Premium · violeta profundo, noche y ritual"],
-      ["esmeralda", "Bosque Esmeralda", "#0a120d", "#63b995", "Maqueta Premium · verde bosque y esmeralda"],
-      ["terracota", "Marfil y Terracota", "#f7f2e9", "#8a3324", "Maqueta Premium · claro editorial, papel y terracota"],
-      ["marfil", "Marfil", "#f7f2e9", "#8a3324", "Claro editorial: papel, tinta y terracota"]
+    var disenosDefs = [
+      ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
+      ["premium", "Premium", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."]
     ];
+    var paletasDefs = {
+      clasica: [
+        ["crepusculo", "Oscuro cyan", "#030305", "#00e5ff"],
+        ["pergamino", "Papel y dorado", "#f6f1e7", "#9a6a1f"],
+        ["bosque", "Verde sereno", "#0e1a14", "#7fc98f"],
+        ["obsidiana", "Negro y dorado", "#0a0a0c", "#d9a441"],
+        ["marfil", "Claro terracota", "#f7f2e9", "#8a3324"]
+      ],
+      premium: [
+        ["dorado", "Dorado cálido", "#0d0906", "#c9a45c"],
+        ["medianoche", "Negro cyan", "#030305", "#00e5ff"],
+        ["violeta", "Violeta arcano", "#0d0a14", "#a78bfa"],
+        ["esmeralda", "Verde esmeralda", "#0a120d", "#63b995"],
+        ["terracota", "Claro terracota", "#f7f2e9", "#8a3324"]
+      ]
+    };
+    var maquetaSitio = sitio.maqueta === "premium" ? "premium" : "clasica";
     var urlSitio = "sitio.html?s=" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
     var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"]];
@@ -458,11 +466,20 @@
       "<label>Descripción corta <textarea name='descripcion'>" + esc(sitio.descripcion) + "</textarea></label>" +
       "<label>Quién soy / quiénes somos (Markdown simple) <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label></div>" +
       "<div class='p-bloque'><h3>Apariencia</h3>" +
-      "<div class='temas'>" + temasDefs.map(function (td) {
-        return "<label class='tema-card'><input type='radio' name='tema' value='" + td[0] + "'" + (sitio.tema === td[0] ? " checked" : "") + ">" +
-          "<span class='tema-prev' style='--tp-fondo:" + td[2] + ";--tp-acento:" + td[3] + "'><span class='tema-barra'></span><span class='tema-linea'></span><span class='tema-linea corta'></span></span>" +
-          "<span class='tema-nombre'>" + td[1] + "</span><span class='tema-desc'>" + td[4] + "</span></label>";
+      "<p class='p-ayuda'>Hay dos diseños. Elegí el diseño y después el color dentro de ese diseño.</p>" +
+      "<div class='temas'>" + disenosDefs.map(function (dd) {
+        return "<label class='tema-card'><input type='radio' name='maqueta' value='" + dd[0] + "'" + (maquetaSitio === dd[0] ? " checked" : "") + ">" +
+          "<span class='tema-prev' style='--tp-fondo:" + dd[2] + ";--tp-acento:" + dd[3] + "'><span class='tema-barra'></span><span class='tema-linea'></span><span class='tema-linea corta'></span></span>" +
+          "<span class='tema-nombre'>Diseño " + dd[1] + "</span><span class='tema-desc'>" + dd[4] + "</span></label>";
       }).join("") + "</div>" +
+      ["clasica", "premium"].map(function (mq) {
+        return "<div class='paletas' id='paletas-" + mq + "'" + (maquetaSitio === mq ? "" : " hidden") + ">" +
+          paletasDefs[mq].map(function (pd) {
+            return "<label class='paleta'><input type='radio' name='tema' value='" + pd[0] + "'" + (sitio.tema === pd[0] ? " checked" : "") + ">" +
+              "<span class='paleta-muestra' style='background:linear-gradient(90deg," + pd[2] + " 50%," + pd[3] + " 50%)'></span>" +
+              "<span class='paleta-nombre'>" + pd[1] + "</span></label>";
+          }).join("") + "</div>";
+      }).join("") +
       "<div class='p-dos'><label>Color de acento (opcional) <span class='c-acento'><input type='text' name='acento' id='c-acento-texto' value='" + esc(sitio.acento || "") + "' placeholder='#00e5ff'><input type='color' id='c-acento-color' value='" + esc(sitio.acento || "#00e5ff") + "'></span></label>" +
       "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label></div>" +
       "<div class='c-fondo'><label>Imagen de fondo (opcional) <input type='text' name='fondo_url' id='c-fondo-url' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…'></label>" +
@@ -552,6 +569,20 @@
       $("#c-slug-aviso").hidden = true;
       $("#ok-slug").textContent = "Dirección cambiada: ahora tu sitio es " + nuevaAbs + ". La anterior (" + viejo + ") redirige sola a la nueva.";
     });
+    cont.querySelectorAll("[name=maqueta]").forEach(function (r) {
+      r.addEventListener("change", function () {
+        var mq = r.value;
+        ["clasica", "premium"].forEach(function (x) {
+          var caja = $("#paletas-" + x);
+          if (caja) caja.hidden = x !== mq;
+        });
+        var grupo = $("#paletas-" + mq);
+        if (grupo && !grupo.querySelector("[name=tema]:checked")) {
+          var primero = grupo.querySelector("[name=tema]");
+          if (primero) primero.checked = true;
+        }
+      });
+    });
     var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
     [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {
@@ -594,7 +625,7 @@
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
         quienes_somos: f.get("quienes_somos") || "", logo_url: f.get("logo_url") || null,
         foto_url: f.get("foto_url") || null, whatsapp: f.get("whatsapp") || null,
-        email: f.get("email") || null, tema: f.get("tema"),
+        email: f.get("email") || null, tema: f.get("tema"), maqueta: f.get("maqueta") || "clasica",
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
         fondo_url: f.get("fondo_url") || null,
         rasgos: rasgosNuevos,

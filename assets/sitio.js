@@ -26,8 +26,8 @@
   var mod = sitio.modulos || {};
   document.title = sitio.nombre + " · TemploWeb";
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
-  var MAQUETA_PREMIUM = ["premium", "onix", "medianoche", "violeta", "esmeralda", "terracota"];
-  var esPremium = MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
+  var MAQUETA_PREMIUM = ["dorado", "medianoche", "violeta", "esmeralda", "terracota"];
+  var esPremium = sitio.maqueta ? sitio.maqueta === "premium" : MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
   document.documentElement.dataset.maqueta = esPremium ? "premium" : (sitio.tema || "crepusculo");
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();

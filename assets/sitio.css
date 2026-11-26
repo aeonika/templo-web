@@ -37,14 +37,14 @@
   --t-obsidiana-borde: #2b2b31;
   --t-obsidiana-acento: #d9a441;
   --t-obsidiana-acento-texto: #0a0a0c;
-  --t-premium-fondo: #0d0906;
-  --t-premium-fondo-2: #141009;
-  --t-premium-tarjeta: #1a120a;
-  --t-premium-texto: #f3e9d2;
-  --t-premium-muted: #ab9a7f;
-  --t-premium-borde: #3a2c1c;
-  --t-premium-acento: #c9a45c;
-  --t-premium-acento-texto: #1d1405;
+  --t-dorado-fondo: #0d0906;
+  --t-dorado-fondo-2: #141009;
+  --t-dorado-tarjeta: #1a120a;
+  --t-dorado-texto: #f3e9d2;
+  --t-dorado-muted: #ab9a7f;
+  --t-dorado-borde: #3a2c1c;
+  --t-dorado-acento: #c9a45c;
+  --t-dorado-acento-texto: #1d1405;
   --t-marfil-fondo: #f7f2e9;
   --t-marfil-fondo-2: #efe8da;
   --t-marfil-tarjeta: #fffdf7;
@@ -53,14 +53,6 @@
   --t-marfil-borde: #ddd2bd;
   --t-marfil-acento: #8a3324;
   --t-marfil-acento-texto: #fff8ee;
-  --t-onix-fondo: #100d09;
-  --t-onix-fondo-2: #17130c;
-  --t-onix-tarjeta: #1a1610;
-  --t-onix-texto: #f2ead8;
-  --t-onix-muted: #b8ab90;
-  --t-onix-borde: #3a3222;
-  --t-onix-acento: #c9a45c;
-  --t-onix-acento-texto: #171208;
   --t-medianoche-fondo: #030305;
   --t-medianoche-fondo-2: #07090f;
   --t-medianoche-tarjeta: #0b0e14;
@@ -98,9 +90,8 @@ html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: va
 html[data-tema="pergamino"] { --fondo: var(--t-pergamino-fondo); --fondo-2: var(--t-pergamino-fondo-2); --tarjeta: var(--t-pergamino-tarjeta); --texto: var(--t-pergamino-texto); --muted: var(--t-pergamino-muted); --borde: var(--t-pergamino-borde); --acento: var(--t-pergamino-acento); --acento-texto: var(--t-pergamino-acento-texto); }
 html[data-tema="bosque"] { --fondo: var(--t-bosque-fondo); --fondo-2: var(--t-bosque-fondo-2); --tarjeta: var(--t-bosque-tarjeta); --texto: var(--t-bosque-texto); --muted: var(--t-bosque-muted); --borde: var(--t-bosque-borde); --acento: var(--t-bosque-acento); --acento-texto: var(--t-bosque-acento-texto); }
 html[data-tema="obsidiana"] { --fondo: var(--t-obsidiana-fondo); --fondo-2: var(--t-obsidiana-fondo-2); --tarjeta: var(--t-obsidiana-tarjeta); --texto: var(--t-obsidiana-texto); --muted: var(--t-obsidiana-muted); --borde: var(--t-obsidiana-borde); --acento: var(--t-obsidiana-acento); --acento-texto: var(--t-obsidiana-acento-texto); }
-html[data-maqueta="premium"] { --fondo: var(--t-premium-fondo); --fondo-2: var(--t-premium-fondo-2); --tarjeta: var(--t-premium-tarjeta); --texto: var(--t-premium-texto); --muted: var(--t-premium-muted); --borde: var(--t-premium-borde); --acento: var(--t-premium-acento); --acento-texto: var(--t-premium-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
+html[data-tema="dorado"] { --fondo: var(--t-dorado-fondo); --fondo-2: var(--t-dorado-fondo-2); --tarjeta: var(--t-dorado-tarjeta); --texto: var(--t-dorado-texto); --muted: var(--t-dorado-muted); --borde: var(--t-dorado-borde); --acento: var(--t-dorado-acento); --acento-texto: var(--t-dorado-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="marfil"] { --fondo: var(--t-marfil-fondo); --fondo-2: var(--t-marfil-fondo-2); --tarjeta: var(--t-marfil-tarjeta); --texto: var(--t-marfil-texto); --muted: var(--t-marfil-muted); --borde: var(--t-marfil-borde); --acento: var(--t-marfil-acento); --acento-texto: var(--t-marfil-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 10px; }
-html[data-tema="onix"] { --fondo: var(--t-onix-fondo); --fondo-2: var(--t-onix-fondo-2); --tarjeta: var(--t-onix-tarjeta); --texto: var(--t-onix-texto); --muted: var(--t-onix-muted); --borde: var(--t-onix-borde); --acento: var(--t-onix-acento); --acento-texto: var(--t-onix-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="medianoche"] { --fondo: var(--t-medianoche-fondo); --fondo-2: var(--t-medianoche-fondo-2); --tarjeta: var(--t-medianoche-tarjeta); --texto: var(--t-medianoche-texto); --muted: var(--t-medianoche-muted); --borde: var(--t-medianoche-borde); --acento: var(--t-medianoche-acento); --acento-texto: var(--t-medianoche-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="violeta"] { --fondo: var(--t-violeta-fondo); --fondo-2: var(--t-violeta-fondo-2); --tarjeta: var(--t-violeta-tarjeta); --texto: var(--t-violeta-texto); --muted: var(--t-violeta-muted); --borde: var(--t-violeta-borde); --acento: var(--t-violeta-acento); --acento-texto: var(--t-violeta-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="esmeralda"] { --fondo: var(--t-esmeralda-fondo); --fondo-2: var(--t-esmeralda-fondo-2); --tarjeta: var(--t-esmeralda-tarjeta); --texto: var(--t-esmeralda-texto); --muted: var(--t-esmeralda-muted); --borde: var(--t-esmeralda-borde); --acento: var(--t-esmeralda-acento); --acento-texto: var(--t-esmeralda-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
@@ -421,9 +412,10 @@ html[data-tema="marfil"] .revelar.visible { opacity: 1; transform: none; transit
 @media (prefers-reduced-motion: reduce) { html[data-tema="marfil"] .s-tarjeta, html[data-tema="marfil"] .s-tarjeta img { transition: none; } }
 
 /* ============================== Paletas sobre la maqueta Premium ==============================
-   onix, medianoche, violeta, esmeralda y terracota comparten el diseño
-   Premium (data-maqueta="premium") y cambian solo los colores. Terracota
-   es clara: su viñeta es un sombreado cálido suave, no el negro del resto. */
+   El diseño Premium (data-maqueta="premium") tiene sus paletas de color:
+   dorado, medianoche, violeta, esmeralda y terracota; cambian solo los
+   colores. Terracota es clara: su viñeta es un sombreado cálido suave,
+   no el negro del resto. (Ónix se eliminó: era casi idéntico a Dorado.) */
 html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix(in srgb, var(--muted) 26%, transparent); }
 
 /* ============================== utilidades de tienda ==============================

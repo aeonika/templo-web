@@ -419,3 +419,11 @@ alter table public.productos add column if not exists stock integer;
 alter table public.productos add column if not exists variantes jsonb not null default '[]'::jsonb;
 alter table public.productos add column if not exists precio_oferta numeric(12, 2);
 alter table public.productos add column if not exists oferta_hasta timestamptz;
+
+-- Diseño (maqueta) y color (tema) como ejes separados (2026-11-26): solo hay
+-- dos diseños, 'clasica' y 'premium'; el tema guarda la paleta de color de
+-- ese diseño. La paleta 'premium' pasó a llamarse 'dorado' y 'onix' se
+-- eliminó (era casi idéntica a dorado).
+alter table public.sitios add column if not exists maqueta text not null default 'clasica';
+update public.sitios set maqueta = 'premium' where tema in ('premium','onix','medianoche','violeta','esmeralda','terracota');
+update public.sitios set tema = 'dorado' where tema = 'premium';
