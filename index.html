@@ -21,7 +21,7 @@
     <a href="#novedades">Novedades</a>
     <a href="#planes">Planes</a>
   </nav>
-  <div class="nav-acciones">
+  <div class="nav-acciones" id="nav-acciones">
     <a class="btn btn-fantasma" href="panel.html">Ingresar</a>
     <a class="btn btn-fantasma" href="panel.html#registro">Crear mi sitio</a>
   </div>
@@ -241,6 +241,29 @@
     entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("visible"); io.unobserve(en.target); } });
   }, { threshold: 0.12 });
   els.forEach(function (el, i) { el.classList.add("revelar"); el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
+})();
+</script>
+<script>
+(async function () {
+  // Estado de sesion en la barra principal: nombre + rol (Master si es el
+  // dueno de la plataforma, Admin si tiene su sitio, Usuario si no) y Salir.
+  var zona = document.getElementById("nav-acciones");
+  if (!zona || !window.TW || !TW.sb) return;
+  var ses = await TW.sesion();
+  if (!ses) return;
+  var u = ses.usuario;
+  var rs = await TW.sb.from("sitios").select("slug").eq("dueno_id", u.id).maybeSingle();
+  var rolTxt = ses.esMaster ? "Master" : (rs.data ? "Admin" : "Usuario");
+  var nombre = ses.perfil.nombre || u.email || "";
+  var html = '<span class="nav-sesion"><span class="ns-nombre">' + TW.esc(nombre) + '</span><span class="ns-rol">' + rolTxt + "</span></span>";
+  if (ses.esMaster) html += '<a class="btn btn-fantasma" href="admin.html">Administración</a>';
+  html += '<a class="btn btn-fantasma" href="panel.html">Mi panel</a>';
+  html += '<button class="btn btn-fantasma" id="ns-salir" type="button">Salir</button>';
+  zona.innerHTML = html;
+  document.getElementById("ns-salir").addEventListener("click", async function () {
+    await TW.sb.auth.signOut();
+    location.reload();
+  });
 })();
 </script>
 </body>

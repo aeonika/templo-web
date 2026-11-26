@@ -61,7 +61,8 @@
     '<nav class="s-links" id="s-links">' +
     enlaces.map(function (e) { return '<a href="' + e[1] + '">' + e[0] + "</a>"; }).join("") +
     (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>WhatsApp</a>' : "") +
-    '<a href="panel.html">Ingresar</a></nav></div>';
+    '<span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
+  TW.pintarSesionSitio(sitio);
   var burger = document.getElementById("s-burger");
   if (burger) burger.addEventListener("click", function () {
     burger.setAttribute("aria-expanded", nav.classList.toggle("abierta") ? "true" : "false");

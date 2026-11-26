@@ -25,7 +25,8 @@
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
   document.getElementById("s-nav").innerHTML =
     '<div class="s-nav-in"><a class="s-marca" href="sitio.html?s=' + encodeURIComponent(slug) + '">' +
-    TW.esc(sitio.nombre) + '</a><nav class="s-links"><a href="panel.html">Ingresar</a></nav></div>';
+    TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
+  TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
     '<div class="contenedor"><p class="credito">Sitio creado con <a href="index.html">TemploWeb</a></p></div>';
 

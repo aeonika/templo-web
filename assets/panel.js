@@ -38,6 +38,7 @@
       var rp = await TW.sb.from("perfiles").select("es_admin").eq("id", user.id).maybeSingle();
       var la = $("#link-admin");
       if (la) la.hidden = !(rp.data && rp.data.es_admin);
+      if (rp.data && rp.data.es_admin) $("#p-usuario").textContent = (user.email || "") + " · Master";
       pintarTab(tabActual);
     }
   }
