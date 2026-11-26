@@ -23,6 +23,7 @@
     if (!user) { $("#a-denegado").hidden = false; return; }
     $("#a-usuario").textContent = user.email;
     $("#btn-salir").hidden = false;
+    $("#p-burger").hidden = false;
     var r = await TW.sb.from("perfiles").select("es_admin").eq("id", user.id).maybeSingle();
     if (!r.data || !r.data.es_admin) { $("#a-denegado").hidden = false; return; }
     $("#a-panel").hidden = false;
@@ -33,6 +34,18 @@
     await TW.sb.auth.signOut();
     location.href = "panel.html";
   });
+  // menú hamburguesa de la barra superior (móvil)
+  var burgerNav = $("#p-burger"), menuNav = $("#p-nav-menu");
+  function cerrarMenuNav() { if (menuNav) menuNav.classList.remove("abierto"); if (burgerNav) { burgerNav.classList.remove("abierta"); burgerNav.setAttribute("aria-expanded", "false"); } }
+  if (burgerNav && menuNav) {
+    burgerNav.addEventListener("click", function () {
+      var abierto = menuNav.classList.toggle("abierto");
+      burgerNav.classList.toggle("abierta", abierto);
+      burgerNav.setAttribute("aria-expanded", abierto ? "true" : "false");
+    });
+    menuNav.addEventListener("click", function (ev) { if (ev.target.closest("a, button")) cerrarMenuNav(); });
+    document.addEventListener("click", function (ev) { if (!ev.target.closest(".p-nav")) cerrarMenuNav(); });
+  }
   $("#a-tabs").addEventListener("click", function (ev) {
     var b = ev.target.closest("[data-tab]");
     if (b) pintarTab(b.dataset.tab);

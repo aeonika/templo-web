@@ -28,6 +28,7 @@
     user = await TW.usuario();
     $("#p-cargando").hidden = true;
     $("#btn-salir").hidden = !user;
+    $("#p-burger").hidden = !user;
     $("#p-usuario").textContent = user ? user.email : "";
     $("#vista-auth").hidden = !!user;
     $("#vista-panel").hidden = !user;
@@ -67,6 +68,18 @@
     await TW.sb.auth.signOut();
     location.reload();
   });
+  // menú hamburguesa de la barra superior (móvil)
+  var burgerNav = $("#p-burger"), menuNav = $("#p-nav-menu");
+  function cerrarMenuNav() { if (menuNav) menuNav.classList.remove("abierto"); if (burgerNav) { burgerNav.classList.remove("abierta"); burgerNav.setAttribute("aria-expanded", "false"); } }
+  if (burgerNav && menuNav) {
+    burgerNav.addEventListener("click", function () {
+      var abierto = menuNav.classList.toggle("abierto");
+      burgerNav.classList.toggle("abierta", abierto);
+      burgerNav.setAttribute("aria-expanded", abierto ? "true" : "false");
+    });
+    menuNav.addEventListener("click", function (ev) { if (ev.target.closest("a, button")) cerrarMenuNav(); });
+    document.addEventListener("click", function (ev) { if (!ev.target.closest(".p-nav")) cerrarMenuNav(); });
+  }
   document.querySelectorAll("#p-tabs button").forEach(function (b) {
     b.addEventListener("click", function () {
       tabActual = b.dataset.tab;
