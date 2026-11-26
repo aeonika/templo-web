@@ -1,7 +1,38 @@
-/* Hallmark · panel (app screen) · redesign full dentro de su shell · brand: Biblioteca Magia del Caos · v2.0.0 */
+/* Hallmark · panel (app screen) · rediseño claro corporativo dentro de su shell · v2.1.0 */
 /* TemploWeb · panel del maestro y del alumno (pantalla de trabajo). */
 @import url("./tokens.css");
 @import url("./base.css");
+
+/* Tokens de página: el panel y la administración van en modo claro corporativo,
+ * igual que la landing (plataforma.css); los sitios de los usuarios conservan
+ * sus propios temas (sitio.css). */
+:root {
+  color-scheme: light;
+  --color-paper: oklch(97.6% 0.005 255);
+  --color-paper-2: oklch(94.6% 0.007 255);
+  --color-paper-3: oklch(99.2% 0.002 255);
+  --color-ink: oklch(24% 0.02 260);
+  --color-ink-2: oklch(38% 0.018 260);
+  --color-muted: oklch(52% 0.016 260);
+  --color-rule: oklch(88% 0.009 260);
+  --color-accent: oklch(54% 0.15 252);
+  --color-accent-hi: oklch(46% 0.15 252);
+  --color-accent-ink: oklch(99% 0.002 255);
+  --color-accent-2: oklch(60% 0.125 82);
+  --color-focus: oklch(54% 0.15 252);
+  --color-success: oklch(52% 0.13 150);
+  --color-dusk: oklch(52% 0.19 15);
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --display-weight: 600;
+  --tracking-display: -0.01em;
+  --glass: oklch(99% 0.002 255 / 0.82);
+  --glass-hi: inset 0 1px 0 oklch(100% 0 0 / 0.65), inset 0 0 0 1px oklch(24% 0.02 260 / 0.05);
+  --shadow-card: 0 1px 2px oklch(24% 0.02 260 / 0.05), 0 16px 40px -16px oklch(24% 0.02 260 / 0.16);
+  --glow-accent: 0 10px 22px -10px oklch(54% 0.15 252 / 0.5);
+  --glow-dorado: 0 10px 22px -10px oklch(60% 0.125 82 / 0.45);
+  --glow-vidrio: 0 24px 48px -24px oklch(24% 0.02 260 / 0.28);
+  --premium-ink: oklch(27% 0.045 80);
+}
 
 body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); margin: 0; }
 h2, h3 { font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--tracking-display); text-wrap: balance; }
@@ -79,7 +110,7 @@ textarea.grande { min-height: 200px; }
 .c-url { display: flex; gap: var(--space-xs); align-items: center; flex-wrap: wrap; }
 .c-url-texto { font-weight: 600; color: var(--color-ink); word-break: break-all; }
 .c-plan { font-size: 12px; font-weight: 600; border-radius: var(--radius-pill); padding: 3px 10px; border: 1px solid var(--color-rule); color: var(--color-muted); }
-.c-plan-premium { background: var(--color-accent-2); color: var(--color-accent-ink); border-color: transparent; box-shadow: var(--glow-dorado); }
+.c-plan-premium { background: var(--color-accent-2); color: var(--premium-ink); border-color: transparent; box-shadow: var(--glow-dorado); }
 .c-stats { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
 .c-chip { background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: var(--radius-pill); padding: var(--space-2xs) var(--space-sm); font-size: 13px; color: var(--color-ink-2); }
 .constructor { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 22px; align-items: start; }

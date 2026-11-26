@@ -17,7 +17,7 @@ a.titulo:hover { color: var(--color-accent-hi); }
 .a-fila .detalle { color: var(--color-muted); font-size: 13px; margin-top: var(--space-3xs); }
 .a-campo { display: flex; align-items: center; gap: var(--space-xs); font-size: 14px; }
 .a-campo select { width: auto; padding: 7px 10px; }
-.a-badge { background: var(--color-accent-2); color: var(--color-accent-ink); font-size: 12px; font-weight: 600; border-radius: var(--radius-pill); padding: 3px 10px; box-shadow: var(--glow-dorado); }
+.a-badge { background: var(--color-accent-2); color: var(--premium-ink); font-size: 12px; font-weight: 600; border-radius: var(--radius-pill); padding: 3px 10px; box-shadow: var(--glow-dorado); }
 
 /* ============================== portada de la plataforma ============================== */
 .a-portada { margin-top: var(--space-xl); background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: var(--radius-card); padding: 22px; }
