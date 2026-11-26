@@ -13,7 +13,12 @@
   if (!slug || !cursoId) { error("Falta indicar el curso."); return; }
 
   var rs = await TW.sb.from("sitios").select("*").eq("slug", slug).eq("publicado", true).maybeSingle();
-  if (!rs.data) { error("Este sitio no existe."); return; }
+  if (!rs.data) {
+    // El sitio pudo haber cambiado de dirección: la anterior redirige a la nueva.
+    var ra = await TW.sb.from("sitios").select("slug").eq("slug_anterior", slug).eq("publicado", true).maybeSingle();
+    if (ra.data && ra.data.slug) { location.replace("curso.html?s=" + encodeURIComponent(ra.data.slug) + "&c=" + encodeURIComponent(cursoId)); return; }
+    error("Este sitio no existe."); return;
+  }
   var sitio = rs.data;
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
   document.documentElement.dataset.maqueta = ["premium", "onix", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo");

@@ -403,3 +403,7 @@ create policy config_lectura on public.config_plataforma
 create policy config_admin on public.config_plataforma
   for all to authenticated
   using (public.es_admin_actual()) with check (public.es_admin_actual());
+
+-- Dirección anterior del sitio: al cambiar el slug, la dirección vieja redirige a la nueva
+-- (sitio.js y curso.js buscan por slug_anterior cuando el slug no existe).
+alter table public.sitios add column if not exists slug_anterior text;

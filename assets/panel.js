@@ -320,6 +320,7 @@
         "<div class='p-bloque'><form id='f-crear'>" +
         "<label>Nombre del sitio <input type='text' name='nombre' required></label>" +
         "<label>Dirección (slug) <input type='text' name='slug' required pattern='[a-z0-9-]{3,40}'></label>" +
+        "<p class='p-ayuda'>Elegila bien: es la dirección permanente de tu sitio. Cambiarla después es posible, pero tus enlaces viejos van a depender de una redirección.</p>" +
         "<label>Descripción corta <textarea name='descripcion'></textarea></label>" +
         "<button class='btn btn-primario' type='submit'>Crear mi sitio</button>" +
         "<p class='p-error' id='e-crear'></p></form></div>";
@@ -381,6 +382,25 @@
         (sitio.publicado ? "" : "<span class='c-plan'>Sin publicar</span>") + "</div>" +
         "<div class='c-stats' id='c-stats'><span class='c-chip'>Cargando tu contenido…</span></div>" +
       "</div>" +
+      "<div class='p-bloque'><h3>Dirección de tu sitio</h3>" +
+      "<p class='p-ayuda'>Tu dirección es <b>" + esc(urlAbsoluta) + "</b>. Cambiar la última parte es posible, pero tiene consecuencias: el botón de cambiar primero te muestra las advertencias.</p>" +
+      "<div class='c-dir-fila'><input type='text' id='c-slug-nuevo' value='" + esc(sitio.slug) + "' pattern='[a-z0-9-]{3,40}' autocomplete='off'>" +
+      "<button class='btn btn-fantasma' type='button' id='c-slug-revisar'>Cambiar dirección…</button></div>" +
+      "<p class='p-error' id='e-slug'></p>" +
+      "<div class='c-aviso' id='c-slug-aviso' hidden>" +
+      "<p class='c-aviso-titulo'>Antes de cambiar tu dirección, tené en cuenta:</p>" +
+      "<ul>" +
+      "<li>Todos los enlaces con tu dirección actual que ya compartiste (WhatsApp, redes sociales, tarjetas, códigos QR) van a depender de una <b>redirección automática</b> a la nueva. Funciona, pero una dirección estable siempre rinde mejor que una redirección.</li>" +
+      "<li>Si tu sitio ya aparece en <b>Google</b>, va a tener que volver a ubicarlo con la dirección nueva: podés perder posiciones.</li>" +
+      "<li>Solo queda guardada <b>una</b> dirección anterior: si cambiás dos veces, la primera deja de redirigir.</li>" +
+      "<li>La nueva dirección tiene que estar <b>libre</b>: si otro sitio ya la usa, no se puede.</li>" +
+      "<li>Cambiala solo si hace falta: un error de tipeo o el cambio de nombre de tu negocio. Una dirección que no cambia es parte de tu marca.</li>" +
+      "</ul>" +
+      "<label class='check'><input type='checkbox' id='c-slug-entiendo'> Entiendo las consecuencias y quiero cambiar mi dirección</label>" +
+      "<div class='p-acciones'><button class='btn btn-primario' type='button' id='c-slug-confirmar' disabled>Confirmar el cambio</button>" +
+      "<button class='btn btn-fantasma' type='button' id='c-slug-cancelar'>Cancelar</button></div>" +
+      "</div>" +
+      "<p class='p-ok' id='ok-slug'></p></div>" +
       "<div class='constructor'>" +
       "<form id='f-sitio' class='c-form'>" +
       "<div class='p-bloque'><h3>Identidad</h3>" +
@@ -434,15 +454,45 @@
       if (caja) caja.innerHTML = partes.join("");
     })();
     $("#c-copiar").addEventListener("click", async function () {
-      try { await navigator.clipboard.writeText(urlAbsoluta); $("#c-copiar").textContent = "Copiado"; }
+      try { await navigator.clipboard.writeText(new URL("sitio.html?s=" + sitio.slug, location.href).href); $("#c-copiar").textContent = "Copiado"; }
       catch (e) { $("#c-copiar").textContent = "Copiá la dirección de arriba"; }
       setTimeout(function () { var b = $("#c-copiar"); if (b) b.textContent = "Copiar"; }, 2000);
     });
     function recargarPrevia() {
       var ifr = $("#c-iframe");
-      if (ifr) ifr.src = urlSitio + "&t=" + Date.now();
+      if (ifr) ifr.src = "sitio.html?s=" + sitio.slug + "&t=" + Date.now();
     }
     $("#c-recargar").addEventListener("click", recargarPrevia);
+    // cambio de dirección (slug) con advertencias
+    $("#c-slug-revisar").addEventListener("click", function () {
+      var nuevo = $("#c-slug-nuevo").value.trim().toLowerCase();
+      var e = $("#e-slug"); e.textContent = ""; $("#ok-slug").textContent = "";
+      if (!/^[a-z0-9-]{3,40}$/.test(nuevo)) { e.textContent = "La dirección solo puede tener letras minúsculas, números y guiones, entre 3 y 40 caracteres."; return; }
+      if (nuevo === sitio.slug) { e.textContent = "Esa ya es tu dirección actual: no hay nada que cambiar."; return; }
+      $("#c-slug-aviso").hidden = false;
+      $("#c-slug-entiendo").checked = false;
+      $("#c-slug-confirmar").disabled = true;
+    });
+    $("#c-slug-entiendo").addEventListener("change", function (ev) { $("#c-slug-confirmar").disabled = !ev.target.checked; });
+    $("#c-slug-cancelar").addEventListener("click", function () { $("#c-slug-aviso").hidden = true; $("#c-slug-nuevo").value = sitio.slug; $("#e-slug").textContent = ""; });
+    $("#c-slug-confirmar").addEventListener("click", async function () {
+      var nuevo = $("#c-slug-nuevo").value.trim().toLowerCase();
+      var e = $("#e-slug"); e.textContent = "";
+      var ocupado = await TW.sb.from("sitios").select("id").eq("slug", nuevo).maybeSingle();
+      if (ocupado.data) { e.textContent = "La dirección «" + nuevo + "» ya la usa otro sitio. Elegí otra."; return; }
+      var r = await TW.sb.from("sitios").update({ slug: nuevo, slug_anterior: sitio.slug }).eq("id", sitio.id).select().maybeSingle();
+      if (r.error || !r.data) { e.textContent = "No se pudo cambiar: " + (r.error ? r.error.message : "error desconocido"); return; }
+      var viejo = sitio.slug;
+      sitio = r.data;
+      var nuevaAbs = new URL("sitio.html?s=" + nuevo, location.href).href;
+      cont.querySelector(".c-url-texto").textContent = nuevaAbs;
+      var abrir = cont.querySelector(".c-url a");
+      if (abrir) abrir.setAttribute("href", "sitio.html?s=" + nuevo);
+      cont.querySelector(".c-marco-url").textContent = "sitio.html?s=" + nuevo;
+      $("#c-iframe").src = "sitio.html?s=" + nuevo;
+      $("#c-slug-aviso").hidden = true;
+      $("#ok-slug").textContent = "Dirección cambiada: ahora tu sitio es " + nuevaAbs + ". La anterior (" + viejo + ") redirige sola a la nueva.";
+    });
     var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
     [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {

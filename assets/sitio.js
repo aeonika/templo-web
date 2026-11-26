@@ -16,7 +16,12 @@
   if (!slug) { error("Falta indicar el sitio."); return; }
 
   var rs = await TW.sb.from("sitios").select("*").eq("slug", slug).eq("publicado", true).maybeSingle();
-  if (rs.error || !rs.data) { error("Este sitio no existe o no esta publicado."); return; }
+  if (rs.error || !rs.data) {
+    // El sitio pudo haber cambiado de dirección: la anterior redirige a la nueva.
+    var ra = await TW.sb.from("sitios").select("slug").eq("slug_anterior", slug).eq("publicado", true).maybeSingle();
+    if (ra.data && ra.data.slug) { location.replace("sitio.html?s=" + encodeURIComponent(ra.data.slug) + (artSlug ? "&a=" + encodeURIComponent(artSlug) : "")); return; }
+    error("Este sitio no existe o no esta publicado."); return;
+  }
   var sitio = rs.data;
   var mod = sitio.modulos || {};
   document.title = sitio.nombre + " · TemploWeb";
