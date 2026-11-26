@@ -388,3 +388,18 @@ begin
   ) into r;
   return r;
 end $$;
+
+-- ============================== configuración de la plataforma ==============================
+-- Pares clave/valor editables desde la administración (hoy: portada_url del index).
+-- Lectura pública (la landing la necesita sin login); escritura solo del admin.
+create table if not exists public.config_plataforma (
+  clave text primary key,
+  valor text not null default '',
+  actualizado timestamptz not null default now()
+);
+alter table public.config_plataforma enable row level security;
+create policy config_lectura on public.config_plataforma
+  for select to anon, authenticated using (true);
+create policy config_admin on public.config_plataforma
+  for all to authenticated
+  using (public.es_admin_actual()) with check (public.es_admin_actual());

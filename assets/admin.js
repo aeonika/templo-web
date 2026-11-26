@@ -52,7 +52,7 @@
 
   // ============================================================ resumen
   async function vistaResumen(cont) {
-    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div>";
+    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-portada'></div>";
     var r = await TW.sb.rpc("admin_estadisticas");
     if (r.error || !r.data) { $("#a-stats").innerHTML = "<p class='p-error'>No se pudieron cargar las estadísticas.</p>"; return; }
     var d = r.data;
@@ -65,6 +65,72 @@
     $("#a-stats").innerHTML = stats.map(function (s) {
       return "<div class='a-stat" + (s[0] === "Sitios Premium" ? " a-stat-dorada" : "") + "'><p class='a-stat-num'>" + s[1] + "</p><p class='a-stat-nombre'>" + s[0] + "</p></div>";
     }).join("");
+    cargarPortada();
+  }
+
+  // ============================================================ portada de la plataforma
+  async function subirCloudinary(archivo, privado) {
+    var sesion = await TW.sb.auth.getSession();
+    var token = sesion.data.session.access_token;
+    var tipoRes = archivo.type.indexOf("image/") === 0 ? "image"
+      : (archivo.type.indexOf("video/") === 0 || archivo.type.indexOf("audio/") === 0) ? "video" : "raw";
+    var r = await fetch("/api/firmar-subida", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ privado: !!privado, resource_type: tipoRes })
+    });
+    if (!r.ok) throw new Error("El servidor no firmó la subida");
+    var firma = await r.json();
+    var fd = new FormData();
+    fd.append("file", archivo);
+    fd.append("api_key", firma.api_key);
+    fd.append("timestamp", firma.timestamp);
+    fd.append("signature", firma.signature);
+    fd.append("folder", firma.folder);
+    if (firma.type) fd.append("type", firma.type);
+    var up = await fetch("https://api.cloudinary.com/v1_1/" + firma.cloud + "/" + tipoRes + "/upload", { method: "POST", body: fd });
+    var datos = await up.json();
+    if (!up.ok) throw new Error(datos.error ? datos.error.message : "La subida falló");
+    return datos;
+  }
+
+  async function cargarPortada() {
+    var caja = $("#a-portada");
+    if (!caja) return;
+    var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "portada_url").maybeSingle();
+    var actual = (r.data && r.data.valor) || "";
+    caja.innerHTML = "<div class='a-portada'>" +
+      "<h3>Portada de la página principal</h3>" +
+      "<p class='bajada'>La imagen grande que se ve al entrar a TemploWeb. Pegá la dirección de una imagen o subí una nueva.</p>" +
+      (actual ? "<img class='a-portada-img' src='" + esc(actual) + "' alt='Portada actual'>" : "") +
+      "<div class='a-portada-form'>" +
+      "<input type='url' id='a-portada-url' class='a-url' placeholder='https://…' value='" + esc(actual) + "'>" +
+      "<label class='btn btn-fantasma'>Subir imagen<input type='file' id='a-portada-file' accept='image/*' hidden></label>" +
+      "<button class='btn btn-primario' id='a-portada-guardar' type='button'>Guardar portada</button>" +
+      (actual ? "<button class='btn btn-fantasma' id='a-portada-quitar' type='button'>Usar la original</button>" : "") +
+      "</div></div>";
+    $("#a-portada-file").addEventListener("change", async function (ev) {
+      var f = ev.target.files[0];
+      if (!f) return;
+      try {
+        aviso(true, "Subiendo imagen…");
+        var datos = await subirCloudinary(f, false);
+        $("#a-portada-url").value = datos.secure_url;
+        aviso(true, "Imagen subida. Tocá «Guardar portada» para aplicarla.");
+      } catch (e) { aviso(false, "No se pudo subir: " + e.message); }
+    });
+    $("#a-portada-guardar").addEventListener("click", async function () {
+      var url = $("#a-portada-url").value.trim();
+      var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "portada_url", valor: url }, { onConflict: "clave" });
+      if (r2.error) aviso(false, "No se pudo guardar: " + r2.error.message);
+      else { aviso(true, "Portada guardada. Se ve al recargar la página principal."); cargarPortada(); }
+    });
+    var quitar = $("#a-portada-quitar");
+    if (quitar) quitar.addEventListener("click", async function () {
+      var r3 = await TW.sb.from("config_plataforma").upsert({ clave: "portada_url", valor: "" }, { onConflict: "clave" });
+      if (r3.error) aviso(false, "No se pudo guardar: " + r3.error.message);
+      else { aviso(true, "Listo: vuelve la portada original."); cargarPortada(); }
+    });
   }
 
   // ============================================================ sitios

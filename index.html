@@ -29,7 +29,7 @@
 
 <section class="hero">
   <div class="hero-fondo" data-slot="hero">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vallee-brouillard.jpg/1920px-Vallee-brouillard.jpg" alt="Mar de niebla llenando un valle bajo colinas oscuras al atardecer">
+    <img id="hero-img" src="https://zmzvrtojrvgqsummglxh.supabase.co/storage/v1/object/public/fondos/portada-plataforma.jpg" alt="Interior cálido de una tienda artesanal al atardecer, con estanterías de productos y velas encendidas">
   </div>
   <div class="hero-velo"></div>
   <div class="hero-contenido">
@@ -42,13 +42,13 @@
       </div>
     </div>
     <div class="hero-vidrio" aria-hidden="true">
-      <div class="vidrio-barra"><span class="vidrio-nombre">Templo de la Mantis</span><span class="vidrio-link">templo-web.app/mantis</span></div>
+      <div class="vidrio-barra"><span class="vidrio-nombre">Tienda Aurora</span><span class="vidrio-link">templo-web.app/aurora</span></div>
       <div class="vidrio-cuerpo">
-        <p class="vidrio-titulo">Curso de servidores mágicos</p>
-        <p class="vidrio-linea">12 lecciones en video · acceso de por vida</p>
-        <div class="vidrio-fila"><span>Manual de sigilos (PDF)</span><span class="vidrio-precio">$ 9.900</span></div>
-        <div class="vidrio-fila"><span>Lectura de tarot, 30 min</span><span class="vidrio-precio">$ 15.000</span></div>
-        <div class="vidrio-fila"><span>Amuleto consagrado</span><span class="vidrio-precio-premium">Premium</span></div>
+        <p class="vidrio-titulo">Ofertas de la semana</p>
+        <p class="vidrio-linea">Pedidos por WhatsApp · envíos en el día</p>
+        <div class="vidrio-fila"><span>Combo desayuno artesanal</span><span class="vidrio-precio">$ 12.500</span></div>
+        <div class="vidrio-fila"><span>Velas aromáticas de soja</span><span class="vidrio-precio">$ 6.900</span></div>
+        <div class="vidrio-fila"><span>Curso de panadería en video</span><span class="vidrio-precio-premium">Premium</span></div>
       </div>
       <div class="vidrio-pie">Ejemplo: así se ve un sitio en TemploWeb</div>
     </div>
@@ -182,13 +182,20 @@
   <div class="contenedor pie-contenido">
     <p class="marca">TemploWeb</p>
     <p class="pie-linea">Una plataforma de Aeonika para negocios, maestros y profesionales.</p>
-    <p class="pie-creditos">Fotografía del encabezado: <a href="https://commons.wikimedia.org/wiki/File:Vallee-brouillard.jpg" target="_blank" rel="noopener">Thomas Bresson</a> (CC BY 3.0, Wikimedia Commons).</p>
+    <p class="pie-creditos">La imagen de portada de esta página se elige desde la administración de la plataforma.</p>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="assets/supabase.js"></script>
+<script>
+(async function () {
+  if (!window.TW || !TW.sb) return;
+  var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "portada_url").maybeSingle();
+  if (r.data && r.data.valor) document.getElementById("hero-img").src = r.data.valor;
+})();
+</script>
 <script>
 (async function () {
   if (!window.TW || !TW.sb) return;
