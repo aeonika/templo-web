@@ -123,6 +123,22 @@
         fav.href = logo;
       }
     },
+    // Pantalla de carga: cada pagina trae un #splash visible desde el
+    // primer pintado, que tapa el destello de los valores de fabrica
+    // mientras llegan los datos reales; estos helpers lo retiran cuando
+    // la pagina ya pinto su contenido verdadero.
+    finSplash: function () { if (window.__finSplash) window.__finSplash(); },
+    // En las paginas de un sitio, la pantalla de carga adopta la
+    // identidad del sitio (el fondo de su tema, su logo y su nombre)
+    // apenas se lo lee de la base.
+    splashSitio: function (sitio) {
+      var s = document.getElementById("splash");
+      if (!s || !sitio) return;
+      var img = document.getElementById("splash-logo");
+      if (img && sitio.logo_url) { img.src = sitio.logo_url; img.hidden = false; }
+      var nom = document.getElementById("splash-nombre");
+      if (nom) nom.textContent = sitio.nombre || "";
+    },
     // Comprime una imagen en el navegador antes de subirla: la achica al
     // maximo indicado (lado mayor) y la pasa a WebP con calidad 0.82, que
     // se ve igual y pesa mucho menos. Si el resultado pesara mas que el

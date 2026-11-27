@@ -27,6 +27,7 @@
   async function refrescar() {
     user = await TW.usuario();
     $("#p-cargando").hidden = true;
+    if (window.TW && TW.finSplash) TW.finSplash();
     $("#btn-salir").hidden = !user;
     $("#p-burger").hidden = !user;
     TW.aplicarMarca();

@@ -20,6 +20,7 @@
   async function iniciar() {
     user = await TW.usuario();
     $("#a-cargando").hidden = true;
+    if (window.TW && TW.finSplash) TW.finSplash();
     if (!user) { $("#a-denegado").hidden = false; return; }
     TW.aplicarMarca();
     $("#a-usuario").textContent = user.email;

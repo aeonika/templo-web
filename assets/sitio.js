@@ -11,6 +11,7 @@
 
   function error(msg) {
     main.innerHTML = '<p class="s-error">' + TW.esc(msg) + "</p>";
+    if (window.__finSplash) window.__finSplash();
   }
   if (!window.TW || !TW.sb) { error("Este sitio todavia no esta conectado a la plataforma."); return; }
   if (!slug) { error("Falta indicar el sitio."); return; }
@@ -46,6 +47,7 @@
     favS.href = sitio.logo_url;
   }
 
+  TW.splashSitio(sitio);
   var base = "sitio.html?s=" + encodeURIComponent(slug);
   var wa = sitio.whatsapp ? "https://wa.me/" + String(sitio.whatsapp).replace(/[^0-9]/g, "") : null;
 
@@ -413,4 +415,5 @@
       if (url) window.open(url, "_blank"); else ba.textContent = "Sin acceso";
     }
   });
+  if (window.__finSplash) window.__finSplash();
 })();

@@ -9,8 +9,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/sitio.css">
+<script>
+window.__finSplash = function () {
+  if (window.__splashListo) return; window.__splashListo = true;
+  var s = document.getElementById("splash"); if (!s) return;
+  var espera = Math.max(0, 450 - performance.now());
+  setTimeout(function () { s.classList.add("fuera"); setTimeout(function () { s.remove(); }, 650); }, espera);
+};
+setTimeout(window.__finSplash, 8000);
+</script>
+<noscript><style>#splash{display:none}</style></noscript>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><img class="splash-logo" id="splash-logo" alt="" hidden src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="><p class="splash-nombre" id="splash-nombre"></p><div class="splash-giro"></div></div>
 <header class="s-nav" id="s-nav"></header>
 <main id="s-main">
   <p class="s-cargando">Cargando el sitio…</p>

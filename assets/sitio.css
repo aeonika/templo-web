@@ -2,6 +2,7 @@
 /* TemploWeb · plantilla del sitio del maestro.
    Cuatro temas por tokens; el acento del sitio puede pisar --acento. */
 :root {
+  --space-md: 16px;
   --fuente-titulos: "Cinzel", Georgia, serif;
   --fuente-cuerpo: "Poppins", system-ui, sans-serif;
   --radio: 14px; --negro: #000;
@@ -451,3 +452,15 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-salir { background: none; border: 0; color: var(--muted); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; padding: 8px 6px; }
 .s-salir:hover { color: var(--texto); }
 @media (max-width: 760px) { .s-sesion-nombre { display: none; } }
+
+/* Pantalla de carga del sitio: visible desde el primer pintado; toma el
+ * fondo y el texto del tema activo (al principio el de fabrica y, apenas
+ * sitio.js marca el tema real, el del sitio) y muestra su logo y nombre
+ * apenas se lo lee de la base (TW.splashSitio). */
+#splash { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-md); background: var(--fondo); transition: opacity 0.5s ease, visibility 0.5s, background 0.4s ease; }
+#splash.fuera { opacity: 0; visibility: hidden; pointer-events: none; }
+#splash .splash-logo { max-width: 190px; max-height: 68px; object-fit: contain; }
+#splash .splash-nombre { margin: 0; font-family: var(--fuente-titulos); font-weight: 600; font-size: 18px; line-height: 1.3; color: var(--texto); text-align: center; padding: 0 var(--space-md); }
+#splash .splash-giro { width: 34px; height: 34px; border-radius: 50%; border: 3px solid color-mix(in srgb, var(--texto) 18%, transparent); border-top-color: var(--texto); animation: splash-girar 0.85s linear infinite; }
+@keyframes splash-girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #splash .splash-giro { animation-duration: 2.4s; } }

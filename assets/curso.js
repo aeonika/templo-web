@@ -8,7 +8,7 @@
   var params = new URLSearchParams(location.search);
   var slug = params.get("s");
   var cursoId = params.get("c");
-  function error(msg) { main.innerHTML = '<p class="s-error">' + TW.esc(msg) + "</p>"; }
+  function error(msg) { main.innerHTML = '<p class="s-error">' + TW.esc(msg) + "</p>"; if (window.__finSplash) window.__finSplash(); }
   if (!window.TW || !TW.sb) { error("La plataforma todavia no esta conectada."); return; }
   if (!slug || !cursoId) { error("Falta indicar el curso."); return; }
 
@@ -23,6 +23,7 @@
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
   document.documentElement.dataset.maqueta = sitio.maqueta ? (sitio.maqueta === "premium" ? "premium" : sitio.tema || "crepusculo") : (["dorado", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo"));
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
+  if (window.TW && TW.splashSitio) TW.splashSitio(sitio);
   document.getElementById("s-nav").innerHTML =
     '<div class="s-nav-in"><a class="s-marca" href="sitio.html?s=' + encodeURIComponent(slug) + '">' +
     TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
@@ -142,4 +143,5 @@
       player.innerHTML = '<p class="aula-aviso">El documento se abrió en otra pestaña.</p>';
     }
   });
+  if (window.__finSplash) window.__finSplash();
 })();

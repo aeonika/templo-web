@@ -31,6 +31,10 @@
   --glass-linea: oklch(24% 0.02 260 / 0.10);
   --glass-fila: oklch(24% 0.02 260 / 0.08);
   --premium-ink: oklch(27% 0.045 80);
+  --splash-a: oklch(38% 0.11 285);
+  --splash-b: oklch(24% 0.09 285);
+  --splash-claro: oklch(95% 0.02 285);
+  --splash-pista: oklch(42% 0.09 285);
   --sombra-nav: 0 10px 30px -12px oklch(24% 0.02 260 / 0.16);
 }
 
@@ -195,3 +199,16 @@ html { scroll-behavior: smooth; }
 .ns-rol { font-size: 11px; font-weight: 800; border: 1.5px solid var(--color-accent); color: var(--color-accent); border-radius: 999px; padding: var(--space-3xs) var(--space-xs); white-space: nowrap; }
 @media (max-width: 640px) { .ns-nombre { display: none; } }
 .marca-logo { height: 30px; width: auto; max-width: 120px; object-fit: contain; }
+
+/* Pantalla de carga de la plataforma: visible desde el primer pintado,
+ * tapa el destello de los valores de fabrica hasta que llegan los datos
+ * reales (el HTML trae el #splash y el script __finSplash lo retira).
+ * El fondo retoma el indigo del logo de la plataforma. */
+#splash { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-lg); background: radial-gradient(120% 120% at 50% 28%, var(--splash-a), var(--splash-b)); transition: opacity 0.5s ease, visibility 0.5s; }
+#splash.fuera { opacity: 0; visibility: hidden; pointer-events: none; }
+#splash .splash-marca { width: 96px; height: 96px; object-fit: contain; animation: splash-pulso 1.7s ease-in-out infinite; }
+#splash .splash-barra { width: 132px; height: 3px; border-radius: 99px; background: var(--splash-pista); overflow: hidden; }
+#splash .splash-barra span { display: block; width: 38%; height: 100%; border-radius: 99px; background: var(--splash-claro); animation: splash-pase 1.15s ease-in-out infinite; }
+@keyframes splash-pulso { 0%, 100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(1.055); opacity: 1; } }
+@keyframes splash-pase { 0% { transform: translateX(-110%); } 100% { transform: translateX(360%); } }
+@media (prefers-reduced-motion: reduce) { #splash .splash-marca, #splash .splash-barra span { animation: none; } }

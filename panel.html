@@ -9,8 +9,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/panel.css">
+<script>
+window.__finSplash = function () {
+  if (window.__splashListo) return; window.__splashListo = true;
+  var s = document.getElementById("splash"); if (!s) return;
+  var espera = Math.max(0, 450 - performance.now());
+  setTimeout(function () { s.classList.add("fuera"); setTimeout(function () { s.remove(); }, 650); }, espera);
+};
+setTimeout(window.__finSplash, 8000);
+</script>
+<noscript><style>#splash{display:none}</style></noscript>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><img class="splash-marca" src="https://zmzvrtojrvgqsummglxh.supabase.co/storage/v1/object/public/fondos/logo-giro-icono.png" alt=""><div class="splash-barra"><span></span></div></div>
 <header class="p-nav">
   <a class="p-marca" href="index.html"><span class="marca-nombre">TemploWeb</span></a>
   <span class="p-nav-titulo">Panel</span>
