@@ -444,7 +444,7 @@ update public.sitios set tema = 'dorado' where tema = 'premium';
 create table if not exists public.miembros (
   sitio_id uuid not null references public.sitios (id) on delete cascade,
   usuario_id uuid not null references public.perfiles (id) on delete cascade,
-  origen text not null default 'manual' check (origen in ('manual','suscripcion','compra')),
+  origen text not null default 'manual' check (origen in ('manual','suscripcion','compra','registro')),
   creado timestamptz not null default now(),
   primary key (sitio_id, usuario_id)
 );

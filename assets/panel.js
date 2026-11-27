@@ -35,6 +35,46 @@
     });
   });
 
+  // ============================================================ ingreso desde un sitio
+  // Registro contextual: quien llega desde un sitio (?s=slug) se une a
+  // ese sitio al autenticarse y vuelve a el, en vez de caer en el panel
+  // generico. Si el registro exige confirmar el email, el sitio queda
+  // pendiente en este navegador y la union se completa al primer ingreso.
+  var slugUrl = new URLSearchParams(location.search).get("s") || "";
+  var ctxSitio = null;
+  async function cargarCtxSitio() {
+    if (!slugUrl) return;
+    var r = await TW.sb.from("sitios").select("id, slug, nombre, logo_url, dueno_id").eq("slug", slugUrl).maybeSingle();
+    if (!r.data) return;
+    ctxSitio = r.data;
+    var caja = $("#auth-sitio");
+    if (caja) {
+      caja.hidden = false;
+      $("#auth-sitio-titulo").textContent = ctxSitio.nombre;
+      var lg = $("#auth-sitio-logo");
+      if (lg && ctxSitio.logo_url) { lg.src = ctxSitio.logo_url; lg.hidden = false; }
+    }
+    var btnReg = document.querySelector("#form-registro button[type='submit']");
+    if (btnReg) btnReg.textContent = "Crear mi cuenta y unirme";
+    var nota = document.querySelector("#tarjeta-registro .p-nota");
+    if (nota) nota.textContent = "Al crear tu cuenta quedás unido a " + ctxSitio.nombre + " automáticamente.";
+  }
+  async function unirseYVolver(userId) {
+    var slug = slugUrl || localStorage.getItem("tw_ctx_sitio") || "";
+    if (!slug) return false;
+    var r = await TW.sb.from("sitios").select("id, slug, dueno_id").eq("slug", slug).maybeSingle();
+    localStorage.removeItem("tw_ctx_sitio");
+    if (!r.data) return false;
+    if (r.data.dueno_id !== userId) {
+      await TW.sb.from("miembros").upsert(
+        { sitio_id: r.data.id, usuario_id: userId, origen: "registro" },
+        { onConflict: "sitio_id,usuario_id", ignoreDuplicates: true });
+    }
+    location.replace("/sitio/" + encodeURIComponent(r.data.slug));
+    return true;
+  }
+  cargarCtxSitio();
+
   // ============================================================ auth
   async function refrescar() {
     user = await TW.usuario();
@@ -47,6 +87,7 @@
     $("#vista-auth").hidden = !!user;
     $("#vista-panel").hidden = !user;
     if (user) {
+      if (await unirseYVolver(user.id)) return;
       var r = await TW.sb.from("sitios").select("*").eq("dueno_id", user.id).maybeSingle();
       sitio = r.data || null;
       var vs = $("#p-ver-sitio");
@@ -85,7 +126,9 @@
     if (r.error) { $("#error-registro").textContent = "No se pudo crear la cuenta: " + r.error.message; return; }
     if (!r.data.session) {
       $("#error-registro").textContent = "";
-      ev.target.innerHTML = '<p class="p-ok">Cuenta creada. Revisá tu email para confirmarla y después ingresá.</p>';
+      if (ctxSitio) localStorage.setItem("tw_ctx_sitio", ctxSitio.slug);
+      ev.target.innerHTML = '<p class="p-ok">Cuenta creada. Revisá tu email para confirmarla' +
+        (ctxSitio ? ": cuando ingreses, quedás unido a " + esc(ctxSitio.nombre) + " automáticamente." : " y después ingresá.") + "</p>";
       return;
     }
     refrescar();
@@ -1219,7 +1262,7 @@
       var rAct = await TW.sb.from("suscripciones").select("alumno_id").eq("sitio_id", sitio.id).eq("estado", "activa");
       var cursosPorAlumno = {};
       (rAct.data || []).forEach(function (x) { cursosPorAlumno[x.alumno_id] = (cursosPorAlumno[x.alumno_id] || 0) + 1; });
-      var viaTexto = { manual: "se unió desde el sitio", suscripcion: "llegó por un curso", compra: "llegó por un documento" };
+      var viaTexto = { manual: "se unió desde el sitio", registro: "se registró desde el sitio", suscripcion: "llegó por un curso", compra: "llegó por un documento" };
       $("#mi-lista").innerHTML = (rm.data || []).length ? rm.data.map(function (m) {
         var n = cursosPorAlumno[m.usuario_id] || 0;
         return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' +

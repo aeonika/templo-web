@@ -335,7 +335,7 @@
     (async function () {
       var u = await TW.usuario();
       if (!u) {
-        zonaMiembro.innerHTML = '<a class="btn" href="/panel.html">Unirse al sitio</a>';
+        zonaMiembro.innerHTML = '<a class="btn" href="/panel.html?s=' + encodeURIComponent(slug) + '">Unirse al sitio</a>';
         return;
       }
       if (sitio.dueno_id && u.id === sitio.dueno_id) return;

@@ -68,7 +68,7 @@
       var zona = document.getElementById("s-sesion");
       if (!zona || !sb) return;
       var ses = await TW.sesion();
-      if (!ses) { zona.innerHTML = '<a href="/panel.html">Ingresar</a>'; return; }
+      if (!ses) { zona.innerHTML = '<a href="/panel.html' + (sitio && sitio.slug ? "?s=" + encodeURIComponent(sitio.slug) : "") + '">Ingresar</a>'; return; }
       var u = ses.usuario;
       var esDueno = !!(sitio && sitio.dueno_id && sitio.dueno_id === u.id);
       var rol, rolTxt;

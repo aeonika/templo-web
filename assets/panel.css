@@ -379,3 +379,11 @@ body.con-drawer { overflow: hidden; }
 .p-card.sobre-antes { box-shadow: inset 0 3px 0 var(--color-accent), var(--shadow-card); }
 .p-card.sobre-despues { box-shadow: inset 0 -3px 0 var(--color-accent), var(--shadow-card); }
 .p-orden-aviso { color: var(--color-success); font-size: 13px; font-weight: 600; margin-left: var(--space-sm); }
+
+/* Ingreso desde un sitio: la tarjeta que viste el acceso con la
+ * identidad del sitio del que viene el visitante. */
+.p-auth-sitio { display: flex; gap: var(--space-md); align-items: center; }
+.p-auth-sitio[hidden] { display: none; }
+.p-auth-sitio img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; flex: none; }
+.p-auth-sitio h2 { margin: 0 0 4px; }
+.p-auth-sitio .p-nota { margin: 0; }

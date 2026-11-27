@@ -59,7 +59,7 @@
     estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>";
   } else if (!usuario) {
     estadoHtml = "<p>Para suscribirte, primero ingresá o creá tu cuenta.</p>" +
-      '<a class="btn btn-acento" href="/panel.html">Ingresar</a>' +
+      '<a class="btn btn-acento" href="/panel.html?s=' + encodeURIComponent(slug) + '">Ingresar</a>' +
       (curso.link_pago ? '<a class="btn" href="' + TW.esc(curso.link_pago) + '" target="_blank" rel="noopener">Pagar la suscripción</a>' : "");
   } else {
     estadoHtml = "<p>Todavía no estás suscripto a este curso.</p>" +
