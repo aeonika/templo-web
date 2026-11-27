@@ -528,3 +528,18 @@ create policy comprobantes_dueno on public.comprobantes for select to authentica
 create policy comprobantes_dueno_edita on public.comprobantes for update to authenticated using (public.es_dueno(sitio_id)) with check (public.es_dueno(sitio_id));
 create policy comprobantes_dueno_borra on public.comprobantes for delete to authenticated using (public.es_dueno(sitio_id));
 create policy comprobantes_admin on public.comprobantes for all to authenticated using (public.es_admin_actual()) with check (public.es_admin_actual());
+
+-- Codigos QR guardados del maestro (tabla 16, 2026-11-27).
+-- Se guarda solo nombre + destino; la imagen se regenera en el panel.
+create table if not exists public.qrs (
+  id uuid primary key default gen_random_uuid(),
+  sitio_id uuid not null references public.sitios (id) on delete cascade,
+  nombre text not null,
+  destino text not null,
+  creado timestamptz not null default now()
+);
+alter table public.qrs enable row level security;
+create policy qrs_dueno on public.qrs for select to authenticated using (public.es_dueno(sitio_id));
+create policy qrs_dueno_crea on public.qrs for insert to authenticated with check (public.es_dueno(sitio_id));
+create policy qrs_dueno_borra on public.qrs for delete to authenticated using (public.es_dueno(sitio_id));
+create policy qrs_admin on public.qrs for all to authenticated using (public.es_admin_actual()) with check (public.es_admin_actual());

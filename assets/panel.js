@@ -7,6 +7,7 @@
   var user = null;
   var sitio = null;
   var tabActual = "inicio";
+  var SERVICIOS_QR = ["Mercado Pago", "Cuenta DNI", "BNA+", "Ualá", "Brubank", "Naranja X", "Personal Pay", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Binance", "PayPal", "Wise", "Otro"];
   function $(s) { return document.querySelector(s); }
   function esc(s) { return TW.esc(s); }
 
@@ -307,6 +308,7 @@
     if (tab === "feed") return vistaFeed(cont);
     if (tab === "alumnos") return vistaAlumnos(cont);
     if (tab === "pagos") return vistaComprobantes(cont);
+    if (tab === "qr") return vistaQR(cont);
   }
 
   // Contador de comprobantes pendientes en el botón del menú.
@@ -378,6 +380,140 @@
       b.addEventListener("click", async function () {
         await TW.sb.from("comprobantes").delete().eq("id", b.dataset.cpQuitar);
         vistaComprobantes(cont); refrescarBadgePagos();
+      });
+    });
+  }
+
+  // ============================================================ codigos QR
+  // Generador con la libreria qrcode-generator (CDN, carga perezosa):
+  // el QR se dibuja en un canvas desde el destino, sin guardar imagenes;
+  // en la base quedan solo el nombre y el destino (tabla qrs).
+  var libQRPedida = null;
+  function cargarLibQR() {
+    if (window.qrcode) return Promise.resolve();
+    if (!libQRPedida) {
+      libQRPedida = new Promise(function (res, rej) {
+        var s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js";
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    return libQRPedida;
+  }
+  function dibujarQR(canvas, texto, px) {
+    var qr = window.qrcode(0, "M");
+    qr.addData(texto);
+    qr.make();
+    var n = qr.getModuleCount();
+    var escala = Math.max(1, Math.floor(px / (n + 8)));
+    var lado = (n + 8) * escala;
+    canvas.width = lado; canvas.height = lado;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, lado, lado);
+    ctx.fillStyle = "#000000";
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) {
+      if (qr.isDark(r, c)) ctx.fillRect((c + 4) * escala, (r + 4) * escala, escala, escala);
+    }
+  }
+  async function vistaQR(cont) {
+    var urlSitio = location.origin + "/sitio/" + sitio.slug;
+    var urlWa = sitio.whatsapp ? "https://wa.me/" + String(sitio.whatsapp).replace(/\D/g, "") : "";
+    cont.innerHTML = "<div class='p-encab'><div><h2>Códigos QR</h2>" +
+      "<p class='p-bajada'>Generá códigos QR para tu sitio o para cualquier link, guardalos con nombre y descargalos para imprimir o compartir. También podés mandar uno directo a tus medios de cobro.</p></div></div>" +
+      "<div class='p-bloque'><h3>Nuevo QR</h3>" +
+      "<div class='p-dos'><label>Nombre <input type='text' id='qr-nombre' placeholder='Ej.: QR del local'></label>" +
+      "<label>Destino (link) <input type='text' id='qr-destino' value='" + esc(urlSitio) + "'></label></div>" +
+      "<div class='qr-atajos'><span>Atajos:</span><button type='button' class='btn btn-fantasma btn-chico' data-qr-atajo='" + esc(urlSitio) + "'>Mi sitio</button>" +
+      (urlWa ? "<button type='button' class='btn btn-fantasma btn-chico' data-qr-atajo='" + esc(urlWa) + "'>Mi WhatsApp</button>" : "") +
+      ((sitio.config && sitio.config.pago_mp) ? "<button type='button' class='btn btn-fantasma btn-chico' data-qr-atajo='" + esc(sitio.config.pago_mp) + "'>Mi link de Mercado Pago</button>" : "") +
+      "</div>" +
+      "<div class='qr-previa-zona'><canvas id='qr-previa' width='200' height='200'></canvas><p class='p-ayuda' id='qr-estado'>Vista previa en vivo: se actualiza cuando escribís el destino.</p></div>" +
+      "<button class='btn btn-primario' id='qr-guardar' type='button'>Guardar QR</button></div>" +
+      "<div class='p-bloque'><h3>Guardados</h3><div id='qr-lista'><p class='p-vacio'>Cargando…</p></div></div>";
+    try { await cargarLibQR(); }
+    catch (e) { document.getElementById("qr-estado").textContent = "No se pudo cargar el generador de QR. Revisá tu conexión."; return; }
+    var previa = document.getElementById("qr-previa"), dest = document.getElementById("qr-destino");
+    function pintarPrevia() {
+      var t = dest.value.trim();
+      if (!t) return;
+      try { dibujarQR(previa, t, 264); }
+      catch (e2) { document.getElementById("qr-estado").textContent = "Ese destino es demasiado largo para un QR."; }
+    }
+    dest.addEventListener("input", pintarPrevia);
+    pintarPrevia();
+    cont.querySelectorAll("[data-qr-atajo]").forEach(function (b) {
+      b.addEventListener("click", function () { dest.value = b.dataset.qrAtajo; pintarPrevia(); });
+    });
+    document.getElementById("qr-guardar").addEventListener("click", async function () {
+      var nombre = document.getElementById("qr-nombre").value.trim();
+      var destino = dest.value.trim();
+      var est = document.getElementById("qr-estado");
+      if (!nombre) { est.textContent = "Ponele un nombre al QR."; return; }
+      if (!destino) { est.textContent = "Falta el destino."; return; }
+      var r = await TW.sb.from("qrs").insert({ sitio_id: sitio.id, nombre: nombre, destino: destino });
+      est.textContent = r.error ? "No se pudo guardar: " + r.error.message : "Guardado. Ya está en tu lista.";
+      if (!r.error) { document.getElementById("qr-nombre").value = ""; cargarListaQR(); }
+    });
+    cargarListaQR();
+  }
+  async function cargarListaQR() {
+    var zona = document.getElementById("qr-lista");
+    if (!zona) return;
+    var r = await TW.sb.from("qrs").select("*").eq("sitio_id", sitio.id).order("creado", { ascending: false });
+    var filas = r.data || [];
+    if (!filas.length) { zona.innerHTML = "<p class='p-vacio'>Todavía no guardaste ningún QR.</p>"; return; }
+    zona.innerHTML = "<div class='p-lista'>" + filas.map(function (q) {
+      return "<div class='p-fila-lista'><canvas class='qr-mini' data-qr-txt='" + esc(q.destino) + "' width='72' height='72'></canvas>" +
+        "<div class='crece'><strong>" + esc(q.nombre) + "</strong><div class='detalle'>" + esc(q.destino) + "</div></div>" +
+        "<button class='btn btn-fantasma' data-qr-bajar='" + q.id + "'>Descargar</button>" +
+        "<span class='qr-cobrar'><select data-qr-serv='" + q.id + "'>" + SERVICIOS_QR.map(function (s) { return "<option value='" + s + "'>" + s + "</option>"; }).join("") + "</select>" +
+        "<button class='btn btn-fantasma' data-qr-cobrar='" + q.id + "'>Usar para cobrar</button></span>" +
+        "<button class='btn btn-fantasma' data-qr-quitar='" + q.id + "'>Quitar</button></div>";
+    }).join("") + "</div><p class='p-ayuda' id='qr-lista-estado'></p>";
+    zona.querySelectorAll("canvas.qr-mini").forEach(function (cv) {
+      try { dibujarQR(cv, cv.dataset.qrTxt, 144); } catch (e) {}
+    });
+    zona.querySelectorAll("[data-qr-bajar]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var q = filas.find(function (x) { return x.id === b.dataset.qrBajar; });
+        var cv = document.createElement("canvas");
+        dibujarQR(cv, q.destino, 1024);
+        var a = document.createElement("a");
+        a.href = cv.toDataURL("image/png");
+        a.download = (q.nombre || "qr").replace(/[^\wáéíóúñ -]+/gi, "").trim().replace(/\s+/g, "-").toLowerCase() + ".png";
+        a.click();
+      });
+    });
+    zona.querySelectorAll("[data-qr-cobrar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        var q = filas.find(function (x) { return x.id === b.dataset.qrCobrar; });
+        var serv = zona.querySelector("[data-qr-serv='" + q.id + "']").value;
+        var est = document.getElementById("qr-lista-estado");
+        b.disabled = true;
+        est.textContent = "Subiendo el QR a tus medios de cobro…";
+        try {
+          var cv = document.createElement("canvas");
+          dibujarQR(cv, q.destino, 1024);
+          var blob = await new Promise(function (res) { cv.toBlob(res, "image/png"); });
+          var archivo = new File([blob], "qr-cobro.png", { type: "image/png" });
+          var datos = await subirCloudinary(archivo, false, { max: 1024 });
+          var cfg = Object.assign({}, sitio.config || {});
+          var lista = Array.isArray(cfg.pagos_qr) ? cfg.pagos_qr.slice() : [];
+          if (cfg.pago_qr && !lista.length) lista.push({ servicio: "", url: cfg.pago_qr });
+          lista.push({ servicio: serv, url: datos.secure_url });
+          cfg.pagos_qr = lista; cfg.pago_qr = null;
+          var r = await TW.sb.from("sitios").update({ config: cfg }).eq("id", sitio.id).select().maybeSingle();
+          if (r.error) throw new Error(r.error.message);
+          sitio = r.data;
+          est.textContent = "Listo: «" + q.nombre + "» quedó como QR de " + serv + " en tus medios de cobro (lo ves en Mi sitio).";
+        } catch (e) { est.textContent = "No se pudo: " + e.message; b.disabled = false; }
+      });
+    });
+    zona.querySelectorAll("[data-qr-quitar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        await TW.sb.from("qrs").delete().eq("id", b.dataset.qrQuitar);
+        cargarListaQR();
       });
     });
   }
@@ -984,7 +1120,6 @@
         "</select></label><label class='c-rasgo-texto'>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(r ? (r.titulo || "") : "") + "' placeholder='Servicios de hechicería'></label>" +
         "<button type='button' class='btn btn-fantasma c-rasgo-quitar'>Quitar</button></div>";
     }
-    var SERVICIOS_QR = ["Mercado Pago", "Cuenta DNI", "BNA+", "Ualá", "Brubank", "Naranja X", "Personal Pay", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Binance", "PayPal", "Wise", "Otro"];
     function filaQr(q) {
       var sel = (q && q.servicio) || "Mercado Pago";
       return "<div class='c-qr-fila'><label>Servicio <select class='c-qr-servicio'>" +
