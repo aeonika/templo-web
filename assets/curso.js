@@ -50,13 +50,25 @@
   var rl = await TW.sb.from("lecciones_indice").select("*").eq("curso_id", curso.id).order("orden");
   var lecciones = rl.data || [];
 
+  // Medios de cobro del sitio (Panel > Mi sitio > Medios de cobro):
+  // link de Mercado Pago, link de PayPal y QR cargado por el maestro.
+  var cfgPagos = sitio.config || {};
+  var mediosHtml = "";
+  if (cfgPagos.pago_mp || cfgPagos.pago_paypal || cfgPagos.pago_qr) {
+    mediosHtml = '<div class="s-pagos"><p class="s-pagos-t">Medios de pago:</p><div class="s-pagos-btns">' +
+      (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
+      (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
+      "</div>" +
+      (cfgPagos.pago_qr ? '<img class="s-qr" src="' + TW.esc(cfgPagos.pago_qr) + '" alt="Código QR para pagar"><p class="s-pagos-nota">Escaneá el QR para pagar y después solicitá el acceso.</p>' : "") +
+      "</div>";
+  }
   var estadoHtml;
   if (esDueno) {
     estadoHtml = "<p>Estás viendo tu propio curso, con acceso completo.</p>";
   } else if (accesoTotal) {
     estadoHtml = "<p>Tenés acceso completo a este curso.</p>";
   } else if (suscripcion && suscripcion.estado === "pendiente") {
-    estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>";
+    estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>" + mediosHtml;
   } else if (!usuario) {
     estadoHtml = "<p>Para suscribirte, primero ingresá o creá tu cuenta.</p>" +
       '<a class="btn btn-acento" href="/panel.html?s=' + encodeURIComponent(slug) + '">Ingresar</a>' +
@@ -64,7 +76,7 @@
   } else {
     estadoHtml = "<p>Todavía no estás suscripto a este curso.</p>" +
       (curso.link_pago ? '<a class="btn btn-acento" href="' + TW.esc(curso.link_pago) + '" target="_blank" rel="noopener">Pagar la suscripción</a>' : "") +
-      '<button class="btn" id="btn-solicitar">Solicitar acceso</button>';
+      '<button class="btn" id="btn-solicitar">Solicitar acceso</button>' + mediosHtml;
   }
 
   main.innerHTML =

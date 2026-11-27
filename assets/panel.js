@@ -987,6 +987,16 @@
       tallesDefs.map(function (t) { return "<option value='" + t[0] + "'" + ((configSitio.talle_sistema || "letras") === t[0] ? " selected" : "") + ">" + t[1] + "</option>"; }).join("") +
       "</select></label></div>" +
       "<label>Avisar «últimas unidades» cuando el stock sea de <input type='number' name='stock_bajo' min='0' step='1' value='" + esc(configSitio.stock_bajo !== undefined ? configSitio.stock_bajo : 3) + "'> o menos</label></div>" +
+      "<div class='p-bloque'><h3>Medios de cobro</h3>" +
+      "<p class='p-ayuda'>Los medios que ven tus alumnos para pagarte un curso o un documento, además del link de pago propio de cada curso. Los cargás una sola vez y se usan en todo tu sitio.</p>" +
+      "<div class='p-dos'><label>Link de Mercado Pago <input type='text' name='pago_mp' value='" + esc(configSitio.pago_mp || "") + "' placeholder='https://link.mercadopago.com.ar/…'></label>" +
+      "<label>Link de PayPal <input type='text' name='pago_paypal' value='" + esc(configSitio.pago_paypal || "") + "' placeholder='https://paypal.me/…'></label></div>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Código QR para cobrar</span>" +
+      "<div class='c-fondo-fila'><img class='c-mini' id='c-qr-img' alt='' src='" + esc(configSitio.pago_qr || "") + "'" + (configSitio.pago_qr ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' id='c-qr-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle='c-qr'>o pegar una URL</button></div>" +
+      "<input type='text' name='pago_qr' id='c-qr' class='c-url-input' value='" + esc(configSitio.pago_qr || "") + "' placeholder='https://…' hidden>" +
+      "<span class='c-ayuda' id='c-qr-estado'>El QR de tu Mercado Pago, tu banco o Binance: el alumno lo escanea para pagarte. Se muestra junto a los botones de pago de tus cursos y documentos.</span></div></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
@@ -1072,7 +1082,7 @@
     });
     var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
-    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"], ["#c-perfil", "#c-perfil-img"]].forEach(function (par) {
+    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"], ["#c-perfil", "#c-perfil-img"], ["#c-qr", "#c-qr-img"]].forEach(function (par) {
       var inp = $(par[0]), img = $(par[1]);
       if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; img.hidden = !inp.value; });
     });
@@ -1108,6 +1118,17 @@
         if (pfImg) { pfImg.src = datos.secure_url; pfImg.hidden = false; }
         if (pfEst) pfEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
       }).catch(function (e2) { if (pfEst) pfEst.textContent = "No se pudo subir: " + e2.message; });
+    });
+    var qrFile = $("#c-qr-file"), qrUrl = $("#c-qr"), qrEst = $("#c-qr-estado"), qrImg = $("#c-qr-img");
+    if (qrFile) qrFile.addEventListener("change", function () {
+      var arch = qrFile.files[0];
+      if (!arch) return;
+      if (qrEst) qrEst.textContent = "Subiendo el QR…";
+      subirCloudinary(arch, false, { max: 800 }).then(function (datos) {
+        qrUrl.value = datos.secure_url;
+        if (qrImg) { qrImg.src = datos.secure_url; qrImg.hidden = false; }
+        if (qrEst) qrEst.textContent = "QR subido. Tocá «Guardar cambios» para aplicarlo.";
+      }).catch(function (e2) { if (qrEst) qrEst.textContent = "No se pudo subir: " + e2.message; });
     });
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
@@ -1153,7 +1174,10 @@
         config: Object.assign({}, sitio.config || {}, {
           avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
-          stock_bajo: Number(f.get("stock_bajo")) || 0
+          stock_bajo: Number(f.get("stock_bajo")) || 0,
+          pago_mp: String(f.get("pago_mp") || "").trim() || null,
+          pago_paypal: String(f.get("pago_paypal") || "").trim() || null,
+          pago_qr: f.get("pago_qr") || null
         }),
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();

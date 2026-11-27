@@ -294,6 +294,17 @@
       var racc = await TW.sb.from("accesos_documentos").select("documento_id").eq("alumno_id", usuario.id).eq("estado", "activa");
       (racc.data || []).forEach(function (x) { misAccesos[x.documento_id] = true; });
     }
+    var cfgPagos = sitio.config || {};
+    var hayPagos = docs.some(function (d) { return Number(d.precio) > 0; });
+    var mediosDocs = "";
+    if (hayPagos && (cfgPagos.pago_mp || cfgPagos.pago_paypal || cfgPagos.pago_qr)) {
+      mediosDocs = '<div class="s-pagos"><p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p><div class="s-pagos-btns">' +
+        (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
+        (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
+        "</div>" +
+        (cfgPagos.pago_qr ? '<img class="s-qr" src="' + TW.esc(cfgPagos.pago_qr) + '" alt="Código QR para pagar">' : "") +
+        "</div>";
+    }
     html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
       docs.map(function (d) {
         var gratis = Number(d.precio) === 0;
@@ -304,7 +315,7 @@
         else accion = wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : "";
         return '<div class="s-doc"><div><h3>' + TW.esc(d.titulo) + "</h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
           '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + accion + "</div></div>";
-      }).join("") + "</div>");
+      }).join("") + "</div>" + mediosDocs);
   }
 
   // Feed publico del maestro
