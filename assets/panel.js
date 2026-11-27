@@ -6,7 +6,7 @@
   "use strict";
   var user = null;
   var sitio = null;
-  var tabActual = "sitio";
+  var tabActual = "inicio";
   function $(s) { return document.querySelector(s); }
   function esc(s) { return TW.esc(s); }
 
@@ -49,6 +49,17 @@
     if (user) {
       var r = await TW.sb.from("sitios").select("*").eq("dueno_id", user.id).maybeSingle();
       sitio = r.data || null;
+      var vs = $("#p-ver-sitio");
+      if (vs) { vs.hidden = !sitio; if (sitio) vs.href = "sitio/" + sitio.slug; }
+      var dn = $("#p-drawer-nombre"), dp = $("#p-drawer-plan"), dl = $("#p-drawer-logo"), da = $("#p-drawer-avatar");
+      if (dn) dn.textContent = sitio ? sitio.nombre : "Todavía no creaste tu sitio";
+      if (dp) dp.textContent = sitio ? ("Plan " + (sitio.plan === "premium" ? "Premium" : "Gratis") + " · /sitio/" + sitio.slug) : "";
+      if (dl && da) {
+        var imgD = sitio && (sitio.avatar_url || sitio.logo_url);
+        dl.hidden = !imgD; da.hidden = !!imgD;
+        if (imgD) dl.src = imgD;
+        else da.textContent = sitio ? (sitio.nombre || "?").trim().charAt(0).toUpperCase() : "?";
+      }
       var rp = await TW.sb.from("perfiles").select("es_admin").eq("id", user.id).maybeSingle();
       var la = $("#link-admin");
       if (la) la.hidden = !(rp.data && rp.data.es_admin);
@@ -83,28 +94,150 @@
     await TW.sb.auth.signOut();
     location.reload();
   });
-  // menú hamburguesa de la barra superior (móvil)
-  var burgerNav = $("#p-burger"), menuNav = $("#p-nav-menu");
-  function cerrarMenuNav() { if (menuNav) menuNav.classList.remove("abierto"); if (burgerNav) { burgerNav.classList.remove("abierta"); burgerNav.setAttribute("aria-expanded", "false"); } }
-  if (burgerNav && menuNav) {
+  // Cajon de navegacion: el menu hamburguesa abre el panel lateral
+  // con todas las secciones (en escritorio y en movil).
+  var burgerNav = $("#p-burger"), drawer = $("#p-drawer"), drawerFondo = $("#p-drawer-fondo");
+  function cerrarDrawer() {
+    if (drawer) { drawer.classList.remove("abierto"); drawer.setAttribute("aria-hidden", "true"); }
+    if (drawerFondo) drawerFondo.hidden = true;
+    if (burgerNav) { burgerNav.classList.remove("abierta"); burgerNav.setAttribute("aria-expanded", "false"); }
+    document.body.classList.remove("con-drawer");
+  }
+  function abrirDrawer() {
+    if (drawer) { drawer.classList.add("abierto"); drawer.setAttribute("aria-hidden", "false"); }
+    if (drawerFondo) drawerFondo.hidden = false;
+    if (burgerNav) { burgerNav.classList.add("abierta"); burgerNav.setAttribute("aria-expanded", "true"); }
+    document.body.classList.add("con-drawer");
+  }
+  if (burgerNav && drawer) {
     burgerNav.addEventListener("click", function () {
-      var abierto = menuNav.classList.toggle("abierto");
-      burgerNav.classList.toggle("abierta", abierto);
-      burgerNav.setAttribute("aria-expanded", abierto ? "true" : "false");
+      if (drawer.classList.contains("abierto")) cerrarDrawer(); else abrirDrawer();
     });
-    menuNav.addEventListener("click", function (ev) { if (ev.target.closest("a, button")) cerrarMenuNav(); });
-    document.addEventListener("click", function (ev) { if (!ev.target.closest(".p-nav")) cerrarMenuNav(); });
+    if (drawerFondo) drawerFondo.addEventListener("click", cerrarDrawer);
+    var dx = $("#p-drawer-x");
+    if (dx) dx.addEventListener("click", cerrarDrawer);
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") cerrarDrawer(); });
+    var pie = drawer.querySelector(".p-drawer-pie");
+    if (pie) pie.addEventListener("click", function (ev) { if (ev.target.closest("a, button")) cerrarDrawer(); });
   }
   document.querySelectorAll("#p-tabs button").forEach(function (b) {
     b.addEventListener("click", function () {
       tabActual = b.dataset.tab;
       document.querySelectorAll("#p-tabs button").forEach(function (x) { x.classList.toggle("activa", x === b); });
+      cerrarDrawer();
       pintarTab(tabActual);
     });
   });
+  // ============================================================ inicio (dashboard)
+  function irA(tab) {
+    var b = document.querySelector('#p-tabs button[data-tab="' + tab + '"]');
+    if (b) b.click();
+  }
+  function contar(tabla, extra) {
+    var q = TW.sb.from(tabla).select("id", { count: "exact", head: true }).eq("sitio_id", sitio.id);
+    if (extra) q = extra(q);
+    return q.then(function (r) { return r.count || 0; }, function () { return 0; });
+  }
+  function animarNumero(el, valor) {
+    if (!el) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !valor) { el.textContent = valor; return; }
+    var t0 = null;
+    function paso(ts) {
+      if (!t0) t0 = ts;
+      var k = Math.min(1, (ts - t0) / 650);
+      el.textContent = Math.round(valor * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
+  async function vistaInicio(cont) {
+    if (!sitio) {
+      cont.innerHTML = "<div class='d-bienvenida d-anim'>" +
+        "<h2>Bienvenido a tu panel</h2>" +
+        "<p class='bajada'>Todavía no creaste tu sitio. Cuando lo crees, este panel se convierte en tu tablero: contenido, alumnos y actividad en un solo lugar.</p>" +
+        "<div class='p-acciones'><button class='btn btn-primario' id='d-crear'>Crear mi sitio</button>" +
+        "<button class='btn btn-fantasma' id='d-aprender'>Ver mi aprendizaje</button></div></div>";
+      $("#d-crear").addEventListener("click", function () { irA("sitio"); });
+      $("#d-aprender").addEventListener("click", function () { irA("aprendizaje"); });
+      return;
+    }
+    var urlSitio = "sitio/" + sitio.slug;
+    var urlAbs = new URL(urlSitio, location.href).href;
+    var stats = [
+      ["productos", "Productos"], ["cursos", "Cursos"], ["articulos", "Artículos"],
+      ["documentos", "Documentos"], ["miembros", "Miembros"], ["suscripciones", "Suscripciones activas"]
+    ];
+    cont.innerHTML =
+      "<div class='d-cab d-anim' style='--i:0'><div>" +
+      "<h2>" + esc(sitio.nombre) + "</h2>" +
+      "<p class='bajada'>Plan " + (sitio.plan === "premium" ? "Premium" : "Gratis") + " · Así va tu sitio hoy.</p></div>" +
+      (sitio.avatar_url || sitio.logo_url ? "<img class='d-cab-img' src='" + esc(sitio.avatar_url || sitio.logo_url) + "' alt=''>" : "") +
+      "</div>" +
+      "<div class='d-stats'>" + stats.map(function (s, i) {
+        return "<button type='button' class='d-stat d-anim' style='--i:" + (i + 1) + "' data-ir='" + (s[0] === "suscripciones" ? "alumnos" : s[0] === "miembros" ? "alumnos" : s[0]) + "'><span class='d-stat-num' id='d-n-" + s[0] + "'>…</span><span class='d-stat-et'>" + s[1] + "</span></button>";
+      }).join("") + "</div>" +
+      "<div class='d-cols'>" +
+      "<div class='p-bloque d-anim' style='--i:7'><h3>Tu sitio</h3>" +
+      "<p class='d-url'>" + esc(urlAbs) + "</p>" +
+      "<div class='p-acciones'><a class='btn btn-primario' href='" + urlSitio + "' target='_blank' rel='noopener'>Abrir mi sitio</a>" +
+      "<button class='btn btn-fantasma' id='d-copiar'>Copiar dirección</button>" +
+      "<button class='btn btn-fantasma' id='d-editar'>Editar sitio</button></div>" +
+      "<h3 class='d-sub'>Acciones rápidas</h3>" +
+      "<div class='d-rapidas'>" +
+      "<button class='btn btn-fantasma' data-ir='productos'>Nuevo producto</button>" +
+      "<button class='btn btn-fantasma' data-ir='articulos'>Nuevo artículo</button>" +
+      "<button class='btn btn-fantasma' data-ir='cursos'>Nuevo curso</button>" +
+      "<button class='btn btn-fantasma' data-ir='feed'>Publicar una novedad</button>" +
+      "</div></div>" +
+      "<div class='p-bloque d-anim' style='--i:8'><h3>Actividad reciente</h3><div id='d-actividad'><p class='p-vacio'>Cargando…</p></div></div>" +
+      "</div>";
+    cont.querySelectorAll("[data-ir]").forEach(function (b) {
+      b.addEventListener("click", function () { irA(b.getAttribute("data-ir")); });
+    });
+    $("#d-editar").addEventListener("click", function () { irA("sitio"); });
+    $("#d-copiar").addEventListener("click", async function () {
+      try { await navigator.clipboard.writeText(urlAbs); $("#d-copiar").textContent = "Copiado"; }
+      catch (e) { $("#d-copiar").textContent = "No se pudo copiar"; }
+    });
+    var promesas = {
+      productos: contar("productos"), cursos: contar("cursos"), articulos: contar("articulos"),
+      documentos: contar("documentos"), miembros: contar("miembros")
+    };
+    promesas.suscripciones = (async function () {
+      var rc = await TW.sb.from("cursos").select("id").eq("sitio_id", sitio.id);
+      var ids = (rc.data || []).map(function (c) { return c.id; });
+      if (!ids.length) return 0;
+      var rs = await TW.sb.from("suscripciones").select("id", { count: "exact", head: true }).in("curso_id", ids).eq("estado", "activa");
+      return rs.count || 0;
+    })();
+    Object.keys(promesas).forEach(function (k) {
+      promesas[k].then(function (n) { animarNumero(document.getElementById("d-n-" + k), n); });
+    });
+    var eventos = [];
+    var rf = await TW.sb.from("publicaciones").select("texto, creada").eq("sitio_id", sitio.id).order("creada", { ascending: false }).limit(3);
+    (rf.data || []).forEach(function (f) { eventos.push({ cuando: f.creada, tipo: "Novedad", texto: f.texto }); });
+    var rm = await TW.sb.from("miembros").select("creado, origen, perfiles(nombre)").eq("sitio_id", sitio.id).order("creado", { ascending: false }).limit(3);
+    (rm.data || []).forEach(function (m) {
+      eventos.push({ cuando: m.creado, tipo: "Miembro", texto: ((m.perfiles && m.perfiles.nombre) || "Alguien") + " se sumó a tu sitio" });
+    });
+    eventos.sort(function (a, b) { return new Date(b.cuando) - new Date(a.cuando); });
+    var zona = document.getElementById("d-actividad");
+    if (zona) {
+      zona.innerHTML = eventos.length ? eventos.slice(0, 5).map(function (e) {
+        return "<div class='p-fila-lista'><div class='crece'><span class='titulo'>" + esc(e.tipo) + "</span>" +
+          "<div class='detalle'>" + new Date(e.cuando).toLocaleDateString("es-AR", { day: "numeric", month: "short" }) + " · " + esc(String(e.texto || "").slice(0, 90)) + "</div></div></div>";
+      }).join("") : "<p class='p-vacio'>Todavía no hay actividad. Publicá una novedad o compartí tu sitio para empezar.</p>";
+    }
+  }
+
   function pintarTab(tab) {
     var cont = $("#p-contenido");
     cont.innerHTML = "";
+    cont.classList.remove("entra");
+    void cont.offsetWidth;
+    cont.classList.add("entra");
+    if (tab === "inicio") return vistaInicio(cont);
     if (tab === "sitio") return vistaSitio(cont);
     if (tab === "aprendizaje") return vistaAprendizaje(cont);
     if (!sitio) {

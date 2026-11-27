@@ -25,12 +25,8 @@ setTimeout(window.__finSplash, 8000);
 <header class="p-nav">
   <a class="p-marca" href="index.html"><span class="marca-nombre">TemploWeb</span></a>
   <span class="p-nav-titulo">Panel</span>
-  <div class="p-nav-menu" id="p-nav-menu">
-    <span class="p-nav-usuario" id="p-usuario"></span>
-    <a class="btn btn-fantasma" id="link-admin" href="admin.html" hidden>Administración</a>
-    <button class="btn btn-fantasma" id="btn-salir" hidden>Salir</button>
-  </div>
-  <button class="p-burger" id="p-burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="p-nav-menu" hidden><span></span><span></span><span></span></button>
+  <a class="btn btn-primario btn-chico p-ver-sitio" id="p-ver-sitio" href="#" target="_blank" rel="noopener" hidden>Ver mi sitio</a>
+  <button class="p-burger" id="p-burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="p-drawer" hidden><span></span><span></span><span></span></button>
 </header>
 
 <main class="p-main">
@@ -60,17 +56,35 @@ setTimeout(window.__finSplash, 8000);
 
   <!-- ======================= panel ======================= -->
   <section id="vista-panel" class="p-panel" hidden>
-    <nav class="p-tabs" id="p-tabs">
-      <button data-tab="sitio" class="activa">Mi sitio</button>
-      <button data-tab="productos">Productos</button>
-      <button data-tab="articulos">Artículos</button>
-      <button data-tab="promociones">Promociones</button>
-      <button data-tab="cursos">Cursos y lecciones</button>
-      <button data-tab="documentos">Documentos</button>
-      <button data-tab="feed">Feed</button>
-      <button data-tab="alumnos">Alumnos</button>
-      <button data-tab="aprendizaje">Mi aprendizaje</button>
-    </nav>
+    <div class="p-drawer-fondo" id="p-drawer-fondo" hidden></div>
+    <aside class="p-drawer" id="p-drawer" aria-hidden="true" aria-label="Menú del panel">
+      <div class="p-drawer-cab">
+        <img class="p-drawer-logo" id="p-drawer-logo" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" hidden>
+        <span class="p-drawer-avatar" id="p-drawer-avatar" hidden></span>
+        <div class="p-drawer-id">
+          <p class="p-drawer-nombre" id="p-drawer-nombre">Tu sitio</p>
+          <p class="p-drawer-plan" id="p-drawer-plan"></p>
+        </div>
+        <button class="p-drawer-x" id="p-drawer-x" type="button" aria-label="Cerrar el menú"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+      </div>
+      <nav class="p-tabs" id="p-tabs">
+      <button data-tab="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v11h14V10"/></svg><span>Inicio</span></button>
+      <button data-tab="sitio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Mi sitio</span></button>
+      <button data-tab="productos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg><span>Productos</span></button>
+      <button data-tab="articulos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Artículos</span></button>
+      <button data-tab="promociones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg><span>Promociones</span></button>
+      <button data-tab="cursos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/></svg><span>Cursos y lecciones</span></button>
+      <button data-tab="documentos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Documentos</span></button>
+      <button data-tab="feed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.6"/></svg><span>Feed</span></button>
+      <button data-tab="alumnos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 7M17.5 14.5a6.5 6.5 0 0 1 4 5.5"/></svg><span>Alumnos</span></button>
+      <button data-tab="aprendizaje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5 12 4l10 5.5L12 15z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg><span>Mi aprendizaje</span></button>
+      </nav>
+      <div class="p-drawer-pie">
+        <span class="p-nav-usuario" id="p-usuario"></span>
+        <a class="btn btn-fantasma" id="link-admin" href="admin.html" hidden>Administración</a>
+        <button class="btn btn-fantasma" id="btn-salir" hidden>Salir</button>
+      </div>
+    </aside>
     <div id="p-contenido" class="p-contenido"></div>
   </section>
 
