@@ -437,10 +437,43 @@
     return obj;
   }
 
+  // Iconos de relleno para las tarjetas sin imagen (trazo, heredan color).
+  var ICONOS_MODULO = {
+    productos: "<path d='M21 8l-9-5-9 5v8l9 5 9-5V8z'/><path d='M3 8l9 5 9-5'/><path d='M12 13v8'/>",
+    articulos: "<path d='M6 3h9l4 4v14H6z'/><path d='M15 3v4h4'/><path d='M9 12h6M9 16h6'/>",
+    promociones: "<path d='M19 5L5 19'/><circle cx='7' cy='7' r='3'/><circle cx='17' cy='17' r='3'/>",
+    documentos: "<path d='M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z'/>",
+    cursos: "<circle cx='12' cy='12' r='9'/><path d='M10 8.5l6 3.5-6 3.5z'/>",
+    lecciones: "<path d='M4 6h16M4 12h16M4 18h10'/>",
+    audio: "<path d='M9 18V6l10-2v11'/><circle cx='6.5' cy='18' r='2.5'/><circle cx='16.5' cy='15' r='2.5'/>"
+  };
+  function iconoDe(cfg, x) {
+    if (cfg.tabla === "lecciones") {
+      if (x.tipo === "video") return ICONOS_MODULO.cursos;
+      if (x.tipo === "audio") return ICONOS_MODULO.audio;
+      if (x.tipo === "documento") return ICONOS_MODULO.articulos;
+      return ICONOS_MODULO.lecciones;
+    }
+    return ICONOS_MODULO[cfg.tabla] || ICONOS_MODULO.articulos;
+  }
+  function insigniasDe(cfg, x) {
+    var izq = "", der = "";
+    if (typeof x.publicado === "boolean") izq = "<span class='p-insignia " + (x.publicado ? "es-ok" : "es-off") + "'>" + (x.publicado ? "Publicado" : "Borrador") + "</span>";
+    else if (typeof x.activa === "boolean") izq = "<span class='p-insignia " + (x.activa ? "es-ok" : "es-off") + "'>" + (x.activa ? "Activa" : "Apagada") + "</span>";
+    if (cfg.tabla === "productos") {
+      var st = Array.isArray(x.variantes) && x.variantes.length
+        ? x.variantes.reduce(function (a, v) { return a + (Number(v.s) || 0); }, 0)
+        : (x.stock === null || x.stock === undefined ? null : Number(x.stock));
+      if (x.precio_oferta != null && x.precio != null && Number(x.precio_oferta) < Number(x.precio)) der = "<span class='p-insignia es-oferta'>Oferta</span>";
+      else if (st !== null && st <= 0) der = "<span class='p-insignia es-alerta'>Sin stock</span>";
+    }
+    return (izq ? "<span class='p-insignias izq'>" + izq + "</span>" : "") + (der ? "<span class='p-insignias der'>" + der + "</span>" : "");
+  }
+
   function crud(cont, cfg, fijo) {
     var editando = null;
     cont.innerHTML = "<h2>" + cfg.titulo + "</h2><p class='bajada'>" + cfg.bajada + "</p>" +
-      "<div class='p-bloque' id='cr-form'></div><div class='p-bloque'><h3>Publicados y borradores</h3><div id='cr-lista'></div></div>";
+      "<div class='p-bloque' id='cr-form'></div><div class='p-bloque'><h3>Publicados y borradores</h3><div id='cr-lista' class='p-cards'></div></div>";
     async function pintarLista() {
       var q = TW.sb.from(cfg.tabla).select("*").eq("sitio_id", sitio.id);
       if (fijo) Object.keys(fijo).forEach(function (k) { q = q.eq(k, fijo[k]); });
@@ -448,11 +481,17 @@
       var lista = $("#cr-lista");
       var filas = r.data || [];
       lista.innerHTML = filas.length ? filas.map(function (x) {
-        return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' +
-          esc(x.titulo || x.nombre || "(sin título)") + '</span><div class="detalle">' + esc(cfg.resumen(x)) + "</div></div>" +
+        var media = x.imagen_url
+          ? "<img src='" + esc(x.imagen_url) + "' alt='' loading='lazy'>"
+          : "<span class='p-card-ph'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>" + iconoDe(cfg, x) + "</svg></span>";
+        return "<article class='p-card'>" +
+          "<div class='p-card-media" + (cfg.tabla === "productos" ? " proporcion-cuadrada" : "") + "'>" + media + insigniasDe(cfg, x) + "</div>" +
+          "<div class='p-card-cuerpo'><h4 class='p-card-titulo'>" + esc(x.titulo || x.nombre || "(sin título)") + "</h4>" +
+          "<p class='p-card-detalle'>" + esc(cfg.resumen(x)) + "</p></div>" +
+          "<div class='p-card-acciones'>" +
           (cfg.extraBoton ? '<button class="btn btn-fantasma btn-chico" data-extra="' + x.id + '">' + cfg.extraBoton + "</button>" : "") +
           '<button class="btn btn-fantasma btn-chico" data-editar="' + x.id + '">Editar</button>' +
-          '<button class="btn btn-peligro btn-chico" data-borrar="' + x.id + '">Borrar</button></div>';
+          '<button class="btn btn-peligro btn-chico" data-borrar="' + x.id + '">Borrar</button></div></article>';
       }).join("") : '<p class="p-vacio">Todavía no cargaste nada acá.</p>';
     }
     function pintarForm() {
@@ -915,13 +954,15 @@
       cursos.map(function (c) { return "<option value='" + c.id + "'>" + esc(c.titulo) + "</option>"; }).join("") +
       "</select></label></div>" +
       "<button class='btn btn-primario' type='submit'>Publicar</button><p class='p-error' id='e-feed'></p></form></div>" +
-      "<div class='p-bloque'><h3>Tus publicaciones</h3><div id='feed-lista'></div></div>";
+      "<div class='p-bloque'><h3>Tus publicaciones</h3><div id='feed-lista' class='p-posts'></div></div>";
     async function pintar() {
       var r = await TW.sb.from("publicaciones").select("*").eq("sitio_id", sitio.id).order("creada", { ascending: false }).limit(50);
       $("#feed-lista").innerHTML = (r.data || []).length ? r.data.map(function (p) {
-        return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' + esc(p.texto.slice(0, 90)) + '</span><div class="detalle">' +
-          (p.alcance === "publico" ? "Público" : "De curso") + " · " + new Date(p.creada).toLocaleDateString("es-AR") + "</div></div>" +
-          '<button class="btn btn-peligro btn-chico" data-borrar-pub="' + p.id + '">Borrar</button></div>';
+        return "<article class='p-post" + (p.imagen_url ? "" : " sin-img") + "'>" +
+          (p.imagen_url ? "<div class='p-post-media'><img src='" + esc(p.imagen_url) + "' alt='' loading='lazy'></div>" : "") +
+          "<div class='p-post-cuerpo'><p class='p-post-texto'>" + esc(p.texto) + "</p>" +
+          "<div class='p-post-meta'><span>" + (p.alcance === "publico" ? "Público" : "De curso") + "</span><span>" + new Date(p.creada).toLocaleDateString("es-AR") + "</span></div></div>" +
+          '<button class="btn btn-peligro btn-chico" data-borrar-pub="' + p.id + '">Borrar</button></article>';
       }).join("") : '<p class="p-vacio">Sin publicaciones todavía.</p>';
     }
     var fiF = $("#feed-img-file");
