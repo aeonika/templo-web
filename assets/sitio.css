@@ -325,6 +325,16 @@ html[data-maqueta="premium"] .btn-acento:hover { filter: brightness(1.07); color
   .s-rasgo + .s-rasgo { border-left: none; }
 }
 
+/* ============================== testimonios: carrusel 9:16 ============================== */
+.s-testis { overflow: hidden; }
+.s-testis-track { display: flex; gap: 14px; transition: transform 0.6s ease; }
+.s-testi { flex: 0 0 min(240px, 68vw); margin: 0; border-radius: var(--radio); overflow: hidden; border: 1px solid var(--borde); background: var(--tarjeta); }
+.s-testi img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+.s-testi figcaption { padding: 10px 12px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.s-testis-dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+.s-testis-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; background: var(--borde); cursor: pointer; padding: 0; }
+.s-testis-dots button.activo { background: var(--acento); }
+
 /* ============================== tema Premium · la escena manda ==============================
    Como la referencia: la foto ES la pagina. Sin cajas: marcos dorados,
    texto crema centrado sobre la escena y barra flotante con placas. */

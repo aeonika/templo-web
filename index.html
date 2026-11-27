@@ -161,6 +161,17 @@ setTimeout(window.__finSplash, 8000);
     </div>
   </section>
 
+  <section id="testimonios" class="banda" hidden>
+    <div class="contenedor">
+      <h2 id="testis-titulo">Testimonios</h2>
+      <p class="banda-bajada">Capturas y fotos de quienes ya venden con su propio sitio.</p>
+      <div class="l-testis" id="l-testis">
+        <div class="l-testis-track" id="l-testis-track"></div>
+        <div class="l-testis-dots" id="l-testis-dots"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="planes" class="banda banda-suave">
     <div class="contenedor">
       <h2>Planes</h2>
@@ -217,6 +228,47 @@ setTimeout(window.__finSplash, 8000);
   if (!window.TW || !TW.sb) { if (window.__finSplash) __finSplash(); return; }
   var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "portada_url").maybeSingle();
   if (r.data && r.data.valor) document.getElementById("hero-img").src = r.data.valor;
+  var rt = await TW.sb.from("config_plataforma").select("clave, valor").in("clave", ["testimonios_titulo", "testimonios"]);
+  var cfgT = {};
+  (rt.data || []).forEach(function (f) { cfgT[f.clave] = f.valor; });
+  var itemsT = [];
+  try { itemsT = JSON.parse(cfgT.testimonios || "[]"); } catch (e) { itemsT = []; }
+  itemsT = itemsT.filter(function (t) { return t && t.imagen_url; }).slice(0, 5);
+  if (itemsT.length) {
+    if (cfgT.testimonios_titulo) document.getElementById("testis-titulo").textContent = cfgT.testimonios_titulo;
+    document.getElementById("testimonios").hidden = false;
+    document.getElementById("l-testis-track").innerHTML = itemsT.map(function (t) {
+      return '<figure class="l-testi"><img src="' + TW.esc(t.imagen_url) + '" alt="" loading="lazy">' +
+        (t.texto ? "<figcaption>" + TW.esc(t.texto) + "</figcaption>" : "") + "</figure>";
+    }).join("");
+    document.getElementById("l-testis-dots").innerHTML = itemsT.length > 1 ? itemsT.map(function (t, i) {
+      return '<button type="button" aria-label="Ir a la foto ' + (i + 1) + '"></button>';
+    }).join("") : "";
+    (function () {
+      var caja = document.getElementById("l-testis");
+      var track = document.getElementById("l-testis-track");
+      var total = track.children.length;
+      if (total < 2) return;
+      var dots = Array.prototype.slice.call(caja.querySelectorAll(".l-testis-dots button"));
+      var idx = 0, timer = null;
+      var reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function ir(i) {
+        idx = ((i % total) + total) % total;
+        var paso = track.children[0].offsetWidth + 14;
+        var maximo = Math.max(0, track.scrollWidth - caja.clientWidth);
+        track.style.transform = "translateX(" + (-Math.min(paso * idx, maximo)) + "px)";
+        dots.forEach(function (d, j) { d.classList.toggle("activo", j === idx); });
+      }
+      function auto() { if (!reducido && !timer) timer = setInterval(function () { ir(idx + 1); }, 4000); }
+      function pausa() { if (timer) { clearInterval(timer); timer = null; } }
+      caja.addEventListener("pointerenter", pausa);
+      caja.addEventListener("pointerdown", pausa);
+      caja.addEventListener("pointerleave", auto);
+      dots.forEach(function (d, j) { d.addEventListener("click", function () { ir(j); }); });
+      ir(0);
+      auto();
+    })();
+  }
   await TW.aplicarMarca();
   if (window.__finSplash) __finSplash();
 })();

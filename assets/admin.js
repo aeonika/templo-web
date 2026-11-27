@@ -75,7 +75,7 @@
 
   // ============================================================ resumen
   async function vistaResumen(cont) {
-    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div>";
+    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div><div id='a-testis'></div>";
     var r = await TW.sb.rpc("admin_estadisticas");
     if (r.error || !r.data) { $("#a-stats").innerHTML = "<p class='p-error'>No se pudieron cargar las estadísticas.</p>"; return; }
     var d = r.data;
@@ -90,6 +90,7 @@
     }).join("");
     cargarMarca();
     cargarPortada();
+    cargarTestis();
   }
 
   // ============================================================ marca de la plataforma
@@ -206,6 +207,80 @@
       var r3 = await TW.sb.from("config_plataforma").upsert({ clave: "portada_url", valor: "" }, { onConflict: "clave" });
       if (r3.error) aviso(false, "No se pudo guardar: " + r3.error.message);
       else { aviso(true, "Listo: vuelve la portada original."); cargarPortada(); }
+    });
+  }
+
+  // ============================================================ testimonios de la portada
+  async function cargarTestis() {
+    var caja = $("#a-testis");
+    if (!caja) return;
+    var r = await TW.sb.from("config_plataforma").select("clave, valor").in("clave", ["testimonios_titulo", "testimonios"]);
+    var cfg = {};
+    (r.data || []).forEach(function (f) { cfg[f.clave] = f.valor; });
+    var items = [];
+    try { items = JSON.parse(cfg.testimonios || "[]"); } catch (e) { items = []; }
+    if (!Array.isArray(items)) items = [];
+    function filaT(t) {
+      var url = t ? (t.imagen_url || "") : "";
+      var texto = t ? (t.texto || "") : "";
+      return "<div class='ts-card at-fila'>" +
+        "<div class='ts-vista'>" + (url ? "<img class='ts-img' src='" + esc(url) + "' alt=''>" : "<span class='ts-vacio'>Sin foto</span>") +
+        "<button type='button' class='pf-quitar at-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
+        "<input type='hidden' class='ts-url' value='" + esc(url) + "'>" +
+        "<label class='btn btn-fantasma'>Subir foto 9:16<input type='file' class='ts-file' accept='image/*' hidden></label>" +
+        "<label>Pie de foto <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Nombre · “Su frase”'></label></div>";
+    }
+    caja.innerHTML = "<div class='a-portada'><h3>Testimonios de la página principal</h3>" +
+      "<p class='bajada'>El carrusel de fotos verticales (9:16) de la portada. Hasta 5 fotos; el nombre de la sección también se puede cambiar.</p>" +
+      "<label>Nombre de la sección <input type='text' id='a-testis-titulo' value='" + esc(cfg.testimonios_titulo || "") + "' placeholder='Testimonios'></label>" +
+      "<div id='a-testis-grid' class='ts-grid'>" + (items.length ? items.map(filaT).join("") : filaT(null)) + "</div>" +
+      "<div class='a-portada-form'><button class='btn btn-fantasma' id='a-testis-agregar' type='button'>+ Agregar foto</button>" +
+      "<button class='btn btn-primario' id='a-testis-guardar' type='button'>Guardar testimonios</button></div></div>";
+    $("#a-testis-agregar").addEventListener("click", function () {
+      var grid = $("#a-testis-grid");
+      if (grid.querySelectorAll(".at-fila").length >= 5) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = filaT(null);
+      grid.appendChild(tmp.firstChild);
+    });
+    caja.addEventListener("click", function (ev) {
+      var q = ev.target.closest(".at-quitar");
+      if (q) q.closest(".at-fila").remove();
+    });
+    caja.addEventListener("change", async function (ev) {
+      if (!ev.target.classList.contains("ts-file")) return;
+      var f = ev.target.files[0];
+      if (!f) return;
+      var card = ev.target.closest(".at-fila");
+      try {
+        aviso(true, "Subiendo foto…");
+        var datos = await subirCloudinary(f, false, { max: 1080 });
+        card.querySelector(".ts-url").value = datos.secure_url;
+        var vista = card.querySelector(".ts-vista");
+        var img = vista.querySelector(".ts-img");
+        if (!img) {
+          img = document.createElement("img");
+          img.className = "ts-img";
+          img.alt = "";
+          vista.insertBefore(img, vista.firstChild);
+          var vacio = vista.querySelector(".ts-vacio");
+          if (vacio) vacio.remove();
+        }
+        img.src = datos.secure_url;
+        aviso(true, "Foto subida. Tocá «Guardar testimonios» para aplicarla.");
+      } catch (e) { aviso(false, "No se pudo subir: " + e.message); }
+    });
+    $("#a-testis-guardar").addEventListener("click", async function () {
+      var nuevos = [];
+      caja.querySelectorAll(".at-fila").forEach(function (card) {
+        var url = card.querySelector(".ts-url").value.trim();
+        if (url) nuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim() });
+      });
+      var titulo = $("#a-testis-titulo").value.trim();
+      var r1 = await TW.sb.from("config_plataforma").upsert({ clave: "testimonios", valor: JSON.stringify(nuevos) }, { onConflict: "clave" });
+      var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "testimonios_titulo", valor: titulo }, { onConflict: "clave" });
+      if (r1.error || r2.error) aviso(false, "No se pudo guardar: " + (r1.error || r2.error).message);
+      else { aviso(true, "Testimonios guardados. Se ven al recargar la página principal."); cargarTestis(); }
     });
   }
 

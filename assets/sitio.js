@@ -61,6 +61,8 @@
   if (mod.articulos !== false) enlaces.push(["Artículos", "#articulos"]);
   if (mod.documentos) enlaces.push(["Documentos", "#documentos"]);
   if (mod.feed) enlaces.push(["Novedades", "#novedades"]);
+  var testisNav = (Array.isArray(sitio.testimonios) ? sitio.testimonios : []).filter(function (t) { return t && t.imagen_url; });
+  if (mod.testimonios && testisNav.length) enlaces.push([sitio.testimonios_titulo || "Testimonios", "#testimonios"]);
   nav.innerHTML = '<div class="s-nav-in"><a class="s-marca" href="' + base + '">' +
     (sitio.logo_url ? '<img src="' + TW.esc(sitio.logo_url) + '" alt="">' : "") +
     "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
@@ -248,6 +250,18 @@
     }).join("") + "</div></div>";
   }
 
+  // Testimonios: carrusel horizontal de fotos 9:16 que avanza solo
+  if (mod.testimonios && testisNav.length) {
+    html += seccion("testimonios", TW.esc(sitio.testimonios_titulo || "Testimonios"), "",
+      '<div class="s-testis"><div class="s-testis-track">' + testisNav.map(function (t) {
+        return '<figure class="s-testi"><img src="' + TW.esc(t.imagen_url) + '" alt="" loading="lazy">' +
+          (t.texto ? "<figcaption>" + TW.esc(t.texto) + "</figcaption>" : "") + "</figure>";
+      }).join("") + '</div>' +
+      (testisNav.length > 1 ? '<div class="s-testis-dots">' + testisNav.map(function (t, i) {
+        return '<button type="button" aria-label="Ir a la foto ' + (i + 1) + '"></button>';
+      }).join("") + "</div>" : "") + "</div>");
+  }
+
   // Promociones
   if (mod.promociones && (rPromo.data || []).length) {
     html += seccion("promociones", "Promociones", "", '<div class="s-promos">' +
@@ -335,7 +349,36 @@
       }).join("") + "</div>");
   }
 
+  // Carrusel de testimonios: avanza solo cada 4 s, se pausa al
+  // tocarlo o pasar el cursor, y los puntos saltan a cada foto.
+  function iniciarTestis() {
+    var caja = document.querySelector(".s-testis");
+    if (!caja) return;
+    var track = caja.querySelector(".s-testis-track");
+    var total = track ? track.children.length : 0;
+    if (!track || total < 2) return;
+    var dots = Array.prototype.slice.call(caja.querySelectorAll(".s-testis-dots button"));
+    var idx = 0, timer = null;
+    var reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function ir(i) {
+      idx = ((i % total) + total) % total;
+      var paso = track.children[0].offsetWidth + 14;
+      var maximo = Math.max(0, track.scrollWidth - caja.clientWidth);
+      track.style.transform = "translateX(" + (-Math.min(paso * idx, maximo)) + "px)";
+      dots.forEach(function (d, j) { d.classList.toggle("activo", j === idx); });
+    }
+    function auto() { if (!reducido && !timer) timer = setInterval(function () { ir(idx + 1); }, 4000); }
+    function pausa() { if (timer) { clearInterval(timer); timer = null; } }
+    caja.addEventListener("pointerenter", pausa);
+    caja.addEventListener("pointerdown", pausa);
+    caja.addEventListener("pointerleave", auto);
+    dots.forEach(function (d, j) { d.addEventListener("click", function () { ir(j); }); });
+    ir(0);
+    auto();
+  }
+
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
+  iniciarTestis();
   // La barra solo enlaza a secciones que existen de verdad: si un modulo
   // esta desactivado o quedo vacio, su seccion no se renderiza y el
   // enlace sobra. «Quien soy» cuenta como vacio si el sitio no tiene

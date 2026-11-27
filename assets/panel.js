@@ -1536,7 +1536,8 @@
       ["articulos", "Artículos", "Tu blog, sin depender de ninguna red social"],
       ["documentos", "Documentos", "Tu repositorio de archivos gratis y pagos"],
       ["promociones", "Promociones", "Avisos, lanzamientos y ofertas"],
-      ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"]
+      ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"],
+      ["testimonios", "Testimonios", "Carrusel de fotos verticales que avanza solo: capturas, clientes, envíos"]
     ];
     var disenosDefs = [
       ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
@@ -1611,6 +1612,20 @@
         "<div class='pf-iconos'>" + iconosPanel.map(function (o) {
           return "<button type='button' class='pf-ico" + (o[0] === icono ? " activo" : "") + "' data-ico='" + o[0] + "' title='" + o[1] + "'>" + ICONOS_RASGO[o[0]] + "</button>";
         }).join("") + "</div></div>";
+    }
+    // Testimonios: fotos verticales 9:16 en carrusel (maximo 5). La
+    // tarjeta guarda la URL en un campo oculto; el texto es el pie.
+    var testisSitio = Array.isArray(sitio.testimonios) ? sitio.testimonios : [];
+    function tarjetaTesti(t) {
+      var url = t ? (t.imagen_url || "") : "";
+      var texto = t ? (t.texto || "") : "";
+      return "<div class='ts-card'>" +
+        "<div class='ts-vista'>" + (url ? "<img class='ts-img' src='" + esc(url) + "' alt=''>" : "<span class='ts-vacio'>Sin foto todavía</span>") +
+        "<button type='button' class='pf-quitar ts-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
+        "<input type='hidden' class='ts-url' value='" + esc(url) + "'>" +
+        "<label class='btn btn-fantasma c-subir'>Subir foto 9:16<input type='file' class='ts-file' accept='image/*' hidden></label>" +
+        "<label>Pie de foto (opcional) <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Marina · “¡Llegó en el día!”'></label>" +
+        "<p class='p-ayuda ts-estado'></p></div>";
     }
     var metodosSitio = TW.metodosDeSitio(configSitio);
     cont.innerHTML =
@@ -1718,6 +1733,10 @@
       "<div class='p-bloque'><h3>Puntos fuertes</h3><p class='p-ayuda'>Las tarjetas con icono que se ven en tu sitio, bajo tu presentación. Escribí el texto y tocá un icono para elegirlo: la vista previa muestra cómo va a quedar. Hasta 6.</p><div id='c-rasgos' class='pf-grid'>" +
       (rasgosSitio.length ? rasgosSitio.map(tarjetaPunto).join("") : tarjetaPunto(null)) +
       "</div><button type='button' class='btn btn-fantasma' id='c-rasgo-agregar'>+ Agregar punto fuerte</button></div>" +
+      "<div class='p-bloque'><h3>Testimonios</h3><p class='p-ayuda'>Fotos verticales (9:16) en un carrusel que avanza solo cada 4 segundos: capturas de pantalla, clientes contentos, indicaciones de envío. Hasta 5 fotos. Activalo en «Módulos» y elegí el nombre de la sección.</p>" +
+      "<label>Nombre de la sección <input type='text' name='testimonios_titulo' value='" + esc(sitio.testimonios_titulo || "") + "' placeholder='Testimonios'></label>" +
+      "<div id='c-testis' class='ts-grid'>" + (testisSitio.length ? testisSitio.map(tarjetaTesti).join("") : tarjetaTesti(null)) + "</div>" +
+      "<button type='button' class='btn btn-fantasma' id='c-testi-agregar'>+ Agregar foto</button></div>" +
       "<div class='p-bloque'><label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Sitio publicado</span><span class='mod-desc'>Visible para tus visitantes; si lo apagás, solo vos lo ves al editar</span></span>" +
       "<input type='checkbox' class='mod-switch' name='publicado'" + (sitio.publicado ? " checked" : "") + "></label>" +
       "<button class='btn btn-primario btn-bloque' type='submit'>Guardar cambios</button>" +
@@ -1876,6 +1895,42 @@
         }
       });
     }
+    var contTestis = $("#c-testis"), btnTesti = $("#c-testi-agregar");
+    if (btnTesti && contTestis) btnTesti.addEventListener("click", function () {
+      if (contTestis.querySelectorAll(".ts-card").length >= 5) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = tarjetaTesti(null);
+      contTestis.appendChild(tmp.firstChild);
+    });
+    if (contTestis) {
+      contTestis.addEventListener("click", function (ev) {
+        var quitar = ev.target.closest(".ts-quitar");
+        if (quitar) quitar.closest(".ts-card").remove();
+      });
+      contTestis.addEventListener("change", function (ev) {
+        if (!ev.target.classList.contains("ts-file")) return;
+        var arch = ev.target.files[0];
+        if (!arch) return;
+        var card = ev.target.closest(".ts-card");
+        var estado = card.querySelector(".ts-estado");
+        estado.textContent = "Subiendo la foto…";
+        subirCloudinary(arch, false, { max: 1080 }).then(function (datos) {
+          card.querySelector(".ts-url").value = datos.secure_url;
+          var vista = card.querySelector(".ts-vista");
+          var img = vista.querySelector(".ts-img");
+          if (!img) {
+            img = document.createElement("img");
+            img.className = "ts-img";
+            img.alt = "";
+            vista.insertBefore(img, vista.firstChild);
+            var vacio = vista.querySelector(".ts-vacio");
+            if (vacio) vacio.remove();
+          }
+          img.src = datos.secure_url;
+          estado.textContent = "Foto subida. Tocá «Guardar cambios» para aplicarla.";
+        }).catch(function (e2) { estado.textContent = "No se pudo subir: " + e2.message; });
+      });
+    }
     mejorarConRico(document.querySelector("#f-sitio [name='quienes_somos']"));
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
@@ -1891,6 +1946,11 @@
         if (de) item.descripcion = de;
         rasgosNuevos.push(item);
       });
+      var testisNuevos = [];
+      document.querySelectorAll(".ts-card").forEach(function (card) {
+        var url = card.querySelector(".ts-url").value.trim();
+        if (url) testisNuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim() });
+      });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
         quienes_somos: f.get("quienes_somos") || "", logo_url: f.get("logo_url") || null,
@@ -1899,6 +1959,8 @@
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
         fondo_url: f.get("fondo_url") || null,
         rasgos: rasgosNuevos,
+        testimonios: testisNuevos,
+        testimonios_titulo: (f.get("testimonios_titulo") || "").trim() || null,
         rubro: f.get("rubro") || "general",
         config: Object.assign({}, sitio.config || {}, {
           avatar_visible: !!f.get("avatar_visible"),
