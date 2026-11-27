@@ -170,7 +170,7 @@
     return '<article class="s-tarjeta' + (agotado ? " s-agotada" : "") + '" data-categoria="' + TW.esc(p.categoria || "") + '">' +
       (p.imagen_url ? '<a href="' + urlDetalle + '"><img src="' + TW.esc(p.imagen_url) + '" alt=""></a>' : "") +
       '<div class="s-tarjeta-cuerpo"><p class="s-tipo">' + tipo + "</p><h3>" + TW.esc(p.nombre) + "</h3>" +
-      "<p>" + TW.esc(p.descripcion) + "</p>" +
+      "<p>" + TW.esc(TW.textoPlano(p.descripcion)) + "</p>" +
       precioHtml + stockHtml + tallesHtml +
       '<div class="s-tarjeta-acciones">' + boton + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div></article>';
   }
@@ -238,7 +238,7 @@
       rPromo.data.map(function (pr) {
         return '<div class="s-promo">' +
           (pr.imagen_url ? '<img src="' + TW.esc(pr.imagen_url) + '" alt="">' : "") +
-          "<div><h3>" + TW.esc(pr.titulo) + "</h3><p>" + TW.esc(pr.descripcion) + "</p></div>" +
+          "<div><h3>" + TW.esc(pr.titulo) + "</h3><p>" + TW.esc(TW.textoPlano(pr.descripcion)) + "</p></div>" +
           (pr.link ? '<a class="btn btn-acento" href="' + TW.esc(pr.link) + '" target="_blank" rel="noopener">Ver</a>' : "") +
           "</div>";
       }).join("") + "</div>");
@@ -266,7 +266,7 @@
       rCursos.data.map(function (c) {
         return '<article class="s-tarjeta">' +
           (c.imagen_url ? '<img src="' + TW.esc(c.imagen_url) + '" alt="">' : "") +
-          '<div class="s-tarjeta-cuerpo"><h3>' + TW.esc(c.titulo) + "</h3><p>" + TW.esc(c.descripcion) + "</p>" +
+          '<div class="s-tarjeta-cuerpo"><h3>' + TW.esc(c.titulo) + "</h3><p>" + TW.esc(TW.textoPlano(c.descripcion)) + "</p>" +
           (c.precio != null ? '<p class="s-precio">' + TW.precio(c.precio, c.moneda) + "</p>" : "") +
           '<a class="btn btn-acento" href="/curso/' + encodeURIComponent(slug) + "/" + c.id + '">Ver el curso</a>' +
           "</div></article>";
@@ -282,7 +282,7 @@
           '<div class="s-articulo-cuerpo"><p class="fecha">' +
           new Date(a2.creado).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
           '<h3><a href="' + base + "?a=" + encodeURIComponent(a2.slug) + '">' + TW.esc(a2.titulo) + "</a></h3>" +
-          "<p>" + TW.esc(a2.extracto) + "</p></div></article>";
+          "<p>" + TW.esc(TW.textoPlano(a2.extracto)) + "</p></div></article>";
       }).join("") + "</div>");
   }
 
@@ -303,7 +303,7 @@
         var gratis = Number(d.precio) === 0;
         var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
         var estado = !gratis && misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "";
-        return '<div class="s-doc"><div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
+        return '<div class="s-doc">' + (d.imagen_url ? '<img class="s-doc-img" src="' + TW.esc(d.imagen_url) + '" alt="">' : "") + '<div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(TW.textoPlano(d.descripcion)) + "</p></div>" +
           '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div>';
       }).join("") + "</div>");
   }

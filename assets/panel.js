@@ -242,9 +242,9 @@
     });
     return out;
   }
-  function conectarGaleria(contenedor, botonAgregar) {
+  function conectarGaleria(contenedor, botonAgregar, maximo) {
     if (botonAgregar) botonAgregar.addEventListener("click", function () {
-      if (contenedor.querySelectorAll(".g-fila").length >= 8) return;
+      if (contenedor.querySelectorAll(".g-fila").length >= (maximo || 8)) return;
       var tmp = document.createElement("div");
       tmp.innerHTML = filaGaleriaHtml("");
       contenedor.appendChild(tmp.firstChild);
@@ -816,7 +816,7 @@
         { k: "nombre", et: "Nombre", tipo: "text" },
         { k: "tipo", et: "Tipo", tipo: "select", opciones: [["fisico", "Físico"], ["digital", "Digital"], ["servicio", "Servicio"]] },
         { k: "categoria", et: "Categoría", tipo: "categoria" },
-        { k: "descripcion", et: "Descripción", tipo: "textarea" },
+        { k: "descripcion", et: "Descripción", tipo: "textarea", md: true },
         { k: "imagen_url", et: "Imagen", tipo: "imagen", grande: true, max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = a consultar)", tipo: "number" },
         { k: "precio_oferta", et: "Precio de oferta (opcional)", tipo: "number" },
@@ -826,10 +826,10 @@
         { k: "variantes", et: "Talles y stock por talle", tipo: "talles2" },
         { k: "destacado", et: "Destacado en la vidriera", tipo: "switch", clase: "es-destacado", desc: "El producto aparece en la sección de destacados de tu sitio." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
-        { k: "galeria", et: "Más imágenes (galería de la pantalla de detalle)", tipo: "galeria" },
+        { k: "galeria", et: "Más imágenes (galería de la pantalla de detalle)", tipo: "galeria", max: 2, ayuda: "La imagen principal + hasta 2 más: máximo 3 imágenes por producto. En los servicios se muestra solo la imagen principal." },
         { k: "pagos_modo", et: "Métodos de pago de este ítem", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este ítem)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
         { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
-        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea", md: true },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
@@ -850,8 +850,8 @@
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
         { k: "slug", et: "Dirección (slug)", tipo: "text" },
-        { k: "extracto", et: "Extracto", tipo: "textarea" },
-        { k: "cuerpo", et: "Cuerpo", tipo: "textarea-grande" },
+        { k: "extracto", et: "Extracto", tipo: "textarea", md: true },
+        { k: "cuerpo", et: "Cuerpo", tipo: "textarea-grande", md: true },
         { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
@@ -862,7 +862,7 @@
       bajada: "Avisos y publicidad de tu sitio: lanzamientos, descuentos, eventos.",
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
-        { k: "descripcion", et: "Descripción", tipo: "textarea" },
+        { k: "descripcion", et: "Descripción", tipo: "textarea", md: true },
         { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "link", et: "Enlace", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
@@ -876,12 +876,13 @@
       archivo: { campoUrl: "url_publica", campoId: "cloudinary_id", privadoSegunPrecio: true },
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
-        { k: "descripcion", et: "Descripción", tipo: "textarea" },
+        { k: "descripcion", et: "Descripción", tipo: "textarea", md: true },
+        { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1200, ayuda: "Se muestra grande en el detalle del documento y como miniatura en la lista." },
         { k: "precio", et: "Precio (0 = gratis)", tipo: "number", def: 0 },
         { k: "link_pago", et: "Link de pago", tipo: "text" },
         { k: "pagos_modo", et: "Métodos de pago de este documento", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este documento)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
         { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
-        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea", md: true },
         { k: "url_publica", et: "URL pública (solo documentos gratis)", tipo: "text" },
         { k: "cloudinary_id", et: "ID de Cloudinary (documentos pagos)", tipo: "text" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
@@ -893,14 +894,13 @@
       bajada: "Cada curso tiene sus lecciones: elegí «Lecciones» en un curso para cargarlas.",
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
-        { k: "descripcion", et: "Descripción", tipo: "textarea" },
+        { k: "descripcion", et: "Descripción", tipo: "textarea", md: true },
         { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = gratis)", tipo: "number" },
         { k: "link_pago", et: "Link de pago de la suscripción", tipo: "text" },
-        { k: "galeria", et: "Más imágenes (galería del aula)", tipo: "galeria" },
         { k: "pagos_modo", et: "Métodos de pago de este curso", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este curso)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
         { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
-        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea", md: true },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
       resumen: function (x) { return (x.precio != null ? TW.precio(x.precio, x.moneda) : "Gratis") + (x.publicado ? "" : " · borrador"); }
@@ -915,7 +915,7 @@
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "url_publica", et: "URL pública (lecciones gratis o preview)", tipo: "text" },
         { k: "cloudinary_id", et: "ID de Cloudinary (lecciones pagas)", tipo: "text" },
-        { k: "cuerpo", et: "Texto de la lección (solo tipo texto)", tipo: "textarea-grande" },
+        { k: "cuerpo", et: "Texto de la lección (solo tipo texto)", tipo: "textarea-grande", md: true },
         { k: "es_preview", et: "Es vista previa gratuita", tipo: "check" }
       ],
       resumen: function (x) { return x.tipo + (x.es_preview ? " · preview" : ""); }
@@ -933,6 +933,16 @@
       }).join("") + "</select></label>";
     }
     if (c.tipo === "textarea" || c.tipo === "textarea-grande") {
+      if (c.md) {
+        return '<div class="c-campo">' + c.et + '<div class="md-bar">' +
+          '<button type="button" data-md="b"><strong>N</strong></button>' +
+          '<button type="button" data-md="i"><em>I</em></button>' +
+          '<button type="button" data-md="h">Título</button>' +
+          '<button type="button" data-md="lista">Lista</button>' +
+          '<button type="button" data-md="link">Enlace</button></div>' +
+          '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea>" +
+          '<span class="c-ayuda">Con formato: **negrita**, *cursiva*, ## título, - ítem de lista, [texto](https://…)</span></div>';
+      }
       return "<label>" + c.et + '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea></label>";
     }
     if (c.tipo === "fecha") {
@@ -982,9 +992,9 @@
     }
     if (c.tipo === "galeria") {
       return '<div class="c-campo">' + c.et +
-        '<div class="g-editor" data-galeria><div class="g-filas"></div>' +
+        '<div class="g-editor" data-galeria data-g-max="' + (c.max || 8) + '"><div class="g-filas"></div>' +
         '<button type="button" class="btn btn-fantasma btn-chico" data-g-add>+ Agregar imagen</button>' +
-        '<span class="c-ayuda">Imágenes extra que se ven en la pantalla de detalle, además de la principal.</span></div></div>';
+        '<span class="c-ayuda">' + (c.ayuda || "Imágenes extra que se ven en la pantalla de detalle, además de la principal.") + '</span></div></div>';
     }
     return "<label>" + c.et + '<input type="' + (c.tipo === "number" ? "number" : "text") + '" name="' + c.k + '" value="' + esc(v) + '"' + (c.tipo === "number" ? ' step="any" min="0"' : "") + "></label>";
   }
@@ -1106,8 +1116,30 @@
         t.innerHTML = filaGaleriaHtml(u);
         filas.appendChild(t.firstChild);
       });
-      conectarGaleria(filas, editor.querySelector("[data-g-add]"));
+      conectarGaleria(filas, editor.querySelector("[data-g-add]"), Number(editor.dataset.gMax || 8));
     }
+    // Barra de formato (Markdown simple) de los textarea con md: true.
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target.closest("[data-md]");
+      if (!btn) return;
+      var campo = btn.closest(".c-campo");
+      var ta = campo && campo.querySelector("textarea");
+      if (!ta) return;
+      ev.preventDefault();
+      var modo = btn.getAttribute("data-md");
+      var s0 = ta.selectionStart || 0, e0 = ta.selectionEnd || 0;
+      var sel = ta.value.substring(s0, e0);
+      var nuevo = "";
+      if (modo === "b") nuevo = "**" + (sel || "negrita") + "**";
+      else if (modo === "i") nuevo = "*" + (sel || "cursiva") + "*";
+      else if (modo === "h") nuevo = "\n## " + (sel || "Título") + "\n";
+      else if (modo === "lista") nuevo = "\n- " + (sel || "ítem") + "\n- ";
+      else if (modo === "link") nuevo = "[" + (sel || "texto") + "](https://)";
+      ta.value = ta.value.substring(0, s0) + nuevo + ta.value.substring(e0);
+      ta.focus();
+      var pos = s0 + nuevo.length;
+      try { ta.setSelectionRange(pos, pos); } catch (e) {}
+    });
     function prepararTalles(caja, iniciales) {
       var editor = caja.querySelector("[data-talles]");
       if (!editor) return;
@@ -1281,6 +1313,15 @@
       if (cfg.tabla === "productos") {
         prepararCats(caja);
         prepararTalles(caja, editando && Array.isArray(editando.variantes) ? editando.variantes : []);
+        // Los servicios muestran una sola imagen: sin galeria.
+        var selTipo = caja.querySelector('[name="tipo"]');
+        var edGal = caja.querySelector("[data-galeria]");
+        var campoGal = edGal ? edGal.closest(".c-campo") : null;
+        if (selTipo && campoGal) {
+          var syncTipo = function () { campoGal.style.display = selTipo.value === "servicio" ? "none" : ""; };
+          selTipo.addEventListener("change", syncTipo);
+          syncTipo();
+        }
         var swFlash = caja.querySelector('[name="flash"]');
         if (swFlash) {
           var syncFlash = function () {

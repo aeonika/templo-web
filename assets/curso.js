@@ -82,10 +82,10 @@
   main.innerHTML =
     '<section class="aula-cabecera"><div class="contenedor">' +
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#cursos">← Todos los cursos</a></p>' +
+    (curso.imagen_url ? '<img class="aula-portada" src="' + TW.esc(curso.imagen_url) + '" alt="">' : "") +
     "<h1>" + TW.esc(curso.titulo) + "</h1>" +
-    (curso.descripcion ? "<p>" + TW.esc(curso.descripcion) + "</p>" : "") +
+    (curso.descripcion ? '<div class="aula-desc">' + TW.md(curso.descripcion) + "</div>" : "") +
     (curso.precio != null ? '<p class="s-precio">' + TW.precio(curso.precio, curso.moneda) + "</p>" : "") +
-    (Array.isArray(curso.galeria) && curso.galeria.length ? '<div class="s-galeria">' + curso.galeria.map(function (u) { return '<img src="' + TW.esc(u) + '" alt="">'; }).join("") + "</div>" : "") +
     '<div class="aula-estado">' + estadoHtml + "</div>" +
     '<div id="aula-player"></div>' +
     '<div class="aula-lecciones">' +

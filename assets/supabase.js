@@ -484,6 +484,18 @@
       document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !fondo.hidden) cerrar(); });
       botones.forEach(function (b) { b.addEventListener("click", function () { elegir(b.dataset.pais); }); });
     },
+    // Texto plano sin marcas de formato: para las tarjetas del indice,
+    // donde la descripcion se muestra como resumen de una linea.
+    textoPlano: function (texto) {
+      return String(texto || "")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .replace(/\*\*([^*]+)\*\*/g, "$1")
+        .replace(/\*([^*]+)\*/g, "$1")
+        .replace(/^#{2,3}\s+/gm, "")
+        .replace(/^\s*-\s+/gm, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {

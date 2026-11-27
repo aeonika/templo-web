@@ -74,15 +74,19 @@
     }
   }
 
-  main.innerHTML =
-    '<section class="s-seccion"><div class="contenedor">' +
-    '<p><a href="/sitio/' + encodeURIComponent(slug) + '#documentos">← Todos los documentos</a></p>' +
+  var infoDoc =
     '<p class="s-tipo">Documento</p><h1>' + TW.esc(doc.titulo) + "</h1>" +
-    (doc.descripcion ? '<p class="s-detalle-desc">' + TW.esc(doc.descripcion) + "</p>" : "") +
+    (doc.descripcion ? '<div class="s-detalle-desc">' + TW.md(doc.descripcion) + "</div>" : "") +
     '<p class="s-precio s-precio-grande">' + (gratis ? "Gratis" : TW.precio(doc.precio, doc.moneda)) + "</p>" +
     (acceso && !gratis ? '<p><span class="s-badge">Ya es tuyo</span></p>' : "") +
     '<div class="s-detalle-acciones">' + accionesHtml + "</div>" +
-    pagosHtml + comprobanteHtml +
+    pagosHtml + comprobanteHtml;
+  main.innerHTML =
+    '<section class="s-seccion"><div class="contenedor">' +
+    '<p><a href="/sitio/' + encodeURIComponent(slug) + '#documentos">← Todos los documentos</a></p>' +
+    (doc.imagen_url
+      ? '<div class="s-detalle"><div class="s-detalle-media"><img class="s-detalle-img" src="' + TW.esc(doc.imagen_url) + '" alt=""></div><div class="s-detalle-info">' + infoDoc + "</div></div>"
+      : infoDoc) +
     "</div></section>";
   TW.conectarPagosInteractivo(main.querySelector(".pg"), sitio.config && sitio.config.pais);
   if (window.__finSplash) window.__finSplash();

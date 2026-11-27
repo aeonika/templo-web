@@ -67,9 +67,12 @@
     }).join("") + "</div>";
   }
 
+  // Servicios: una sola imagen. Productos: principal + galeria, con un
+  // maximo de 3 imagenes en total.
   var imagenes = [];
   if (p.imagen_url) imagenes.push(p.imagen_url);
-  if (Array.isArray(p.galeria)) p.galeria.forEach(function (u) { if (u && imagenes.indexOf(u) < 0) imagenes.push(u); });
+  if (p.tipo !== "servicio" && Array.isArray(p.galeria)) p.galeria.forEach(function (u) { if (u && imagenes.indexOf(u) < 0) imagenes.push(u); });
+  imagenes = imagenes.slice(0, 3);
   var galeriaHtml = "";
   if (imagenes.length) {
     galeriaHtml = '<div class="s-detalle-media"><img class="s-detalle-img" id="dprod-img" src="' + TW.esc(imagenes[0]) + '" alt="">' +
@@ -106,7 +109,7 @@
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#productos">← Todos los productos</a></p>' +
     '<div class="s-detalle">' + galeriaHtml +
     '<div class="s-detalle-info"><p class="s-tipo">' + tipo + "</p><h1>" + TW.esc(p.nombre) + "</h1>" +
-    (p.descripcion ? '<p class="s-detalle-desc">' + TW.esc(p.descripcion) + "</p>" : "") +
+    (p.descripcion ? '<div class="s-detalle-desc">' + TW.md(p.descripcion) + "</div>" : "") +
     precioHtml + stockHtml + tallesHtml +
     '<div class="s-detalle-acciones">' + accionHtml + "</div>" +
     pagosHtml + comprobanteHtml +
