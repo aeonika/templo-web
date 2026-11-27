@@ -82,9 +82,11 @@
       var nombre = ses.perfil.nombre || u.email || "";
       var html = '<span class="s-sesion-datos"><span class="s-sesion-nombre">' + TW.esc(nombre) + "</span>" +
         '<span class="s-rol s-rol--' + rol + '">' + rolTxt + "</span></span>";
-      if (esDueno) html += '<a class="s-nav-admin" href="/panel.html">Administrar sitio</a>';
-      else if (ses.esMaster) html += '<a href="/admin.html">Administración</a>';
-      else html += '<a href="/panel.html">Mi panel</a>';
+      var icoLlave = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="16" r="4.2"/><path d="M11.2 12.8L20 4"/><path d="M16.4 7.6l2.4 2.4"/><path d="M13.9 10.1l2 2"/></svg>';
+      var icoUsuario = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.4 3.6-5 7-5s6.2 1.6 7 5"/></svg>';
+      if (esDueno) html += '<a class="s-sesion-ico es-llave" href="/panel.html" title="Administrar sitio" aria-label="Administrar sitio">' + icoLlave + "</a>";
+      else if (ses.esMaster) html += '<a class="s-sesion-ico es-llave" href="/admin.html" title="Administración" aria-label="Administración">' + icoLlave + "</a>";
+      else html += '<a class="s-sesion-ico" href="/panel.html" title="Mi panel" aria-label="Mi panel">' + icoUsuario + "</a>";
       html += '<button class="s-salir" id="s-salir-nav" type="button">Salir</button>';
       zona.innerHTML = html;
       var b = document.getElementById("s-salir-nav");
