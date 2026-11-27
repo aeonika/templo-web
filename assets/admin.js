@@ -75,7 +75,7 @@
 
   // ============================================================ resumen
   async function vistaResumen(cont) {
-    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div><div id='a-testis'></div>";
+    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div><div id='a-testis'></div><div id='a-orden'></div>";
     var r = await TW.sb.rpc("admin_estadisticas");
     if (r.error || !r.data) { $("#a-stats").innerHTML = "<p class='p-error'>No se pudieron cargar las estadísticas.</p>"; return; }
     var d = r.data;
@@ -91,6 +91,7 @@
     cargarMarca();
     cargarPortada();
     cargarTestis();
+    cargarOrden();
   }
 
   // ============================================================ marca de la plataforma
@@ -228,7 +229,8 @@
         "<button type='button' class='pf-quitar at-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
         "<input type='hidden' class='ts-url' value='" + esc(url) + "'>" +
         "<label class='btn btn-fantasma'>Subir foto 9:16<input type='file' class='ts-file' accept='image/*' hidden></label>" +
-        "<label>Pie de foto <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Nombre · “Su frase”'></label></div>";
+        "<label class='ts-pie'><input type='checkbox' class='ts-pie-check'" + (!t || t.pie !== false ? " checked" : "") + "> Mostrar pie de foto</label>" +
+        "<label>Pie de foto <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Nombre · “Su frase”'" + (t && t.pie === false ? " disabled" : "") + "></label></div>";
     }
     caja.innerHTML = "<div class='a-portada'><h3>Testimonios de la página principal</h3>" +
       "<p class='bajada'>El carrusel de fotos verticales (9:16) de la portada. Hasta 5 fotos; el nombre de la sección también se puede cambiar.</p>" +
@@ -248,6 +250,12 @@
       if (q) q.closest(".at-fila").remove();
     });
     caja.addEventListener("change", async function (ev) {
+      if (ev.target.classList.contains("ts-pie-check")) {
+        var cardP = ev.target.closest(".at-fila");
+        var inpP = cardP && cardP.querySelector(".ts-texto");
+        if (inpP) inpP.disabled = !ev.target.checked;
+        return;
+      }
       if (!ev.target.classList.contains("ts-file")) return;
       var f = ev.target.files[0];
       if (!f) return;
@@ -274,13 +282,65 @@
       var nuevos = [];
       caja.querySelectorAll(".at-fila").forEach(function (card) {
         var url = card.querySelector(".ts-url").value.trim();
-        if (url) nuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim() });
+        if (url) nuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim(), pie: card.querySelector(".ts-pie-check").checked });
       });
       var titulo = $("#a-testis-titulo").value.trim();
       var r1 = await TW.sb.from("config_plataforma").upsert({ clave: "testimonios", valor: JSON.stringify(nuevos) }, { onConflict: "clave" });
       var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "testimonios_titulo", valor: titulo }, { onConflict: "clave" });
       if (r1.error || r2.error) aviso(false, "No se pudo guardar: " + (r1.error || r2.error).message);
       else { aviso(true, "Testimonios guardados. Se ven al recargar la página principal."); cargarTestis(); }
+    });
+  }
+
+  // ============================================================ orden de secciones de la portada
+  async function cargarOrden() {
+    var caja = $("#a-orden");
+    if (!caja) return;
+    var SECCIONES = [["para-quien", "Para quién"], ["herramientas", "Herramientas"], ["como", "Cómo funciona"], ["novedades", "Novedades"], ["testimonios", "Testimonios"], ["planes", "Planes"]];
+    var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "orden_secciones").maybeSingle();
+    var guardado = [];
+    try { guardado = JSON.parse((r.data && r.data.valor) || "[]"); } catch (e) { guardado = []; }
+    var filas = SECCIONES.map(function (s2, i) { return { s2: s2, i: i }; });
+    filas.sort(function (a, b) {
+      var pa = guardado.indexOf(a.s2[0]), pb = guardado.indexOf(b.s2[0]);
+      if (pa < 0) pa = 100 + a.i;
+      if (pb < 0) pb = 100 + b.i;
+      return pa - pb;
+    });
+    caja.innerHTML = "<div class='a-portada'><h3>Orden de la página principal</h3>" +
+      "<p class='bajada'>Arrastrá las secciones desde el agarre ⠿ para cambiar su ubicación en la portada. La presentación y el cierre quedan fijos.</p>" +
+      "<div id='a-orden-lista'>" + filas.map(function (f) {
+        return "<div class='a-orden-fila' data-orden-id='" + f.s2[0] + "'><span class='mod-grip' title='Arrastrá para ordenar'>⠿</span><span>" + f.s2[1] + "</span></div>";
+      }).join("") + "</div>" +
+      "<div class='a-portada-form'><button class='btn btn-primario' id='a-orden-guardar' type='button'>Guardar orden</button></div></div>";
+    var lista = $("#a-orden-lista"), arrastrada = null;
+    lista.addEventListener("mousedown", function (ev) {
+      var fila = ev.target.closest(".a-orden-fila");
+      if (fila && ev.target.closest(".mod-grip")) fila.draggable = true;
+    });
+    lista.addEventListener("dragstart", function (ev) {
+      arrastrada = ev.target.closest(".a-orden-fila");
+      if (arrastrada) arrastrada.classList.add("arrastrando");
+    });
+    lista.addEventListener("dragover", function (ev) {
+      if (!arrastrada) return;
+      ev.preventDefault();
+      var destino = Array.prototype.slice.call(lista.querySelectorAll(".a-orden-fila")).find(function (f2) {
+        var r2 = f2.getBoundingClientRect();
+        return ev.clientY < r2.top + r2.height / 2;
+      });
+      if (destino) lista.insertBefore(arrastrada, destino);
+      else lista.appendChild(arrastrada);
+    });
+    lista.addEventListener("dragend", function () {
+      if (arrastrada) { arrastrada.classList.remove("arrastrando"); arrastrada.draggable = false; }
+      arrastrada = null;
+    });
+    $("#a-orden-guardar").addEventListener("click", async function () {
+      var orden = Array.prototype.map.call(lista.querySelectorAll(".a-orden-fila"), function (f2) { return f2.dataset.ordenId; });
+      var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "orden_secciones", valor: JSON.stringify(orden) }, { onConflict: "clave" });
+      if (r2.error) aviso(false, "No se pudo guardar: " + r2.error.message);
+      else aviso(true, "Orden guardado. Se ve al recargar la página principal.");
     });
   }
 

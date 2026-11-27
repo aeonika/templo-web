@@ -1624,7 +1624,8 @@
         "<button type='button' class='pf-quitar ts-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
         "<input type='hidden' class='ts-url' value='" + esc(url) + "'>" +
         "<label class='btn btn-fantasma c-subir'>Subir foto 9:16<input type='file' class='ts-file' accept='image/*' hidden></label>" +
-        "<label>Pie de foto (opcional) <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Marina · “¡Llegó en el día!”'></label>" +
+        "<label class='ts-pie'><input type='checkbox' class='ts-pie-check'" + (!t || t.pie !== false ? " checked" : "") + "> Mostrar pie de foto</label>" +
+        "<label>Pie de foto <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Marina · “¡Llegó en el día!”'" + (t && t.pie === false ? " disabled" : "") + "></label>" +
         "<p class='p-ayuda ts-estado'></p></div>";
     }
     var metodosSitio = TW.metodosDeSitio(configSitio);
@@ -1725,11 +1726,28 @@
       "<p class='p-ayuda'>Es el país principal de tu página: al agregar un método, primero salen los servicios de ese país. Igual podés sumar métodos de otros países e internacionales.</p>" +
       "<div class='mt-editor' id='c-metodos'><div class='mt-cards'></div>" +
       "<button type='button' class='btn btn-fantasma' id='c-metodo-agregar' data-mt-add>+ Agregar método</button></div></div>" +
-      "<div class='p-bloque'><h3>Módulos visibles</h3>" +
-      modulosDefs.map(function (m) {
-        return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
-          "<input type='checkbox' class='mod-switch' name='mod_" + m[0] + "'" + (mods[m[0]] !== false ? " checked" : "") + "></label>";
-      }).join("") + "</div>" +
+      "<div class='p-bloque'><h3>Módulos visibles</h3><p class='p-ayuda'>Arrastrá las filas desde el agarre ⠿ para cambiar el orden en que las secciones aparecen en tu sitio. Tu presentación («Quién soy») va siempre primera.</p><div id='c-modulos'>" +
+      (function () {
+        var ordenGuardado = (configSitio && Array.isArray(configSitio.orden)) ? configSitio.orden : [];
+        var claveOrden = function (m) { return m[0] === "feed" ? "novedades" : m[0]; };
+        var filas = modulosDefs.map(function (m, i) { return { m: m, i: i }; });
+        filas.sort(function (a, b) {
+          if (a.m[0] === "quienes") return -1;
+          if (b.m[0] === "quienes") return 1;
+          var pa = ordenGuardado.indexOf(claveOrden(a.m)), pb = ordenGuardado.indexOf(claveOrden(b.m));
+          if (pa < 0) pa = 100 + a.i;
+          if (pb < 0) pb = 100 + b.i;
+          return pa - pb;
+        });
+        return filas.map(function (f) {
+          var m = f.m;
+          var fija = m[0] === "quienes";
+          return "<label class='mod-fila'" + (fija ? "" : " data-orden='" + claveOrden(m) + "'") + ">" +
+            (fija ? "<span class='mod-grip mod-grip-fija' title='Siempre primera'>•</span>" : "<span class='mod-grip' title='Arrastrá para ordenar'>⠿</span>") +
+            "<span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
+            "<input type='checkbox' class='mod-switch' name='mod_" + m[0] + "'" + (mods[m[0]] !== false ? " checked" : "") + "></label>";
+        }).join("");
+      })() + "</div></div>" +
       "<div class='p-bloque'><h3>Puntos fuertes</h3><p class='p-ayuda'>Las tarjetas con icono que se ven en tu sitio, bajo tu presentación. Escribí el texto y tocá un icono para elegirlo: la vista previa muestra cómo va a quedar. Hasta 6.</p><div id='c-rasgos' class='pf-grid'>" +
       (rasgosSitio.length ? rasgosSitio.map(tarjetaPunto).join("") : tarjetaPunto(null)) +
       "</div><button type='button' class='btn btn-fantasma' id='c-rasgo-agregar'>+ Agregar punto fuerte</button></div>" +
@@ -1908,6 +1926,12 @@
         if (quitar) quitar.closest(".ts-card").remove();
       });
       contTestis.addEventListener("change", function (ev) {
+        if (ev.target.classList.contains("ts-pie-check")) {
+          var cardP = ev.target.closest(".ts-card");
+          var inpP = cardP && cardP.querySelector(".ts-texto");
+          if (inpP) inpP.disabled = !ev.target.checked;
+          return;
+        }
         if (!ev.target.classList.contains("ts-file")) return;
         var arch = ev.target.files[0];
         if (!arch) return;
@@ -1931,6 +1955,36 @@
         }).catch(function (e2) { estado.textContent = "No se pudo subir: " + e2.message; });
       });
     }
+    // Orden de modulos arrastrando desde el agarre (solo filas con
+    // data-orden; «Quién soy» queda fija como primera seccion).
+    var contMods = $("#c-modulos");
+    if (contMods) {
+      var filaArrastrada = null;
+      contMods.addEventListener("mousedown", function (ev) {
+        var grip = ev.target.closest(".mod-grip");
+        var fila = grip && grip.closest(".mod-fila");
+        if (fila && fila.dataset.orden) fila.draggable = true;
+      });
+      contMods.addEventListener("dragstart", function (ev) {
+        filaArrastrada = ev.target.closest(".mod-fila");
+        if (filaArrastrada) filaArrastrada.classList.add("arrastrando");
+      });
+      contMods.addEventListener("dragover", function (ev) {
+        if (!filaArrastrada) return;
+        ev.preventDefault();
+        var filas = Array.prototype.slice.call(contMods.querySelectorAll(".mod-fila[data-orden]"));
+        var destino = filas.find(function (f2) {
+          var r2 = f2.getBoundingClientRect();
+          return ev.clientY < r2.top + r2.height / 2;
+        });
+        if (destino) contMods.insertBefore(filaArrastrada, destino);
+        else if (filas.length) contMods.appendChild(filaArrastrada);
+      });
+      contMods.addEventListener("dragend", function () {
+        if (filaArrastrada) { filaArrastrada.classList.remove("arrastrando"); filaArrastrada.draggable = false; }
+        filaArrastrada = null;
+      });
+    }
     mejorarConRico(document.querySelector("#f-sitio [name='quienes_somos']"));
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
@@ -1949,7 +2003,7 @@
       var testisNuevos = [];
       document.querySelectorAll(".ts-card").forEach(function (card) {
         var url = card.querySelector(".ts-url").value.trim();
-        if (url) testisNuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim() });
+        if (url) testisNuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim(), pie: card.querySelector(".ts-pie-check").checked });
       });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
@@ -1963,6 +2017,7 @@
         testimonios_titulo: (f.get("testimonios_titulo") || "").trim() || null,
         rubro: f.get("rubro") || "general",
         config: Object.assign({}, sitio.config || {}, {
+          orden: Array.prototype.map.call(document.querySelectorAll("#c-modulos [data-orden]"), function (f2) { return f2.dataset.orden; }),
           avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
           stock_bajo: Number(f.get("stock_bajo")) || 0,

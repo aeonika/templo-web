@@ -185,6 +185,12 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .ts-vista { position: relative; aspect-ratio: 9 / 16; border: 1px dashed var(--color-rule); border-radius: 10px; background: var(--color-paper); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .ts-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ts-vacio { color: var(--color-ink-2); font-size: .85rem; padding: 10px; text-align: center; }
+.ts-pie { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; }
+.ts-pie input { width: auto; }
+.mod-grip { cursor: grab; color: var(--color-ink-2); font-size: 15px; line-height: 1; padding: 2px; user-select: none; flex: none; }
+.mod-grip-fija { cursor: default; opacity: .4; }
+.mod-fila.arrastrando, .a-orden-fila.arrastrando { opacity: .45; }
+.a-orden-fila { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--color-rule); border-radius: 10px; background: var(--color-paper); margin-bottom: 8px; font-weight: 600; }
 .mt-chip.sel { border-color: var(--color-accent); outline: 2px solid var(--color-accent); }
 .mt-toggle { display: flex; gap: var(--space-xs); }
 .mt-toggle button { flex: 1; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); border-radius: var(--radius-inner); padding: var(--space-xs); cursor: pointer; font: inherit; }

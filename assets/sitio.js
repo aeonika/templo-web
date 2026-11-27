@@ -211,6 +211,7 @@
   };
   var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
   var html = "";
+  var BLOQUES = {};
 
   // Quien soy: con foto, el hero es una portada a pantalla completa
   if (mod.quienes !== false) {
@@ -252,10 +253,10 @@
 
   // Testimonios: carrusel horizontal de fotos 9:16 que avanza solo
   if (mod.testimonios && testisNav.length) {
-    html += seccion("testimonios", TW.esc(sitio.testimonios_titulo || "Testimonios"), "",
+    BLOQUES.testimonios = seccion("testimonios", TW.esc(sitio.testimonios_titulo || "Testimonios"), "",
       '<div class="s-testis"><div class="s-testis-track">' + testisNav.map(function (t) {
         return '<figure class="s-testi"><img src="' + TW.esc(t.imagen_url) + '" alt="" loading="lazy">' +
-          (t.texto ? "<figcaption>" + TW.esc(t.texto) + "</figcaption>" : "") + "</figure>";
+          (t.texto && t.pie !== false ? "<figcaption>" + TW.esc(t.texto) + "</figcaption>" : "") + "</figure>";
       }).join("") + '</div>' +
       (testisNav.length > 1 ? '<div class="s-testis-dots">' + testisNav.map(function (t, i) {
         return '<button type="button" aria-label="Ir a la foto ' + (i + 1) + '"></button>';
@@ -264,7 +265,7 @@
 
   // Promociones
   if (mod.promociones && (rPromo.data || []).length) {
-    html += seccion("promociones", "Promociones", "", '<div class="s-promos">' +
+    BLOQUES.promociones = seccion("promociones", "Promociones", "", '<div class="s-promos">' +
       rPromo.data.map(function (pr) {
         return '<div class="s-promo">' +
           (pr.imagen_url ? '<img src="' + TW.esc(pr.imagen_url) + '" alt="">' : "") +
@@ -276,7 +277,7 @@
 
   // Destacados
   if (mod.destacados && destacados.length) {
-    html += seccion("destacados", "Destacados", "", '<div class="s-grilla">' + destacados.map(tarjetaProducto).join("") + "</div>");
+    BLOQUES.destacados = seccion("destacados", "Destacados", "", '<div class="s-grilla">' + destacados.map(tarjetaProducto).join("") + "</div>");
   }
 
   // Productos y servicios
@@ -287,12 +288,12 @@
       ? '<div class="s-filtros"><button type="button" class="s-filtro activo" data-filtro="">Todas</button>' +
         cats.map(function (c) { return '<button type="button" class="s-filtro" data-filtro="' + TW.esc(c) + '">' + TW.esc(c) + "</button>"; }).join("") + "</div>"
       : "";
-    html += seccion("productos", "Productos y servicios", "", filtrosHtml + '<div class="s-grilla">' + productos.map(tarjetaProducto).join("") + "</div>");
+    BLOQUES.productos = seccion("productos", "Productos y servicios", "", filtrosHtml + '<div class="s-grilla">' + productos.map(tarjetaProducto).join("") + "</div>");
   }
 
   // Cursos
   if (mod.cursos !== false && (rCursos.data || []).length) {
-    html += seccion("cursos", "Cursos y talleres", "Clases en video y audio, para mirar a tu ritmo.", '<div class="s-grilla">' +
+    BLOQUES.cursos = seccion("cursos", "Cursos y talleres", "Clases en video y audio, para mirar a tu ritmo.", '<div class="s-grilla">' +
       rCursos.data.map(function (c) {
         return '<article class="s-tarjeta">' +
           (c.imagen_url ? '<img src="' + TW.esc(c.imagen_url) + '" alt="">' : "") +
@@ -305,7 +306,7 @@
 
   // Articulos
   if (mod.articulos !== false && (rArt.data || []).length) {
-    html += seccion("articulos", "Artículos", "", '<div class="s-lista">' +
+    BLOQUES.articulos = seccion("articulos", "Artículos", "", '<div class="s-lista">' +
       rArt.data.map(function (a2) {
         return '<article class="s-articulo">' +
           (a2.imagen_url ? '<img class="s-articulo-img" src="' + TW.esc(a2.imagen_url) + '" alt="">' : "") +
@@ -328,7 +329,7 @@
     // En el indice NO se muestran medios de pago: cada documento abre
     // su pantalla de detalle (/documento/<slug>/<id>) con el precio,
     // los medios e instrucciones y el envio de comprobante.
-    html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
+    BLOQUES.documentos = seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
       docs.map(function (d) {
         var gratis = Number(d.precio) === 0;
         var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
@@ -340,7 +341,7 @@
 
   // Feed publico del maestro
   if (mod.feed && (rFeed.data || []).length) {
-    html += seccion("novedades", "Novedades", "", '<div class="s-feed">' +
+    BLOQUES.novedades = seccion("novedades", "Novedades", "", '<div class="s-feed">' +
       rFeed.data.map(function (p) {
         return '<article class="s-feed-item"><p class="fecha">' +
           new Date(p.creada).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
@@ -348,6 +349,15 @@
           (p.imagen_url ? '<img src="' + TW.esc(p.imagen_url) + '" alt="">' : "") + "</article>";
       }).join("") + "</div>");
   }
+
+  // Las secciones se pegan en el orden que el dueno eligio
+  // arrastrando los modulos en su panel (config.orden); las que no
+  // figuran van despues, en el orden de siempre.
+  var ORDEN_DEF = ["testimonios", "promociones", "destacados", "productos", "cursos", "articulos", "documentos", "novedades"];
+  var ordenSitio = (sitio.config && Array.isArray(sitio.config.orden)) ? sitio.config.orden : [];
+  ordenSitio.filter(function (k) { return ORDEN_DEF.indexOf(k) >= 0; })
+    .concat(ORDEN_DEF.filter(function (k) { return ordenSitio.indexOf(k) < 0; }))
+    .forEach(function (k) { if (BLOQUES[k]) html += BLOQUES[k]; });
 
   // Carrusel de testimonios: avanza solo cada 4 s, se pausa al
   // tocarlo o pasar el cursor, y los puntos saltan a cada foto.
