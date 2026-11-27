@@ -83,7 +83,7 @@
   main.innerHTML =
     '<section class="aula-cabecera"><div class="contenedor">' +
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#cursos">← Todos los cursos</a></p>' +
-    (curso.imagen_url ? '<img class="aula-portada" src="' + TW.esc(curso.imagen_url) + '" alt="">' : "") +
+    (curso.imagen_url ? '<img class="aula-portada" src="' + TW.esc(TW.imgUrl(curso.imagen_url, 1100)) + '" alt="">' : "") +
     "<h1>" + TW.esc(curso.titulo) + "</h1>" +
     (curso.descripcion ? '<div class="aula-desc">' + TW.textoRico(curso.descripcion) + "</div>" : "") +
     (curso.precio != null ? '<p class="s-precio">' + TW.precio(curso.precio, curso.moneda) + "</p>" : "") +
@@ -148,7 +148,7 @@
         return '<article class="s-feed-item"><p class="fecha">' +
           new Date(p.creada).toLocaleDateString("es-AR", { day: "numeric", month: "short" }) + "</p><p>" +
           TW.esc(p.texto) + "</p>" +
-          (p.imagen_url ? '<img src="' + TW.esc(p.imagen_url) + '" alt="">' : "") + "</article>";
+          (p.imagen_url ? '<img src="' + TW.esc(TW.imgUrl(p.imagen_url, 700)) + '" alt="">' : "") + "</article>";
       }).join("") + "</div></section>";
   }
 

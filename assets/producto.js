@@ -76,9 +76,9 @@
   imagenes = imagenes.slice(0, 3);
   var galeriaHtml = "";
   if (imagenes.length) {
-    galeriaHtml = '<div class="s-detalle-media"><img class="s-detalle-img" id="dprod-img" src="' + TW.esc(imagenes[0]) + '" alt="">' +
+    galeriaHtml = '<div class="s-detalle-media"><img class="s-detalle-img" id="dprod-img" src="' + TW.esc(TW.imgUrl(imagenes[0], 1100)) + '" alt="">' +
       (imagenes.length > 1 ? '<div class="s-galeria">' + imagenes.map(function (u, i) {
-        return '<button type="button" class="s-galeria-btn' + (i === 0 ? " activa" : "") + '" data-dprod-src="' + TW.esc(u) + '"><img src="' + TW.esc(u) + '" alt=""></button>';
+        return '<button type="button" class="s-galeria-btn' + (i === 0 ? " activa" : "") + '" data-dprod-src="' + TW.esc(TW.imgUrl(u, 1100)) + '"><img src="' + TW.esc(TW.imgUrl(u, 200)) + '" alt=""></button>';
       }).join("") + "</div>" : "") + "</div>";
   }
 

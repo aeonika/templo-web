@@ -18,6 +18,17 @@
       return "$ " + n.toLocaleString("es-AR") + (moneda && moneda !== "ARS" ? " " + moneda : "");
     },
     // Escape basico para interpolar datos de usuarios en HTML.
+    // Version liviana de una imagen publica de Cloudinary: pide el
+    // ancho justo para donde se muestra, con calidad y formato
+    // automaticos. Estira el ancho de banda del plan gratuito (las
+    // tarjetas no necesitan la foto a 1200px). Las URL que no son de
+    // Cloudinary, y las que ya traen transformacion, van sin tocar.
+    imgUrl: function (url, ancho) {
+      if (!url || typeof url !== "string") return url;
+      if (url.indexOf("res.cloudinary.com") < 0 || url.indexOf("/image/upload/") < 0) return url;
+      if (url.indexOf("/image/upload/w_") >= 0) return url;
+      return url.replace("/image/upload/", "/image/upload/w_" + ancho + ",q_auto,f_auto/");
+    },
     esc: function (s) {
       return String(s == null ? "" : s)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -579,4 +590,15 @@
       return json.url || null;
     }
   };
+  // Red de seguridad de imgUrl: si una version liviana de Cloudinary
+  // fallara (por ejemplo, transformaciones restringidas en la cuenta),
+  // la imagen reintenta una sola vez con su URL original.
+  document.addEventListener("error", function (ev) {
+    var t = ev.target;
+    if (!t || t.tagName !== "IMG" || t.dataset.sinLiviana) return;
+    var src = t.getAttribute("src") || "";
+    if (src.indexOf("/image/upload/w_") < 0) return;
+    t.dataset.sinLiviana = "1";
+    t.src = src.replace(/\/image\/upload\/w_[^/]+\//, "/image/upload/");
+  }, true);
 })();

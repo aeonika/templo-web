@@ -86,7 +86,7 @@
     '<section class="s-seccion"><div class="contenedor">' +
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#documentos">← Todos los documentos</a></p>' +
     (doc.imagen_url
-      ? '<div class="s-detalle"><div class="s-detalle-media"><img class="s-detalle-img" src="' + TW.esc(doc.imagen_url) + '" alt=""></div><div class="s-detalle-info">' + infoDoc + "</div></div>"
+      ? '<div class="s-detalle"><div class="s-detalle-media"><img class="s-detalle-img" src="' + TW.esc(TW.imgUrl(doc.imagen_url, 900)) + '" alt=""></div><div class="s-detalle-info">' + infoDoc + "</div></div>"
       : infoDoc) +
     "</div></section>";
   TW.conectarPagosInteractivo(main.querySelector(".pg"), sitio.config && sitio.config.pais);

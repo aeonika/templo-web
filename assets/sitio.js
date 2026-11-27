@@ -37,7 +37,7 @@
     if (!fondoHex || fondoHex.indexOf("var(") === 0) fondoHex = "#0a0c11";
     var veloA = esPremium ? "58%" : "84%";
     var veloB = esPremium ? "74%" : "90%";
-    document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " " + veloA + ", transparent), color-mix(in srgb, " + fondoHex + " " + veloB + ", transparent)), url(\"" + String(sitio.fondo_url).replace(/"/g, "") + "\")";
+    document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " " + veloA + ", transparent), color-mix(in srgb, " + fondoHex + " " + veloB + ", transparent)), url(\"" + String(TW.imgUrl(sitio.fondo_url, 1600)).replace(/"/g, "") + "\")";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center top";
     document.body.style.backgroundAttachment = "fixed";
@@ -65,7 +65,7 @@
   var testisNav = (Array.isArray(sitio.testimonios) ? sitio.testimonios : []).filter(function (t) { return t && t.imagen_url; });
   if (mod.testimonios && testisNav.length) enlaces.push([sitio.testimonios_titulo || "Testimonios", "#testimonios"]);
   nav.innerHTML = '<div class="s-nav-in"><a class="s-marca" href="' + base + '">' +
-    (sitio.logo_url ? '<img src="' + TW.esc(sitio.logo_url) + '" alt="">' : "") +
+    (sitio.logo_url ? '<img src="' + TW.esc(TW.imgUrl(sitio.logo_url, 200)) + '" alt="">' : "") +
     "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
     '<button class="s-burger" id="s-burger" type="button" aria-label="Abrir el menú" aria-expanded="false"><span></span><span></span><span></span></button>' +
     (sitio.whatsapp ? '<a class="s-wa-movil" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></a>' : "") +
@@ -114,7 +114,7 @@
       '<p><a href="' + base + '#articulos">← Volver</a></p>' +
       "<h1>" + TW.esc(a.titulo) + "</h1>" +
       '<p class="fecha">' + new Date(a.creado).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" }) + "</p>" +
-      (a.imagen_url ? '<img class="s-foto" src="' + TW.esc(a.imagen_url) + '" alt="">' : "") +
+      (a.imagen_url ? '<img class="s-foto" src="' + TW.esc(TW.imgUrl(a.imagen_url, 800)) + '" alt="">' : "") +
       TW.textoRico(a.cuerpo) + "</div></section>";
     return;
   }
@@ -171,7 +171,7 @@
         ? '<a class="btn btn-acento" href="' + TW.esc(p.link_pago) + '" target="_blank" rel="noopener">Comprar</a>'
         : (wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : ""));
     return '<article class="s-tarjeta' + (agotado ? " s-agotada" : "") + '" data-categoria="' + TW.esc(p.categoria || "") + '">' +
-      (p.imagen_url ? '<a href="' + urlDetalle + '"><img src="' + TW.esc(p.imagen_url) + '" alt=""></a>' : "") +
+      (p.imagen_url ? '<a href="' + urlDetalle + '"><img src="' + TW.esc(TW.imgUrl(p.imagen_url, 600)) + '" alt=""></a>' : "") +
       '<div class="s-tarjeta-cuerpo"><p class="s-tipo">' + tipo + "</p><h3>" + TW.esc(p.nombre) + "</h3>" +
       "<p>" + TW.esc(TW.textoPlano(p.descripcion)) + "</p>" +
       precioHtml + stockHtml + tallesHtml +
@@ -222,10 +222,10 @@
       (sitio.email ? '<a class="btn" href="mailto:' + TW.esc(sitio.email) + '">Email</a>' : "") +
       '<span id="s-miembro"></span>' +
       "</div>";
-    var avatarHtml = (sitio.avatar_url && !(sitio.config && sitio.config.avatar_visible === false)) ? '<img class="s-avatar" src="' + TW.esc(sitio.avatar_url) + '" alt="">' : "";
+    var avatarHtml = (sitio.avatar_url && !(sitio.config && sitio.config.avatar_visible === false)) ? '<img class="s-avatar" src="' + TW.esc(TW.imgUrl(sitio.avatar_url, 200)) + '" alt="">' : "";
     if (sitio.foto_url) {
       html += '<section class="s-hero s-hero--portada" id="quienes">' +
-        '<img class="s-portada-img" src="' + TW.esc(sitio.foto_url) + '" alt="">' +
+        '<img class="s-portada-img" src="' + TW.esc(TW.imgUrl(sitio.foto_url, 1400)) + '" alt="">' +
         '<div class="contenedor s-hero-in"><div class="s-hero-texto">' +
         avatarHtml +
         "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
@@ -256,7 +256,7 @@
   if (mod.testimonios && testisNav.length) {
     BLOQUES.testimonios = seccion("testimonios", TW.esc(sitio.testimonios_titulo || "Testimonios"), "",
       '<div class="s-testis"><div class="s-testis-track">' + testisNav.map(function (t) {
-        return '<figure class="s-testi"><img src="' + TW.esc(t.imagen_url) + '" alt="" loading="lazy">' +
+        return '<figure class="s-testi"><img src="' + TW.esc(TW.imgUrl(t.imagen_url, 700)) + '" alt="" loading="lazy">' +
           (t.texto && t.pie !== false ? "<figcaption>" + TW.esc(t.texto) + "</figcaption>" : "") + "</figure>";
       }).join("") + '</div>' +
       (testisNav.length > 1 ? '<div class="s-testis-dots">' + testisNav.map(function (t, i) {
@@ -269,7 +269,7 @@
     BLOQUES.promociones = seccion("promociones", "Promociones", "", '<div class="s-promos">' +
       rPromo.data.map(function (pr) {
         return '<div class="s-promo">' +
-          (pr.imagen_url ? '<img src="' + TW.esc(pr.imagen_url) + '" alt="">' : "") +
+          (pr.imagen_url ? '<img src="' + TW.esc(TW.imgUrl(pr.imagen_url, 600)) + '" alt="">' : "") +
           "<div><h3>" + TW.esc(pr.titulo) + "</h3><p>" + TW.esc(TW.textoPlano(pr.descripcion)) + "</p></div>" +
           (pr.link ? '<a class="btn btn-acento" href="' + TW.esc(pr.link) + '" target="_blank" rel="noopener">Ver</a>' : "") +
           "</div>";
@@ -297,7 +297,7 @@
     BLOQUES.cursos = seccion("cursos", "Cursos y talleres", "Clases en video y audio, para mirar a tu ritmo.", '<div class="s-grilla">' +
       rCursos.data.map(function (c) {
         return '<article class="s-tarjeta">' +
-          (c.imagen_url ? '<img src="' + TW.esc(c.imagen_url) + '" alt="">' : "") +
+          (c.imagen_url ? '<img src="' + TW.esc(TW.imgUrl(c.imagen_url, 600)) + '" alt="">' : "") +
           '<div class="s-tarjeta-cuerpo"><h3>' + TW.esc(c.titulo) + "</h3><p>" + TW.esc(TW.textoPlano(c.descripcion)) + "</p>" +
           (c.precio != null ? '<p class="s-precio">' + TW.precio(c.precio, c.moneda) + "</p>" : "") +
           '<a class="btn btn-acento" href="/curso/' + encodeURIComponent(slug) + "/" + c.id + '">Ver el curso</a>' +
@@ -310,7 +310,7 @@
     BLOQUES.articulos = seccion("articulos", "Artículos", "", '<div class="s-lista">' +
       rArt.data.map(function (a2) {
         return '<article class="s-articulo">' +
-          (a2.imagen_url ? '<img class="s-articulo-img" src="' + TW.esc(a2.imagen_url) + '" alt="">' : "") +
+          (a2.imagen_url ? '<img class="s-articulo-img" src="' + TW.esc(TW.imgUrl(a2.imagen_url, 600)) + '" alt="">' : "") +
           '<div class="s-articulo-cuerpo"><p class="fecha">' +
           new Date(a2.creado).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
           '<h3><a href="' + base + "?a=" + encodeURIComponent(a2.slug) + '">' + TW.esc(a2.titulo) + "</a></h3>" +
@@ -335,7 +335,7 @@
         var gratis = Number(d.precio) === 0;
         var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
         var estado = !gratis && misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "";
-        return '<div class="s-doc">' + (d.imagen_url ? '<img class="s-doc-img" src="' + TW.esc(d.imagen_url) + '" alt="">' : "") + '<div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(TW.textoPlano(d.descripcion)) + "</p></div>" +
+        return '<div class="s-doc">' + (d.imagen_url ? '<img class="s-doc-img" src="' + TW.esc(TW.imgUrl(d.imagen_url, 300)) + '" alt="">' : "") + '<div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(TW.textoPlano(d.descripcion)) + "</p></div>" +
           '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div>';
       }).join("") + "</div>");
   }
@@ -347,7 +347,7 @@
         return '<article class="s-feed-item"><p class="fecha">' +
           new Date(p.creada).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
           "<p>" + TW.esc(p.texto) + "</p>" +
-          (p.imagen_url ? '<img src="' + TW.esc(p.imagen_url) + '" alt="">' : "") + "</article>";
+          (p.imagen_url ? '<img src="' + TW.esc(TW.imgUrl(p.imagen_url, 700)) + '" alt="">' : "") + "</article>";
       }).join("") + "</div>");
   }
 
