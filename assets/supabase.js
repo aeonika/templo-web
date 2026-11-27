@@ -527,8 +527,12 @@
           }
           var href = h.tagName === "A" ? (h.getAttribute("href") || "") : "";
           var esPleca = h.tagName === "DIV" && h.classList && h.classList.contains("s-pleca");
+          var estiloPleca = esPleca ? (h.getAttribute("data-estilo") || "") : "";
           Array.prototype.slice.call(h.attributes || []).forEach(function (at) { h.removeAttribute(at.name); });
-          if (esPleca) h.setAttribute("class", "s-pleca");
+          if (esPleca) {
+            h.setAttribute("class", "s-pleca");
+            if (["linea", "simple", "doble", "puntos", "pastilla"].indexOf(estiloPleca) >= 0) h.setAttribute("data-estilo", estiloPleca);
+          }
           if (h.tagName === "A") {
             if (/^https?:\/\//i.test(href)) { h.setAttribute("href", href); h.setAttribute("target", "_blank"); h.setAttribute("rel", "noopener"); }
             else { h.removeAttribute("href"); }

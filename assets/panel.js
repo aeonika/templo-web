@@ -1119,11 +1119,30 @@
     tb.addHandler("pleca", function () {
       var rango = q.getSelection(true);
       var idx = rango ? rango.index : q.getLength();
-      q.insertEmbed(idx, "pleca", "linea", "user");
-      q.setSelection(idx + 1, 0, "silent");
+      abrirSelectorPlecas(q, idx);
     });
     var b = tb.container.querySelector(".ql-pleca");
-    if (b) b.textContent = "❖ Pleca";
+    if (b) b.innerHTML = '<svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><rect x="2.2" y="2.2" width="5.6" height="5.6" transform="rotate(45 5 5)" fill="currentColor"/></svg> Pleca';
+  }
+  // Selector visual de plecas: modal con los estilos dibujados tal
+  // como se van a ver; al tocar uno se inserta en el cursor.
+  function abrirSelectorPlecas(q, idx) {
+    var ESTILOS = [["linea", "Línea con rombo"], ["simple", "Línea simple"], ["doble", "Doble filete"], ["puntos", "Puntos"], ["pastilla", "Pastilla"]];
+    var fondo = document.createElement("div");
+    fondo.className = "mt-modal-fondo";
+    fondo.innerHTML = '<div class="mt-modal"><div class="mt-modal-cab"><h3>Elegí una pleca</h3><button type="button" class="mt-x" aria-label="Cerrar">✕</button></div><div class="pl-lista">' +
+      ESTILOS.map(function (e) { return '<button type="button" class="pl-op" data-estilo="' + e[0] + '"><span class="s-pleca" data-estilo="' + e[0] + '"></span><span class="pl-nombre">' + e[1] + "</span></button>"; }).join("") +
+      "</div></div>";
+    document.body.appendChild(fondo);
+    function cerrar() { fondo.remove(); }
+    fondo.addEventListener("click", function (ev) { if (ev.target === fondo || ev.target.closest(".mt-x")) cerrar(); });
+    fondo.querySelectorAll(".pl-op").forEach(function (b) {
+      b.addEventListener("click", function () {
+        q.insertEmbed(idx, "pleca", b.getAttribute("data-estilo"), "user");
+        q.setSelection(idx + 1, 0, "silent");
+        cerrar();
+      });
+    });
   }
   function htmlDeQuill(q) {
     var h = q && q.root ? q.root.innerHTML.trim() : "";
@@ -1424,7 +1443,11 @@
             $("#cr-subida-nota").textContent = "Subiendo a Cloudinary…";
             var privado = cfg.archivo.privadoSegunPrecio ? Number(obj.precio) > 0 : !obj.es_preview;
             var datos = await subirCloudinary(archivo, privado, { max: 1600 });
-            if (privado) obj[cfg.archivo.campoId] = datos.public_id + (datos.format ? "." + datos.format : "");
+            if (privado) {
+              var pid = datos.public_id || "";
+              // En raw el public_id ya trae la extension; no duplicarla.
+              obj[cfg.archivo.campoId] = datos.format && pid.slice(-(datos.format.length + 1)) !== "." + datos.format ? pid + "." + datos.format : pid;
+            }
             else obj[cfg.archivo.campoUrl] = datos.secure_url;
           }
           var r = editando

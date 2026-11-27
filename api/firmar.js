@@ -62,13 +62,22 @@ module.exports = async function (req, res) {
     return res.status(403).json({ error: "El sitio no tiene activo el plan premium" });
   }
 
-  // El cloudinary_id guardado incluye la extension: "carpeta/archivo.mp4"
-  const punto = item.cloudinary_id.lastIndexOf(".");
-  const publicId = punto > 0 ? item.cloudinary_id.slice(0, punto) : item.cloudinary_id;
-  const formato = punto > 0 ? item.cloudinary_id.slice(punto + 1) : "";
   const resourceType = esLeccion
     ? (item.tipo === "documento" ? "raw" : "video")
     : "raw";
+  // En Cloudinary, el public_id de un archivo RAW incluye la extension
+  // ("carpeta/archivo.pdf") y la descarga privada lo pide completo y
+  // sin formato aparte; quitarle la extension da «Resource not found».
+  // En video/imagen el id va sin extension y el formato va separado.
+  let publicId, formato;
+  if (resourceType === "raw") {
+    publicId = item.cloudinary_id;
+    formato = "";
+  } else {
+    const punto = item.cloudinary_id.lastIndexOf(".");
+    publicId = punto > 0 ? item.cloudinary_id.slice(0, punto) : item.cloudinary_id;
+    formato = punto > 0 ? item.cloudinary_id.slice(punto + 1) : "";
+  }
 
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD,
