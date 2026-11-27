@@ -935,16 +935,9 @@
     if (c.tipo === "textarea" || c.tipo === "textarea-grande") {
       if (c.md) {
         var htmlIni = /<\/?[a-z][^>]*>/i.test(String(v)) ? String(v) : TW.md(String(v));
-        return '<div class="c-campo">' + c.et + '<div class="rico-wrap"><div class="md-bar">' +
-          '<button type="button" data-rico="bold"><strong>N</strong></button>' +
-          '<button type="button" data-rico="italic"><em>I</em></button>' +
-          '<button type="button" data-rico="underline"><u>S</u></button>' +
-          '<button type="button" data-rico="h3">Título</button>' +
-          '<button type="button" data-rico="lista">Lista</button>' +
-          '<button type="button" data-rico="link">Enlace</button>' +
-          '<button type="button" data-rico="limpiar">Quitar formato</button></div>' +
-          '<div class="rico' + (c.tipo === "textarea-grande" ? " grande" : "") + '" contenteditable="true" data-rico-campo="' + c.k + '">' + htmlIni + "</div></div>" +
-          '<span class="c-ayuda">Escribí y seleccioná el texto para darle formato con los botones: se ve tal como va a quedar.</span></div>';
+        return '<div class="c-campo">' + c.et +
+          '<div class="ql-mount' + (c.tipo === "textarea-grande" ? " grande" : "") + '" data-rico-campo="' + c.k + '">' + htmlIni + "</div>" +
+          '<span class="c-ayuda">Escribí y seleccioná el texto para darle formato con los botones de arriba: se ve tal como va a quedar.</span></div>';
       }
       return "<label>" + c.et + '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea></label>";
     }
@@ -1030,7 +1023,7 @@
       }
       else if (c.md) {
         var ed = form.querySelector('[data-rico-campo="' + c.k + '"]');
-        obj[c.k] = ed ? ed.innerHTML.trim() : "";
+        obj[c.k] = ed ? (ed._quill ? htmlDeQuill(ed._quill) : ed.innerHTML.trim()) : "";
       }
       else obj[c.k] = (f.get(c.k) || "").toString().trim();
     });
@@ -1072,26 +1065,64 @@
 
   // Convierte un textarea comun en editor visual, sincronizando el
   // HTML de vuelta al textarea (para formularios que leen FormData).
+  // Editor visual de formato: Quill (CDN, carga perezosa). Reemplaza
+  // al editor casero con execCommand, cuyos formatos quedaban
+  // «trabados» al saltar de linea y cuyo «quitar formato» fallaba.
+  // Quill maneja bien los saltos, los estados de la barra y la
+  // limpieza de formato, y entrega HTML limpio.
+  var libQuillPedida = null;
+  function cargarQuill() {
+    if (window.Quill) return Promise.resolve();
+    if (!libQuillPedida) {
+      libQuillPedida = new Promise(function (res, rej) {
+        var l = document.createElement("link");
+        l.rel = "stylesheet";
+        l.href = "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css";
+        document.head.appendChild(l);
+        var s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js";
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    return libQuillPedida;
+  }
+  var OPCIONES_QUILL = {
+    theme: "snow",
+    placeholder: "Escribí acá…",
+    modules: { toolbar: [["bold", "italic", "underline"], [{ header: 3 }], [{ list: "bullet" }], ["link", "clean"]] }
+  };
+  function htmlDeQuill(q) {
+    var h = q && q.root ? q.root.innerHTML.trim() : "";
+    return h === "<p><br></p>" ? "" : h;
+  }
+  function iniciarQuillEn(contenedor) {
+    if (!contenedor) return;
+    var montes = contenedor.querySelectorAll("[data-rico-campo]:not([data-q-listo])");
+    if (!montes.length) return;
+    cargarQuill().then(function () {
+      montes.forEach(function (el) {
+        el.setAttribute("data-q-listo", "1");
+        el._quill = new window.Quill(el, OPCIONES_QUILL);
+      });
+    }).catch(function () { /* sin red: el contenido queda visible sin editor */ });
+  }
+  // Convierte un textarea comun en editor visual, sincronizando el
+  // HTML de vuelta al textarea (para formularios que leen FormData).
   function mejorarConRico(ta) {
     if (!ta || ta.dataset.ricoOk) return;
     ta.dataset.ricoOk = "1";
     var v = ta.value || "";
     var htmlIni = /<\/?[a-z][^>]*>/i.test(v) ? v : TW.md(v);
-    var wrap = document.createElement("div");
-    wrap.className = "rico-wrap";
-    wrap.innerHTML = '<div class="md-bar">' +
-      '<button type="button" data-rico="bold"><strong>N</strong></button>' +
-      '<button type="button" data-rico="italic"><em>I</em></button>' +
-      '<button type="button" data-rico="underline"><u>S</u></button>' +
-      '<button type="button" data-rico="h3">Título</button>' +
-      '<button type="button" data-rico="lista">Lista</button>' +
-      '<button type="button" data-rico="link">Enlace</button>' +
-      '<button type="button" data-rico="limpiar">Quitar formato</button></div>' +
-      '<div class="rico grande" contenteditable="true">' + htmlIni + "</div>";
-    ta.parentNode.insertBefore(wrap, ta);
+    var monte = document.createElement("div");
+    monte.className = "ql-mount grande";
+    monte.innerHTML = htmlIni;
+    ta.parentNode.insertBefore(monte, ta);
     ta.hidden = true;
-    var ed = wrap.querySelector(".rico");
-    ed.addEventListener("input", function () { ta.value = ed.innerHTML; });
+    cargarQuill().then(function () {
+      var q = new window.Quill(monte, OPCIONES_QUILL);
+      q.on("text-change", function () { ta.value = htmlDeQuill(q); });
+    }).catch(function () { ta.hidden = false; });
   }
   function crud(cont, cfg, fijo) {
     var editando = null;
@@ -1147,34 +1178,6 @@
         filas.appendChild(t.firstChild);
       });
       conectarGaleria(filas, editor.querySelector("[data-g-add]"), Number(editor.dataset.gMax || 8));
-    }
-    // Editor visual de los campos con formato (md: true): el usuario
-    // selecciona el texto y toca un boton; el formato se ve aplicado
-    // en el momento, sin marcas ni codigos. El contenido se guarda
-    // como HTML y las pantallas publicas lo sanitizan (TW.textoRico).
-    if (!document.__ricoListo) {
-    document.__ricoListo = true;
-    document.addEventListener("click", function (ev) {
-      var btn = ev.target.closest("[data-rico]");
-      if (!btn) return;
-      var wrap = btn.closest(".rico-wrap");
-      var ed = wrap && wrap.querySelector(".rico");
-      if (!ed) return;
-      ev.preventDefault();
-      ed.focus();
-      var cmd = btn.getAttribute("data-rico");
-      if (cmd === "bold") document.execCommand("bold");
-      else if (cmd === "italic") document.execCommand("italic");
-      else if (cmd === "underline") document.execCommand("underline");
-      else if (cmd === "h3") document.execCommand("formatBlock", false, "h3");
-      else if (cmd === "lista") document.execCommand("insertUnorderedList");
-      else if (cmd === "link") {
-        var url = prompt("Dirección del enlace (https://…)");
-        if (url) document.execCommand("createLink", false, url);
-      }
-      else if (cmd === "limpiar") document.execCommand("removeFormat");
-      ed.dispatchEvent(new Event("input", { bubbles: true }));
-    });
     }
     function prepararTalles(caja, iniciales) {
       var editor = caja.querySelector("[data-talles]");
@@ -1346,6 +1349,7 @@
       // (cada preparar* no hace nada si su editor no esta en el form).
       prepararMetodos(caja, editando && Array.isArray(editando.metodos_pago) ? editando.metodos_pago : []);
       prepararGaleria(caja, editando && Array.isArray(editando.galeria) ? editando.galeria : []);
+      iniciarQuillEn(caja);
       if (cfg.tabla === "productos") {
         prepararCats(caja);
         prepararTalles(caja, editando && Array.isArray(editando.variantes) ? editando.variantes : []);

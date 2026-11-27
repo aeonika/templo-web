@@ -136,15 +136,12 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .mt-chip { display: flex; align-items: center; gap: var(--space-xs); border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); border-radius: var(--radius-inner); padding: var(--space-xs); cursor: pointer; font: inherit; text-align: left; min-height: 46px; }
 .mt-chip > span:not(.mt-logo) { min-width: 0; overflow-wrap: anywhere; font-size: 13.5px; line-height: 1.25; }
 .mt-datos { display: grid; gap: var(--space-xs); }
-.md-bar { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
-.md-bar button { border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); border-radius: 8px; padding: 4px 10px; font: inherit; font-size: .85rem; cursor: pointer; }
-.md-bar button:hover { border-color: var(--color-accent); color: var(--color-accent); }
-.rico { border: 1px solid var(--color-rule); border-radius: 10px; background: var(--color-paper); padding: 10px 12px; min-height: 96px; line-height: 1.55; }
-.rico.grande { min-height: 180px; }
-.rico:focus { outline: 2px solid var(--color-accent); outline-offset: 0; }
-.rico p { margin: 0 0 8px; }
-.rico ul { margin: 0 0 8px; padding-left: 20px; }
-.rico h3 { margin: 12px 0 6px; font-size: 1.05rem; }
+.ql-mount { margin-top: 6px; }
+.ql-mount .ql-toolbar { border: 1px solid var(--color-rule); border-bottom: none; border-radius: 10px 10px 0 0; background: var(--color-paper-2); }
+.ql-mount .ql-container { border: 1px solid var(--color-rule); border-radius: 0 0 10px 10px; background: var(--color-paper); font: inherit; }
+.ql-mount .ql-editor { min-height: 96px; line-height: 1.55; }
+.ql-mount.grande .ql-editor { min-height: 180px; }
+.ql-mount .ql-editor h3 { font-size: 1.05rem; }
 .mt-chip.sel { border-color: var(--color-accent); outline: 2px solid var(--color-accent); }
 .mt-toggle { display: flex; gap: var(--space-xs); }
 .mt-toggle button { flex: 1; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); border-radius: var(--radius-inner); padding: var(--space-xs); cursor: pointer; font: inherit; }
