@@ -82,7 +82,7 @@
   var pagosHtml = "";
   if (Number(p.precio) > 0 && (metodos.length || p.instrucciones_pago)) {
     pagosHtml = '<div class="s-pagos"><p class="s-pagos-t">Cómo pagar</p>' +
-      (metodos.length ? TW.htmlMetodos(metodos) : "") +
+      (metodos.length ? TW.htmlMetodos(metodos, sitio.config && sitio.config.pais) : "") +
       (p.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(p.instrucciones_pago) + "</p>" : "") + "</div>";
   }
   var comprobanteHtml = "";

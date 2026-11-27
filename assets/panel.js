@@ -14,7 +14,7 @@
   // metodo» y «Editar» abren un modal compartido para llenar la
   // tarjeta. Lo usan Medios de cobro del sitio y los formularios de
   // productos, cursos y documentos (metodos personalizados).
-  var LOGOS_METODO = { "Mercado Pago": "mercadopago.com.ar", "Cuenta DNI": "bancoprovincia.com.ar", "BNA+": "bna.com.ar", "Ualá": "uala.com.ar", "Brubank": "brubank.com", "Naranja X": "naranjax.com", "Personal Pay": "personalpay.com.ar", "Banco Galicia": "galicia.com.ar", "Banco Macro": "macro.com.ar", "Santander": "santander.com.ar", "BBVA": "bbva.com.ar", "Binance": "binance.com", "PayPal": "paypal.com", "Wise": "wise.com" };
+  var LOGOS_METODO = { "Mercado Pago": "mercadopago.com.ar", "Cuenta DNI": "bancoprovincia.com.ar", "BNA+": "bna.com.ar", "Ualá": "uala.com.ar", "Brubank": "brubank.com", "Naranja X": "naranjax.com", "Personal Pay": "personalpay.com.ar", "Banco Galicia": "galicia.com.ar", "Banco Macro": "macro.com.ar", "Santander": "santander.com.ar", "BBVA": "bbva.com.ar", "Modo": "modo.com.ar", "Binance": "binance.com", "PayPal": "paypal.com", "Wise": "wise.com", "Payoneer": "payoneer.com", "Skrill": "skrill.com", "Cuenta RUT / BancoEstado": "bancoestado.cl", "Mach": "somosmach.cl", "Tenpo": "tenpo.cl", "Webpay / Transbank": "transbank.cl", "Banco de Chile": "bancochile.cl", "Khipu": "khipu.com", "Nequi": "nequi.com.co", "Daviplata": "daviplata.com", "Bancolombia": "bancolombia.com", "PSE": "pse.com.co", "Banco de Bogotá": "bancodebogota.com", "OXXO": "oxxo.com", "BBVA México": "bbva.mx", "Santander México": "santander.com.mx", "Banco Azteca": "bancoazteca.com.mx", "Clip": "clip.mx", "Yape": "yape.com.pe", "Plin": "plin.pe", "BCP": "viabcp.com", "Interbank": "interbank.pe", "BBVA Perú": "bbva.pe", "Prex": "prexcard.com", "OCA": "oca.com.uy", "Banco República (BROU)": "brou.com.uy", "Bizum": "bizum.es", "CaixaBank": "caixabank.es", "Revolut": "revolut.com", "Banco de Venezuela": "banvenez.com", "Banesco": "banesco.com", "Mercantil": "mercantilbanco.com", "Zelle": "zellepay.com", "Banco Unión": "bancounion.com.bo", "Tigo Money": "tigo.com", "Banco Itaú": "itau.com.py", "Visión Banco": "visionbanco.com", "Banco Pichincha": "pichincha.com", "Banco Guayaquil": "bancoguayaquil.com", "Produbanco": "produbanco.com.ec", "Banco Nacional": "bncr.fi.cr", "Banco de Costa Rica": "bancobcr.com" };
   function logoMetodoHtml(servicio) {
     var dom = LOGOS_METODO[servicio];
     return "<span class='mt-logo'><span class='mt-logo-letra'>" + esc((servicio || "?").trim().charAt(0).toUpperCase() || "?") + "</span>" +
@@ -23,7 +23,7 @@
   function tarjetaMetodoHtml(m, i) {
     return "<div class='mt-card'>" + logoMetodoHtml(m.servicio) +
       "<div class='mt-card-info'><strong>" + esc(m.servicio || "Método") + "</strong>" +
-      "<span class='mt-card-meta'>" + (m.ambito === "internacional" ? "Internacional" : "Local") + " · " + (m.tipo === "qr" ? "Código QR" : "Link de pago") + "</span>" +
+      "<span class='mt-card-meta'>" + esc(TW.nombrePais(m.pais || "INT")) + " · " + (m.tipo === "qr" ? "Código QR" : "Link de pago") + "</span>" +
       "<span class='mt-card-url'>" + esc(m.url || "") + "</span></div>" +
       (m.tipo === "qr" && m.url ? "<img class='mt-card-qr' src='" + esc(m.url) + "' alt=''>" : "") +
       "<div class='mt-card-acciones'><button type='button' class='btn btn-fantasma btn-chico' data-mt-edit='" + i + "'>Editar</button>" +
@@ -32,7 +32,7 @@
   function crearEditorMetodos(el, iniciales) {
     if (!el) return;
     el._metodos = (iniciales || []).filter(function (m) { return m && m.url; }).map(function (m) {
-      return { servicio: m.servicio || "Otro", ambito: m.ambito === "internacional" ? "internacional" : "local", tipo: m.tipo === "qr" ? "qr" : "link", url: m.url || "" };
+      return { servicio: m.servicio || "Otro", pais: m.pais || (m.ambito === "internacional" ? "INT" : ((sitio && sitio.config && sitio.config.pais) || "AR")), tipo: m.tipo === "qr" ? "qr" : "link", url: m.url || "" };
     });
     el._pintar = function () {
       var caja = el.querySelector(".mt-cards");
@@ -52,19 +52,27 @@
   }
   function leerMetodosDe(el) {
     if (!el || !el._metodos) return [];
-    return el._metodos.map(function (m) { return { servicio: m.servicio, ambito: m.ambito, tipo: m.tipo, url: m.url }; });
+    return el._metodos.map(function (m) { return { servicio: m.servicio, pais: m.pais, tipo: m.tipo, url: m.url }; });
   }
   // Modal compartido para crear y editar una tarjeta de metodo.
+  // Paso 1: el pais (los servicios que se ofrecen son los de ese
+  // pais). Paso 2: el servicio de ese pais (u «Otro» con nombre
+  // libre). Paso 3: link de pago o codigo QR.
   var mtModalEstado = null;
+  function paisDelSitio() { return (sitio && sitio.config && sitio.config.pais) || "AR"; }
+  function serviciosDePais(cod) {
+    var p = TW.PAISES[cod];
+    return (p ? p.servicios.slice() : []).concat(["Otro"]);
+  }
   function asegurarModalMetodo() {
     var modal = document.getElementById("mt-modal");
     if (modal) return modal;
     document.body.insertAdjacentHTML("beforeend",
       "<div class='mt-modal-fondo' id='mt-modal' hidden><div class='mt-modal' role='dialog' aria-modal='true'>" +
       "<h3 id='mtm-titulo'>Método de pago</h3>" +
-      "<p class='mtm-paso'>1 · Elegí el servicio</p><div class='mt-chips' id='mtm-chips'></div>" +
+      "<p class='mtm-paso'>1 · País del método</p><div class='mt-chips' id='mtm-paises'></div>" +
+      "<p class='mtm-paso'>2 · Servicio</p><div class='mt-chips' id='mtm-chips'></div>" +
       "<label id='mtm-otro-wrap' hidden>Nombre del servicio <input type='text' id='mtm-otro' placeholder='Ej.: Banco Nación'></label>" +
-      "<p class='mtm-paso'>2 · Ámbito</p><div class='mt-toggle' id='mtm-ambito'><button type='button' data-amb='local'>Local (tu país)</button><button type='button' data-amb='internacional'>Internacional</button></div>" +
       "<p class='mtm-paso'>3 · ¿Cómo cobra?</p><div class='mt-toggle' id='mtm-tipo'><button type='button' data-tipo='link'>Link de pago</button><button type='button' data-tipo='qr'>Código QR</button></div>" +
       "<div id='mtm-link-wrap'><label>Link de pago <input type='text' id='mtm-url' placeholder='https://…'></label></div>" +
       "<div id='mtm-qr-wrap' hidden><div class='c-fondo-fila'><img class='c-mini' id='mtm-qr-prev' alt='' hidden>" +
@@ -75,17 +83,18 @@
       "<button type='button' class='btn btn-fantasma' id='mtm-cancelar'>Cancelar</button></div>" +
       "</div></div>");
     modal = document.getElementById("mt-modal");
+    document.querySelector("#mtm-paises").addEventListener("click", function (ev) {
+      var chip = ev.target.closest("[data-pais]");
+      if (!chip || !mtModalEstado) return;
+      mtModalEstado.pais = chip.getAttribute("data-pais");
+      var servs = serviciosDePais(mtModalEstado.pais);
+      if (servs.indexOf(mtModalEstado.servicio) < 0) mtModalEstado.servicio = servs[0];
+      pintarModalMetodo();
+    });
     document.querySelector("#mtm-chips").addEventListener("click", function (ev) {
       var chip = ev.target.closest("[data-serv]");
       if (!chip || !mtModalEstado) return;
       mtModalEstado.servicio = chip.getAttribute("data-serv");
-      if (mtModalEstado.servicio !== "Otro") mtModalEstado.ambito = ambitoDeServicio(mtModalEstado.servicio);
-      pintarModalMetodo();
-    });
-    document.querySelector("#mtm-ambito").addEventListener("click", function (ev) {
-      var b = ev.target.closest("[data-amb]");
-      if (!b || !mtModalEstado) return;
-      mtModalEstado.ambito = b.getAttribute("data-amb");
       pintarModalMetodo();
     });
     document.querySelector("#mtm-tipo").addEventListener("click", function (ev) {
@@ -120,7 +129,7 @@
       var err = document.querySelector("#mtm-error");
       if (!servicio) { err.textContent = "Escribí el nombre del servicio."; return; }
       if (!url) { err.textContent = st.tipo === "qr" ? "Subí la imagen del QR o pegá su URL." : "Pegá el link de pago."; return; }
-      var nuevo = { servicio: servicio, ambito: st.ambito, tipo: st.tipo, url: url };
+      var nuevo = { servicio: servicio, pais: st.pais, tipo: st.tipo, url: url };
       if (st.indice < 0) {
         if (st.editor._metodos.length >= 10) { err.textContent = "Máximo 10 métodos por editor."; return; }
         st.editor._metodos.push(nuevo);
@@ -139,11 +148,14 @@
     var st = mtModalEstado;
     if (!st) return;
     document.querySelector("#mtm-titulo").textContent = st.indice < 0 ? "Agregar método de pago" : "Editar método de pago";
-    document.querySelector("#mtm-chips").innerHTML = SERVICIOS_QR.map(function (s) {
+    var ps = paisDelSitio();
+    document.querySelector("#mtm-paises").innerHTML = Object.keys(TW.PAISES).map(function (cod) {
+      return "<button type='button' class='mt-chip" + (st.pais === cod ? " sel" : "") + "' data-pais='" + cod + "'><span>" + esc(TW.PAISES[cod].nombre) + (cod === ps ? " (tu sitio)" : "") + "</span></button>";
+    }).join("");
+    document.querySelector("#mtm-chips").innerHTML = serviciosDePais(st.pais).map(function (s) {
       return "<button type='button' class='mt-chip" + (st.servicio === s ? " sel" : "") + "' data-serv='" + esc(s) + "'>" + logoMetodoHtml(s) + "<span>" + esc(s) + "</span></button>";
     }).join("");
     document.querySelector("#mtm-otro-wrap").hidden = st.servicio !== "Otro";
-    document.querySelectorAll("#mtm-ambito button").forEach(function (b) { b.classList.toggle("sel", b.getAttribute("data-amb") === st.ambito); });
     document.querySelectorAll("#mtm-tipo button").forEach(function (b) { b.classList.toggle("sel", b.getAttribute("data-tipo") === st.tipo); });
     document.querySelector("#mtm-link-wrap").hidden = st.tipo === "qr";
     document.querySelector("#mtm-qr-wrap").hidden = st.tipo !== "qr";
@@ -156,13 +168,15 @@
   function abrirModalMetodo(editor, indice) {
     asegurarModalMetodo();
     var base = indice >= 0 ? editor._metodos[indice] : null;
-    var serv = base ? base.servicio : "Mercado Pago";
-    var esConocido = SERVICIOS_QR.indexOf(serv) >= 0;
+    var pais = base ? (base.pais || paisDelSitio()) : paisDelSitio();
+    var servs = serviciosDePais(pais);
+    var serv = base ? base.servicio : servs[0];
+    var esConocido = servs.indexOf(serv) >= 0;
     mtModalEstado = {
       editor: editor,
       indice: indice,
+      pais: pais,
       servicio: esConocido ? serv : "Otro",
-      ambito: base ? base.ambito : ambitoDeServicio(serv),
       tipo: base ? base.tipo : "link"
     };
     document.querySelector("#mtm-otro").value = esConocido ? "" : serv;
@@ -710,7 +724,7 @@
           var archivo = new File([blob], "qr-cobro.png", { type: "image/png" });
           var datos = await subirCloudinary(archivo, false, { max: 1024 });
           var lista = TW.metodosDeSitio(sitio.config);
-          lista.push({ servicio: serv, ambito: ambitoDeServicio(serv), tipo: "qr", url: datos.secure_url });
+          lista.push({ servicio: serv, pais: TW.PAISES.INT.servicios.indexOf(serv) >= 0 ? "INT" : ((sitio.config && sitio.config.pais) || "AR"), tipo: "qr", url: datos.secure_url });
           var cfg = Object.assign({}, sitio.config || {}, { metodos_pago: lista, pago_mp: null, pago_paypal: null, pago_qr: null, pagos_qr: null });
           var r = await TW.sb.from("sitios").update({ config: cfg }).eq("id", sitio.id).select().maybeSingle();
           if (r.error) throw new Error(r.error.message);
@@ -928,7 +942,7 @@
       return '<div class="c-campo">' + c.et +
         '<div class="mt-editor" data-metodos><div class="mt-cards"></div>' +
         '<button type="button" class="btn btn-fantasma btn-chico" data-mt-add>+ Agregar método</button>' +
-        '<span class="c-ayuda">Se usan solo si en «Métodos de pago» elegís «Personalizados» o «Del sitio + personalizados». Cada método: un servicio, local o internacional, como link o como QR.</span></div></div>';
+        '<span class="c-ayuda">Se usan solo si en «Métodos de pago» elegís «Personalizados» o «Del sitio + personalizados». Cada método: un país, un servicio de ese país, como link o como QR.</span></div></div>';
     }
     if (c.tipo === "galeria") {
       return '<div class="c-campo">' + c.et +
@@ -1471,7 +1485,11 @@
       "</select></label></div>" +
       "<label>Avisar «últimas unidades» cuando el stock sea de <input type='number' name='stock_bajo' min='0' step='1' value='" + esc(configSitio.stock_bajo !== undefined ? configSitio.stock_bajo : 3) + "'> o menos</label></div>" +
       "<div class='p-bloque'><h3>Medios de cobro</h3>" +
-      "<p class='p-ayuda'>Los métodos generales de tu sitio: se usan en todos tus cursos, productos y documentos, salvo que un ítem tenga los suyos propios. Cada método puede ser un link de pago o un código QR, local (de tu país) o internacional.</p>" +
+      "<p class='p-ayuda'>Los métodos generales de tu sitio: se usan en todos tus cursos, productos y documentos, salvo que un ítem tenga los suyos propios. Cada método puede ser un link de pago o un código QR, del país que elijas.</p>" +
+      "<label>País de tu sitio <select name='pais'>" +
+      Object.keys(TW.PAISES).filter(function (cod) { return cod !== "INT"; }).map(function (cod) { return "<option value='" + cod + "'" + ((configSitio.pais || "AR") === cod ? " selected" : "") + ">" + TW.PAISES[cod].nombre + "</option>"; }).join("") +
+      "</select></label>" +
+      "<p class='p-ayuda'>Es el país principal de tu página: al agregar un método, primero salen los servicios de ese país. Igual podés sumar métodos de otros países e internacionales.</p>" +
       "<div class='mt-editor' id='c-metodos'><div class='mt-cards'></div>" +
       "<button type='button' class='btn btn-fantasma' id='c-metodo-agregar' data-mt-add>+ Agregar método</button></div></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
@@ -1642,6 +1660,7 @@
           avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
           stock_bajo: Number(f.get("stock_bajo")) || 0,
+          pais: f.get("pais") || "AR",
           metodos_pago: leerMetodosDe(document.getElementById("c-metodos")),
           pago_mp: null,
           pago_paypal: null,

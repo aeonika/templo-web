@@ -57,7 +57,7 @@
   var mediosHtml = "";
   if (metodosCurso.length || curso.instrucciones_pago) {
     mediosHtml = '<div class="s-pagos">' +
-      (metodosCurso.length ? '<p class="s-pagos-t">Medios de pago:</p>' + TW.htmlMetodos(metodosCurso) : "") +
+      (metodosCurso.length ? '<p class="s-pagos-t">Medios de pago:</p>' + TW.htmlMetodos(metodosCurso, sitio.config && sitio.config.pais) : "") +
       (curso.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(curso.instrucciones_pago) + "</p>" : "") +
       "</div>";
   }

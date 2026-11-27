@@ -301,7 +301,7 @@
     var mediosDocs = "";
     if (docsPagos.length && ((algunConSitio && metodosSitio.length) || usuario)) {
       mediosDocs = '<div class="s-pagos">' +
-        (algunConSitio && metodosSitio.length ? '<p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p>' + TW.htmlMetodos(metodosSitio) : "") +
+        (algunConSitio && metodosSitio.length ? '<p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p>' + TW.htmlMetodos(metodosSitio, sitio.config && sitio.config.pais) : "") +
         (usuario ? '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
           '<div class="s-comp-fila"><select id="comp-doc">' + docsPagos.map(function (d) { return '<option value="' + d.id + '">' + TW.esc(d.titulo) + "</option>"; }).join("") + "</select>" +
           '<input type="file" id="comp-file-d" accept="image/*,.pdf">' +
@@ -315,7 +315,7 @@
       var mets = propios ? TW.metodosEfectivos(d, sitio.config) : [];
       if (!mets.length && !d.instrucciones_pago) return "";
       return '<details class="s-doc-pagos"><summary>Cómo pagar este documento</summary>' +
-        (mets.length ? TW.htmlMetodos(mets) : "") +
+        (mets.length ? TW.htmlMetodos(mets, sitio.config && sitio.config.pais) : "") +
         (d.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(d.instrucciones_pago) + "</p>" : "") + "</details>";
     }
     html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +

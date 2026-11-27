@@ -200,15 +200,43 @@
       return datos;
     },
     // ---- Metodos de pago ----------------------------------------------
-    // Un metodo: { servicio, ambito: "local"|"internacional",
-    //              tipo: "link"|"qr", url }.
+    // Un metodo: { servicio, pais, tipo: "link"|"qr", url }. El pais es
+    // un codigo de PAISES o "INT" (internacional). El sitio define su
+    // pais general en sitios.config.pais. Los metodos viejos guardaban
+    // ambito ("local"|"internacional") en vez de pais: normalizarMetodo
+    // los convierte (local -> pais del sitio, internacional -> "INT").
     // Los generales viven en sitios.config.metodos_pago; cada producto,
     // curso o documento puede tener los suyos (columna metodos_pago) y
     // elegir con pagos_modo: "sitio" (default), "propios" o "ambos".
+    PAISES: {
+      AR: { nombre: "Argentina", servicios: ["Mercado Pago", "Ualá", "Brubank", "Naranja X", "Cuenta DNI", "BNA+", "Personal Pay", "Modo", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Transferencia / CBU"] },
+      CL: { nombre: "Chile", servicios: ["Cuenta RUT / BancoEstado", "Mach", "Tenpo", "Mercado Pago", "Webpay / Transbank", "Banco de Chile", "Santander", "Khipu", "Transferencia bancaria"] },
+      CO: { nombre: "Colombia", servicios: ["Nequi", "Daviplata", "Bancolombia", "PSE", "Mercado Pago", "Banco de Bogotá", "BBVA", "Transferencia bancaria"] },
+      MX: { nombre: "México", servicios: ["SPEI / Transferencia", "Mercado Pago", "OXXO", "BBVA México", "Santander México", "Banco Azteca", "Clip", "Transferencia bancaria"] },
+      PE: { nombre: "Perú", servicios: ["Yape", "Plin", "BCP", "Interbank", "BBVA Perú", "Mercado Pago", "Transferencia bancaria"] },
+      UY: { nombre: "Uruguay", servicios: ["Mercado Pago", "Prex", "OCA", "Banco República (BROU)", "Santander", "Transferencia bancaria"] },
+      ES: { nombre: "España", servicios: ["Bizum", "Transferencia SEPA", "BBVA", "Santander", "CaixaBank", "Revolut"] },
+      VE: { nombre: "Venezuela", servicios: ["Pago Móvil", "Banco de Venezuela", "Banesco", "Mercantil", "Zelle", "Transferencia bancaria"] },
+      BO: { nombre: "Bolivia", servicios: ["Banco Unión", "BCP Bolivia", "Tigo Money", "QR Simple", "Transferencia bancaria"] },
+      PY: { nombre: "Paraguay", servicios: ["Banco Itaú", "Visión Banco", "Tigo Money", "Transferencia bancaria"] },
+      EC: { nombre: "Ecuador", servicios: ["Banco Pichincha", "Banco Guayaquil", "Produbanco", "Transferencia bancaria"] },
+      CR: { nombre: "Costa Rica", servicios: ["SINPE Móvil", "Banco Nacional", "Banco de Costa Rica", "Transferencia bancaria"] },
+      INT: { nombre: "Internacional", servicios: ["PayPal", "Binance", "Wise", "Payoneer", "Skrill"] }
+    },
+    nombrePais: function (cod) {
+      if (cod === "INT") return "Internacional";
+      return TW.PAISES[cod] ? TW.PAISES[cod].nombre : (cod || "");
+    },
+    normalizarMetodo: function (m, paisSitio) {
+      if (!m || !m.url) return null;
+      var pais = m.pais || (m.ambito === "internacional" ? "INT" : (paisSitio || "AR"));
+      return { servicio: m.servicio || "Otro", pais: pais, tipo: m.tipo === "qr" ? "qr" : "link", url: m.url };
+    },
     metodosDeSitio: function (cfg) {
       cfg = cfg || {};
+      var paisSitio = cfg.pais || "AR";
       if (Array.isArray(cfg.metodos_pago) && cfg.metodos_pago.length) {
-        return cfg.metodos_pago.filter(function (m) { return m && m.url; });
+        return cfg.metodos_pago.map(function (m) { return TW.normalizarMetodo(m, paisSitio); }).filter(Boolean);
       }
       // Legado: campos sueltos anteriores a metodos_pago.
       var out = [];
@@ -220,10 +248,12 @@
         var inter = ["Binance", "PayPal", "Wise"].indexOf(q.servicio) >= 0;
         out.push({ servicio: q.servicio || "QR", ambito: inter ? "internacional" : "local", tipo: "qr", url: q.url });
       });
-      return out;
+      return out.map(function (m) { return TW.normalizarMetodo(m, paisSitio); }).filter(Boolean);
     },
     metodosEfectivos: function (item, cfg) {
-      var propios = item && Array.isArray(item.metodos_pago) ? item.metodos_pago.filter(function (m) { return m && m.url; }) : [];
+      cfg = cfg || {};
+      var paisSitio = cfg.pais || "AR";
+      var propios = item && Array.isArray(item.metodos_pago) ? item.metodos_pago.map(function (m) { return TW.normalizarMetodo(m, paisSitio); }).filter(Boolean) : [];
       var modo = (item && item.pagos_modo) || "sitio";
       if (modo === "propios") return propios;
       if (modo === "ambos") return TW.metodosDeSitio(cfg).concat(propios);
@@ -242,16 +272,27 @@
           '<img class="s-qr" src="' + TW.esc(m.url) + '" alt="Código QR de ' + TW.esc(m.servicio || "pago") + '"></figure>';
       }).join("") + "</div>" : "");
     },
-    // HTML completo: agrupa por ambito si hay de los dos.
-    htmlMetodos: function (metodos) {
+    // HTML completo: agrupa por pais si hay mas de uno (primero el del
+    // sitio, Internacional al final), con el nombre del pais como
+    // encabezado de cada grupo.
+    htmlMetodos: function (metodos, paisSitio) {
       if (!metodos || !metodos.length) return "";
-      var locales = metodos.filter(function (m) { return m.ambito !== "internacional"; });
-      var inter = metodos.filter(function (m) { return m.ambito === "internacional"; });
-      if (locales.length && inter.length) {
-        return '<p class="s-pagos-sub">Desde tu país</p>' + TW.htmlMetodosGrupo(locales) +
-          '<p class="s-pagos-sub">Internacional</p>' + TW.htmlMetodosGrupo(inter);
-      }
-      return TW.htmlMetodosGrupo(metodos);
+      var orden = [];
+      var grupos = {};
+      metodos.forEach(function (m) {
+        var p = m.pais || "INT";
+        if (!grupos[p]) { grupos[p] = []; orden.push(p); }
+        grupos[p].push(m);
+      });
+      if (orden.length <= 1) return TW.htmlMetodosGrupo(metodos);
+      orden.sort(function (a, b) {
+        var pa = a === (paisSitio || "AR") ? 0 : (a === "INT" ? 2 : 1);
+        var pb = b === (paisSitio || "AR") ? 0 : (b === "INT" ? 2 : 1);
+        return pa - pb;
+      });
+      return orden.map(function (p) {
+        return '<p class="s-pagos-sub">' + TW.esc(TW.nombrePais(p)) + "</p>" + TW.htmlMetodosGrupo(grupos[p]);
+      }).join("");
     },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
