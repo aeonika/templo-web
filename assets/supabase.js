@@ -30,7 +30,10 @@
       t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
       t = t.replace(/\*([^*]+)\*/g, "<em>$1</em>");
       t = t.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-      return t.split(/\n\s*\n/).map(function (bloque) {
+      t = t.replace(/(^|\n)###\s+([^\n]+)/g, "\n\n<h3>$2</h3>\n\n");
+      t = t.replace(/(^|\n)##\s+([^\n]+)/g, "\n\n<h2>$2</h2>\n\n");
+      return t.split(/\n\s*\n/).filter(function (b) { return b.trim(); }).map(function (bloque) {
+        if (/^<h[23]>/.test(bloque.trim())) return bloque.trim();
         var lineas = bloque.split("\n");
         var esLista = lineas.every(function (l) { return /^\s*-\s+/.test(l); });
         if (esLista) {
