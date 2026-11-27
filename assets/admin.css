@@ -26,4 +26,22 @@ a.titulo:hover { color: var(--color-accent-hi); }
 .a-url { flex: 1; min-width: 220px; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-inner); border: 1px solid var(--color-rule); background: var(--color-paper-3); color: var(--color-ink); font: inherit; font-size: 14px; }
 
 #a-ok, #a-error { position: sticky; bottom: 14px; }
+
+/* ============================== barra y navegación de la administración ==============================
+   En el panel las pestañas viven en el cajón lateral; acá son una fila
+   de píldoras sobre el contenido. La hamburguesa es solo de móvil:
+   en escritorio el menú de la barra se ve siempre, en línea. */
+.p-nav-menu { display: flex; align-items: center; gap: var(--space-sm); margin-left: auto; }
+#p-burger { display: none; }
+#a-tabs { display: flex; flex-wrap: wrap; gap: var(--space-xs); overflow: visible; padding: 0; margin-bottom: 22px; align-content: initial; }
+#a-tabs button { border: 1px solid var(--color-rule); border-radius: var(--radius-pill); background: var(--color-paper-3); padding: 9px 18px; box-shadow: none; }
+#a-tabs button:hover { transform: none; background: var(--color-paper-2); }
+#a-tabs button.activa { background: var(--color-paper-2); border-color: var(--color-accent); color: var(--color-ink); box-shadow: none; }
+@media (max-width: 760px) {
+  #p-burger { display: grid; margin-left: auto; }
+  .p-nav-menu { display: none; position: absolute; top: 100%; left: 0; right: 0; margin-left: 0; flex-direction: column; align-items: stretch; gap: var(--space-xs); background: var(--color-paper-3); border-bottom: 1px solid var(--color-rule); padding: var(--space-sm); box-shadow: var(--shadow-card); }
+  .p-nav-menu.abierto { display: flex; }
+  .p-nav-menu .btn { justify-content: center; }
+  .p-nav-usuario { text-align: center; word-break: break-all; }
+}
 .a-marca-img { height: 44px; width: auto; max-width: 180px; object-fit: contain; display: block; margin-bottom: var(--space-sm); }
