@@ -1128,7 +1128,7 @@
   // Selector visual de plecas: modal con los estilos dibujados tal
   // como se van a ver; al tocar uno se inserta en el cursor.
   function abrirSelectorPlecas(q, idx) {
-    var ESTILOS = [["linea", "Línea con rombo"], ["simple", "Línea simple"], ["doble", "Doble filete"], ["puntos", "Puntos"], ["pastilla", "Pastilla"]];
+    var ESTILOS = [["barrita", "Barrita (la de las tarjetas)"], ["linea", "Línea con rombo"], ["simple", "Línea simple"], ["doble", "Doble filete"], ["puntos", "Puntos"], ["rombo", "Rombo solo"], ["pastilla", "Pastilla"]];
     var fondo = document.createElement("div");
     fondo.className = "mt-modal-fondo";
     fondo.innerHTML = '<div class="mt-modal"><div class="mt-modal-cab"><h3>Elegí una pleca</h3><button type="button" class="mt-x" aria-label="Cerrar">✕</button></div><div class="pl-lista">' +

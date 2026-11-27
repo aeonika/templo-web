@@ -531,7 +531,7 @@
           Array.prototype.slice.call(h.attributes || []).forEach(function (at) { h.removeAttribute(at.name); });
           if (esPleca) {
             h.setAttribute("class", "s-pleca");
-            if (["linea", "simple", "doble", "puntos", "pastilla"].indexOf(estiloPleca) >= 0) h.setAttribute("data-estilo", estiloPleca);
+            if (["linea", "simple", "doble", "puntos", "pastilla", "barrita", "rombo"].indexOf(estiloPleca) >= 0) h.setAttribute("data-estilo", estiloPleca);
           }
           if (h.tagName === "A") {
             if (/^https?:\/\//i.test(href)) { h.setAttribute("href", href); h.setAttribute("target", "_blank"); h.setAttribute("rel", "noopener"); }

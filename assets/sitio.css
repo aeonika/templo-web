@@ -500,8 +500,12 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-pleca::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; background: var(--acento); transform: translate(-50%, -50%) rotate(45deg); }
 .s-pleca[data-estilo="simple"] { background: linear-gradient(90deg, transparent, var(--acento), transparent) center / 100% 1px no-repeat; }
 .s-pleca[data-estilo="simple"]::after { content: none; }
-.s-pleca[data-estilo="doble"] { height: 7px; background: linear-gradient(90deg, transparent, var(--acento), transparent) top / 100% 1px no-repeat, linear-gradient(90deg, transparent, var(--acento), transparent) bottom / 100% 1px no-repeat; }
+.s-pleca[data-estilo="doble"] { height: 6px; max-width: 300px; background: none; border-top: 1px solid var(--acento); border-bottom: 1px solid var(--acento); }
 .s-pleca[data-estilo="doble"]::after { content: none; }
+.s-pleca[data-estilo="barrita"] { height: 4px; width: 34px; max-width: none; margin: 22px 0; background: var(--acento); border-radius: 2px; }
+.s-pleca[data-estilo="barrita"]::after { content: none; }
+.s-pleca[data-estilo="rombo"] { height: 11px; width: 11px; max-width: none; background: var(--acento); transform: rotate(45deg); }
+.s-pleca[data-estilo="rombo"]::after { content: none; }
 .s-pleca[data-estilo="puntos"] { height: 4px; max-width: 190px; background: radial-gradient(circle, var(--acento) 1.8px, transparent 2.3px) center / 16px 4px repeat-x; }
 .s-pleca[data-estilo="puntos"]::after { content: none; }
 .s-pleca[data-estilo="pastilla"] { height: 11px; max-width: 44px; background: none; border: 1px solid var(--acento); border-radius: 99px; }
