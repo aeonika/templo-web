@@ -79,9 +79,7 @@
         if (rm.data) { rol = "miembro"; rolTxt = "Miembro"; }
         else { rol = "usuario"; rolTxt = "Usuario"; }
       }
-      var nombre = ses.perfil.nombre || u.email || "";
-      var html = '<span class="s-sesion-datos"><span class="s-sesion-nombre">' + TW.esc(nombre) + "</span>" +
-        '<span class="s-rol s-rol--' + rol + '">' + rolTxt + "</span></span>";
+      var html = '<span class="s-sesion-datos"><span class="s-rol s-rol--' + rol + '">' + rolTxt + "</span></span>";
       var icoLlave = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="16" r="4.2"/><path d="M11.2 12.8L20 4"/><path d="M16.4 7.6l2.4 2.4"/><path d="M13.9 10.1l2 2"/></svg>';
       var icoUsuario = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.4 3.6-5 7-5s6.2 1.6 7 5"/></svg>';
       if (esDueno) html += '<a class="s-sesion-ico es-llave" href="/panel.html" title="Administrar sitio" aria-label="Administrar sitio">' + icoLlave + "</a>";
