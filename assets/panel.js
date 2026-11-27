@@ -109,11 +109,14 @@
 
   // ============================================================ subida a Cloudinary
   // Pide la firma al servidor (api/firmar-subida.js) y sube directo.
-  async function subirCloudinary(archivo, privado) {
+  async function subirCloudinary(archivo, privado, opciones) {
     var sesion = await TW.sb.auth.getSession();
     var token = sesion.data.session.access_token;
     var tipoRes = archivo.type.indexOf("image/") === 0 ? "image"
       : (archivo.type.indexOf("video/") === 0 || archivo.type.indexOf("audio/") === 0) ? "video" : "raw";
+    if (tipoRes === "image" && TW.comprimirImagen) {
+      archivo = await TW.comprimirImagen(archivo, (opciones && opciones.max) || 1600);
+    }
     var r = await fetch("/api/firmar-subida", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
@@ -149,7 +152,7 @@
         { k: "oferta_hasta", et: "La oferta termina (opcional: la vuelve oferta flash)", tipo: "fecha" },
         { k: "stock", et: "Stock total (vacío = sin control de stock)", tipo: "number" },
         { k: "variantes", et: "Talles con su stock (si cargás talles, el stock total sale de ellos)", tipo: "talles" },
-        { k: "imagen_url", et: "URL de la imagen", tipo: "text" },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "destacado", et: "Destacado en la vidriera", tipo: "check" },
@@ -174,7 +177,7 @@
         { k: "slug", et: "Dirección (slug)", tipo: "text" },
         { k: "extracto", et: "Extracto", tipo: "textarea" },
         { k: "cuerpo", et: "Cuerpo", tipo: "textarea-grande" },
-        { k: "imagen_url", et: "URL de la imagen", tipo: "text" },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
       resumen: function (x) { return x.publicado ? "Publicado" : "Borrador"; }
@@ -185,7 +188,7 @@
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
-        { k: "imagen_url", et: "URL de la imagen", tipo: "text" },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
         { k: "link", et: "Enlace", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "activa", et: "Activa", tipo: "check", def: true }
@@ -213,7 +216,7 @@
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
-        { k: "imagen_url", et: "URL de la imagen", tipo: "text" },
+        { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
         { k: "precio", et: "Precio (vacío = gratis)", tipo: "number" },
         { k: "link_pago", et: "Link de pago de la suscripción", tipo: "text" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
@@ -253,6 +256,14 @@
     if (c.tipo === "fecha") {
       var fv = v ? String(v).slice(0, 16) : "";
       return "<label>" + c.et + '<input type="datetime-local" name="' + c.k + '" value="' + esc(fv) + '"></label>';
+    }
+    if (c.tipo === "imagen") {
+      return '<div class="c-campo">' + c.et +
+        '<span class="c-img"><input type="text" name="' + c.k + '" value="' + esc(v) + '" placeholder="https://… o subí la imagen">' +
+        '<img class="c-mini c-img-prev" src="' + esc(v) + '" alt=""' + (v ? "" : " hidden") + ">" +
+        '<label class="btn btn-fantasma c-subir">Subir imagen<input type="file" class="c-img-file" data-max="' + (c.max || 1600) + '" accept="image/*" hidden></label></span>' +
+        (c.ayuda ? '<span class="c-ayuda">' + c.ayuda + "</span>" : "") +
+        '<span class="c-ayuda c-img-estado"></span></div>';
     }
     if (c.tipo === "talles") {
       var tv = Array.isArray(v) ? v.map(function (x) { return x.t + ":" + x.s; }).join(", ") : "";
@@ -306,6 +317,28 @@
         '<div class="p-acciones"><button class="btn btn-primario" type="submit">Guardar</button>' +
         (editando ? '<button class="btn btn-fantasma" type="button" id="cr-cancelar">Cancelar</button>' : "") +
         "</div><p class='p-error' id='cr-error'></p></form>";
+      caja.querySelectorAll(".c-img-file").forEach(function (inp) {
+        inp.addEventListener("change", function () {
+          var arch = inp.files[0];
+          if (!arch) return;
+          var zona = inp.closest(".c-img");
+          var txt = zona.querySelector('input[type="text"]');
+          var prev = zona.querySelector(".c-img-prev");
+          var est = inp.closest(".c-campo").querySelector(".c-img-estado");
+          if (est) est.textContent = "Comprimiendo y subiendo…";
+          subirCloudinary(arch, false, { max: Number(inp.dataset.max) || 1600 }).then(function (datos) {
+            txt.value = datos.secure_url;
+            if (prev) { prev.src = datos.secure_url; prev.hidden = false; }
+            if (est) est.textContent = "Imagen subida y comprimida: se guarda con el formulario.";
+          }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
+        });
+      });
+      caja.querySelectorAll(".c-img input[type='text']").forEach(function (txt) {
+        txt.addEventListener("input", function () {
+          var prev = txt.closest(".c-img").querySelector(".c-img-prev");
+          if (prev) { prev.src = txt.value; prev.hidden = !txt.value; }
+        });
+      });
       if (cfg.tabla === "productos" && sitio.config && sitio.config.talle_sistema === "ninguno") {
         var inpV = caja.querySelector('[name="variantes"]');
         if (inpV && inpV.closest("label")) inpV.closest("label").style.display = "none";
@@ -320,7 +353,7 @@
           if (archivo) {
             $("#cr-subida-nota").textContent = "Subiendo a Cloudinary…";
             var privado = cfg.archivo.privadoSegunPrecio ? Number(obj.precio) > 0 : !obj.es_preview;
-            var datos = await subirCloudinary(archivo, privado);
+            var datos = await subirCloudinary(archivo, privado, { max: 1600 });
             if (privado) obj[cfg.archivo.campoId] = datos.public_id + (datos.format ? "." + datos.format : "");
             else obj[cfg.archivo.campoUrl] = datos.secure_url;
           }
@@ -491,7 +524,9 @@
       "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
       "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div>" +
       "<div class='c-fondo-fila'><label class='btn btn-fantasma c-subir'>Subir logo<input type='file' id='c-logo-file' accept='image/*' hidden></label>" +
-      "<span class='c-ayuda' id='c-logo-estado'>Tu logo va en la barra de tu sitio y como icono de la pestaña. Se ajusta solo al alto de la barra: puede ser ancho, cuadrado o con fondo transparente, y no se recorta.</span></div></div>" +
+      "<span class='c-ayuda' id='c-logo-estado'>Tu logo va en la barra de tu sitio y como icono de la pestaña. Se ajusta solo al alto de la barra: puede ser ancho, cuadrado o con fondo transparente, y no se recorta.</span></div>" +
+      "<div class='c-fondo-fila'><label class='btn btn-fantasma c-subir'>Subir tu foto<input type='file' id='c-foto-file' accept='image/*' hidden></label>" +
+      "<span class='c-ayuda' id='c-foto-estado'>Tu foto es la portada de tu sitio. Tamaño sugerido: 1200 × 1500 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
       "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
@@ -598,18 +633,29 @@
       var arch = lFile.files[0];
       if (!arch) return;
       if (lEst) lEst.textContent = "Subiendo el logo…";
-      subirCloudinary(arch, false).then(function (datos) {
+      subirCloudinary(arch, false, { max: 512 }).then(function (datos) {
         lUrl.value = datos.secure_url;
         if (lImg) { lImg.src = datos.secure_url; lImg.hidden = false; }
         if (lEst) lEst.textContent = "Logo subido. Tocá «Guardar sitio» para aplicarlo.";
       }).catch(function (e2) { if (lEst) lEst.textContent = "No se pudo subir: " + e2.message; });
+    });
+    var foFile = $("#c-foto-file"), foUrl = $("#c-foto"), foEst = $("#c-foto-estado"), foImg = $("#c-foto-img");
+    if (foFile) foFile.addEventListener("change", function () {
+      var arch = foFile.files[0];
+      if (!arch) return;
+      if (foEst) foEst.textContent = "Comprimiendo y subiendo…";
+      subirCloudinary(arch, false, { max: 1600 }).then(function (datos) {
+        foUrl.value = datos.secure_url;
+        if (foImg) { foImg.src = datos.secure_url; foImg.hidden = false; }
+        if (foEst) foEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
+      }).catch(function (e2) { if (foEst) foEst.textContent = "No se pudo subir: " + e2.message; });
     });
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
       var arch = fFile.files[0];
       if (!arch) return;
       fEst.textContent = "Subiendo la imagen…";
-      subirCloudinary(arch, false).then(function (datos) {
+      subirCloudinary(arch, false, { max: 1920 }).then(function (datos) {
         fUrl.value = datos.secure_url;
         if (fMini) { fMini.src = datos.secure_url; fMini.hidden = false; }
         fEst.textContent = "Imagen subida. Tocá «Guardar sitio» para aplicarla.";
@@ -684,7 +730,10 @@
     cont.innerHTML = "<h2>Feed de novedades</h2><p class='bajada'>Lo público aparece en tu sitio y en la portada de la plataforma. Lo de curso, solo en el aula de ese curso.</p>" +
       "<div class='p-bloque'><form id='f-feed'>" +
       "<label>Texto <textarea name='texto' required></textarea></label>" +
-      "<label>URL de imagen (opcional) <input type='text' name='imagen_url'></label>" +
+      "<div class='c-campo'>Imagen (opcional)" +
+      "<span class='c-img'><input type='text' name='imagen_url' placeholder='https://… o subí la imagen'>" +
+      "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='feed-img-file' accept='image/*' hidden></label></span>" +
+      "<span class='c-ayuda' id='feed-img-estado'>Tamaño sugerido: 1600 × 900 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div>" +
       "<div class='p-dos'><label>Alcance <select name='alcance'><option value='publico'>Público</option><option value='curso'>Solo alumnos de un curso</option></select></label>" +
       "<label>Curso (si es de curso) <select name='curso_id'><option value=''>—</option>" +
       cursos.map(function (c) { return "<option value='" + c.id + "'>" + esc(c.titulo) + "</option>"; }).join("") +
@@ -699,6 +748,17 @@
           '<button class="btn btn-peligro btn-chico" data-borrar-pub="' + p.id + '">Borrar</button></div>';
       }).join("") : '<p class="p-vacio">Sin publicaciones todavía.</p>';
     }
+    var fiF = $("#feed-img-file");
+    if (fiF) fiF.addEventListener("change", function () {
+      var arch = fiF.files[0];
+      if (!arch) return;
+      var est = $("#feed-img-estado");
+      if (est) est.textContent = "Comprimiendo y subiendo…";
+      subirCloudinary(arch, false, { max: 1600 }).then(function (datos) {
+        document.querySelector("#f-feed [name='imagen_url']").value = datos.secure_url;
+        if (est) est.textContent = "Imagen subida y comprimida: se publica con el texto.";
+      }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
+    });
     $("#f-feed").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);

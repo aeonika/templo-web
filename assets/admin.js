@@ -108,7 +108,7 @@
       if (!f) return;
       try {
         aviso(true, "Subiendo logo…");
-        var datos2 = await subirCloudinary(f, false);
+        var datos2 = await subirCloudinary(f, false, { max: 512 });
         $("#a-marca-logo").value = datos2.secure_url;
         aviso(true, "Logo subido. Tocá «Guardar marca» para aplicarlo.");
       } catch (e) { aviso(false, "No se pudo subir: " + e.message); }
@@ -131,11 +131,14 @@
   }
 
   // ============================================================ portada de la plataforma
-  async function subirCloudinary(archivo, privado) {
+  async function subirCloudinary(archivo, privado, opciones) {
     var sesion = await TW.sb.auth.getSession();
     var token = sesion.data.session.access_token;
     var tipoRes = archivo.type.indexOf("image/") === 0 ? "image"
       : (archivo.type.indexOf("video/") === 0 || archivo.type.indexOf("audio/") === 0) ? "video" : "raw";
+    if (tipoRes === "image" && TW.comprimirImagen) {
+      archivo = await TW.comprimirImagen(archivo, (opciones && opciones.max) || 1600);
+    }
     var r = await fetch("/api/firmar-subida", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
@@ -176,7 +179,7 @@
       if (!f) return;
       try {
         aviso(true, "Subiendo imagen…");
-        var datos = await subirCloudinary(f, false);
+        var datos = await subirCloudinary(f, false, { max: 1920 });
         $("#a-portada-url").value = datos.secure_url;
         aviso(true, "Imagen subida. Tocá «Guardar portada» para aplicarla.");
       } catch (e) { aviso(false, "No se pudo subir: " + e.message); }

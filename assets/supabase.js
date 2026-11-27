@@ -123,6 +123,35 @@
         fav.href = logo;
       }
     },
+    // Comprime una imagen en el navegador antes de subirla: la achica al
+    // maximo indicado (lado mayor) y la pasa a WebP con calidad 0.82, que
+    // se ve igual y pesa mucho menos. Si el resultado pesara mas que el
+    // original, o el archivo no es JPEG/PNG/WebP (un GIF animado o un SVG
+    // se respetan), devuelve el archivo tal cual. Nunca lanza error.
+    comprimirImagen: async function (archivo, maximo) {
+      if (!archivo || !/^image\/(jpeg|png|webp)$/.test(archivo.type)) return archivo;
+      var max = maximo || 1600;
+      try {
+        var bmp = await createImageBitmap(archivo);
+        var escala = Math.min(1, max / Math.max(bmp.width, bmp.height));
+        var w = Math.max(1, Math.round(bmp.width * escala));
+        var h = Math.max(1, Math.round(bmp.height * escala));
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
+        if (bmp.close) bmp.close();
+        var blob = await new Promise(function (res) { canvas.toBlob(res, "image/webp", 0.82); });
+        var ext = ".webp";
+        if (!blob) {
+          blob = await new Promise(function (res) { canvas.toBlob(res, "image/jpeg", 0.85); });
+          ext = ".jpg";
+        }
+        if (!blob || blob.size >= archivo.size) return archivo;
+        var nombre = (archivo.name || "imagen").replace(/\.[^.]+$/, "") + ext;
+        return new File([blob], nombre, { type: blob.type });
+      } catch (e) { return archivo; }
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {
