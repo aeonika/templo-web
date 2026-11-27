@@ -228,7 +228,7 @@ setTimeout(window.__finSplash, 8000);
   if (!window.TW || !TW.sb) { if (window.__finSplash) __finSplash(); return; }
   var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "portada_url").maybeSingle();
   if (r.data && r.data.valor) document.getElementById("hero-img").src = r.data.valor;
-  var rt = await TW.sb.from("config_plataforma").select("clave, valor").in("clave", ["testimonios_titulo", "testimonios", "orden_secciones"]);
+  var rt = await TW.sb.from("config_plataforma").select("clave, valor").in("clave", ["testimonios_titulo", "testimonios", "orden_secciones", "contenido"]);
   var cfgT = {};
   (rt.data || []).forEach(function (f) { cfgT[f.clave] = f.valor; });
   var itemsT = [];
@@ -279,6 +279,87 @@ setTimeout(window.__finSplash, 8000);
     var el = document.getElementById(id);
     if (el) mainEl.insertBefore(el, cierreEl);
   });
+  // Textos de la pagina, editables desde Administracion (clave
+  // «contenido»): solo se pisa lo que viene cargado; el resto queda
+  // como esta escrito en el HTML.
+  var C = {};
+  try { C = JSON.parse(cfgT.contenido || "{}"); } catch (e) { C = {}; }
+  function poner(sel, val) { if (typeof val === "string" && val.trim()) { var el = document.querySelector(sel); if (el) el.textContent = val; } }
+  function tarjetas(sel, lista) {
+    if (!Array.isArray(lista)) return;
+    document.querySelectorAll(sel).forEach(function (el, i) {
+      var d = lista[i];
+      if (!d) return;
+      var h = el.querySelector("h3"), p = el.querySelector("p:not(.paso-num)");
+      if (h && d.t) h.textContent = d.t;
+      if (p && d.x) p.textContent = d.x;
+    });
+  }
+  if (C.hero) {
+    if (C.hero.titulo || C.hero.acento) {
+      var h1 = document.querySelector(".hero h1");
+      if (h1) h1.innerHTML = TW.esc(C.hero.titulo || "") + ' <span class="h1-acento">' + TW.esc(C.hero.acento || "") + "</span>";
+    }
+    poner(".hero-bajada", C.hero.bajada);
+    poner(".hero-acciones .btn-primario", C.hero.boton);
+    var lh = document.querySelectorAll(".hero-acciones .hero-link");
+    if (lh[0] && C.hero.link_novedades) lh[0].textContent = C.hero.link_novedades;
+    if (lh[1] && C.hero.link_ejemplo) lh[1].textContent = C.hero.link_ejemplo;
+  }
+  if (C.vidrio) {
+    poner(".vidrio-nombre", C.vidrio.nombre);
+    poner(".vidrio-link", C.vidrio.link);
+    poner(".vidrio-titulo", C.vidrio.titulo);
+    poner(".vidrio-linea", C.vidrio.linea);
+    poner(".vidrio-pie", C.vidrio.pie);
+    if (Array.isArray(C.vidrio.filas)) document.querySelectorAll(".vidrio-fila").forEach(function (f2, i) {
+      var d = C.vidrio.filas[i];
+      if (!d) return;
+      var spans = f2.querySelectorAll("span");
+      if (spans[0] && d[0]) spans[0].textContent = d[0];
+      if (spans[1] && d[1]) { spans[1].textContent = d[1]; spans[1].className = d[1] === "Premium" ? "vidrio-precio-premium" : "vidrio-precio"; }
+    });
+  }
+  poner(".ejemplos-titulo", C.ejemplos_titulo);
+  if (C.para_quien) {
+    poner("#para-quien h2", C.para_quien.titulo);
+    poner("#para-quien .banda-bajada", C.para_quien.bajada);
+    tarjetas("#para-quien .paso", C.para_quien.tarjetas);
+  }
+  if (C.herramientas) {
+    poner("#herramientas h2", C.herramientas.titulo);
+    poner("#herramientas .banda-bajada", C.herramientas.bajada);
+    tarjetas("#herramientas .modulo", C.herramientas.modulos);
+  }
+  if (C.como) {
+    poner("#como h2", C.como.titulo);
+    tarjetas("#como .paso", C.como.pasos);
+  }
+  if (C.novedades) {
+    poner("#novedades h2", C.novedades.titulo);
+    poner("#novedades .banda-bajada", C.novedades.bajada);
+  }
+  poner("#testimonios .banda-bajada", C.testimonios_bajada);
+  if (C.planes) {
+    poner("#planes h2", C.planes.titulo);
+    [["gratis", 0], ["premium", 1]].forEach(function (par) {
+      var d = C.planes[par[0]], el = document.querySelectorAll("#planes .plan")[par[1]];
+      if (!d || !el) return;
+      var h = el.querySelector("h3"), pr = el.querySelector(".plan-precio"), ul = el.querySelector("ul"), b = el.querySelector(".btn");
+      if (h && d.nombre) h.textContent = d.nombre;
+      if (pr && d.precio) pr.textContent = d.precio;
+      if (ul && Array.isArray(d.items) && d.items.length) ul.innerHTML = d.items.map(function (it) { return "<li>" + TW.esc(it) + "</li>"; }).join("");
+      if (b && d.boton) b.textContent = d.boton;
+    });
+  }
+  if (C.cierre) {
+    poner(".cierre h2", C.cierre.titulo);
+    poner(".cierre .btn", C.cierre.boton);
+  }
+  if (C.pie) {
+    poner(".pie-linea", C.pie.linea);
+    poner(".pie-creditos", C.pie.creditos);
+  }
   await TW.aplicarMarca();
   if (window.__finSplash) __finSplash();
 })();

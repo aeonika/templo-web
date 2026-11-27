@@ -68,6 +68,7 @@
     });
     var cont = $("#a-contenido");
     if (tab === "resumen") return vistaResumen(cont);
+    if (tab === "portada") return vistaPortada(cont);
     if (tab === "sitios") return vistaSitios(cont);
     if (tab === "usuarios") return vistaUsuarios(cont);
     if (tab === "suscripciones") return vistaSuscripciones(cont);
@@ -75,7 +76,7 @@
 
   // ============================================================ resumen
   async function vistaResumen(cont) {
-    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div><div id='a-portada'></div><div id='a-testis'></div><div id='a-orden'></div>";
+    cont.innerHTML = "<h2>Resumen</h2><p class='bajada'>La plataforma de un vistazo.</p><div class='a-stats' id='a-stats'><p class='p-vacio'>Cargando…</p></div><div id='a-marca'></div>";
     var r = await TW.sb.rpc("admin_estadisticas");
     if (r.error || !r.data) { $("#a-stats").innerHTML = "<p class='p-error'>No se pudieron cargar las estadísticas.</p>"; return; }
     var d = r.data;
@@ -89,9 +90,6 @@
       return "<div class='a-stat" + (s[0] === "Sitios Premium" ? " a-stat-dorada" : "") + "'><p class='a-stat-num'>" + s[1] + "</p><p class='a-stat-nombre'>" + s[0] + "</p></div>";
     }).join("");
     cargarMarca();
-    cargarPortada();
-    cargarTestis();
-    cargarOrden();
   }
 
   // ============================================================ marca de la plataforma
@@ -139,6 +137,137 @@
       var r3 = await TW.sb.from("config_plataforma").upsert({ clave: "marca_logo_url", valor: "" }, { onConflict: "clave" });
       if (r3.error) aviso(false, "No se pudo guardar: " + r3.error.message);
       else { aviso(true, "Listo: vuelve la marca original."); cargarMarca(); }
+    });
+  }
+
+  // ============================================================ pestaña Portada: todo el index editable
+  function vistaPortada(cont) {
+    cont.innerHTML = "<h2>Página principal</h2><p class='bajada'>Todo lo que se ve en la portada de la plataforma, editable desde acá: imagen, textos de cada módulo, testimonios y el orden de las secciones.</p><div id='a-portada'></div><div id='a-contenido-form'></div><div id='a-testis'></div><div id='a-orden'></div>";
+    cargarPortada();
+    cargarContenido();
+    cargarTestis();
+    cargarOrden();
+  }
+
+  var DEF_CONTENIDO = {
+    hero: { titulo: "Tu proyecto, en tu propio", acento: "sitio", bajada: "Tu tienda, tus cursos, tus servicios y tu blog en un solo lugar, sin saber programar.", boton: "Crear mi sitio gratis", link_novedades: "Ver sitios y novedades", link_ejemplo: "Ejemplo real: una tienda de ropa" },
+    vidrio: { nombre: "Tienda Aurora", link: "templo-web.app/aurora", titulo: "Ofertas de la semana", linea: "Pedidos por WhatsApp · envíos en el día", filas: [["Combo desayuno artesanal", "$ 12.500"], ["Velas aromáticas de soja", "$ 6.900"], ["Curso de panadería en video", "Premium"]], pie: "Ejemplo: así se ve un sitio en TemploWeb" },
+    ejemplos_titulo: "Sitios de ejemplo, hechos con la plataforma",
+    para_quien: { titulo: "Un sitio para cada proyecto", bajada: "La misma plataforma, tres formas de usarla. El aspecto premium y el panel simple son los mismos para todos.", tarjetas: [
+      { t: "Tiendas y emprendimientos", x: "Tu catálogo con precios y fotos, promociones de la semana y contacto directo por WhatsApp para recibir pedidos." },
+      { t: "Maestros y cursos", x: "Cursos en video con acceso por suscripción, documentos protegidos y un feed propio para tu comunidad." },
+      { t: "Servicios y profesionales", x: "Tus servicios con precio, tu presentación y tus artículos, reunidos en un solo enlace para compartir." }] },
+    herramientas: { titulo: "Todo lo que tu sitio incluye", bajada: "Cada módulo se enciende o se apaga desde tu panel. Empezás con lo que tenés y sumás cuando crece.", modulos: [
+      { t: "Productos y servicios", x: "Físicos, digitales o sesiones: precio, foto y tu propio link de cobro." },
+      { t: "Cursos y talleres", x: "Lecciones en video y audio con acceso solo para tus alumnos suscriptos." },
+      { t: "Repositorio de documentos", x: "Tus PDFs y textos, gratis o pagos, entregados de forma segura." },
+      { t: "Artículos y blog", x: "Escribí y publicá sin depender del algoritmo de una red social." },
+      { t: "Promociones", x: "Avisos y ofertas de tu sitio, en el orden que vos elijas." },
+      { t: "Feed de novedades", x: "Actualizaciones públicas para tus seguidores y privadas para cada curso." },
+      { t: "Quién soy", x: "Tu presentación, tu foto y tus canales de contacto directos." },
+      { t: "Vidriera de destacados", x: "Lo que quieras empujar primero, en una vista propia." }] },
+    como: { titulo: "En marcha en tres pasos", pasos: [
+      { t: "Registrate", x: "Creás tu cuenta y elegís la dirección de tu sitio. Sin instalar nada." },
+      { t: "Cargá tu contenido", x: "Productos, cursos, servicios, artículos y documentos, desde un panel simple." },
+      { t: "Compartí tu enlace", x: "Tus clientes y alumnos entran, compran, se suscriben y vuelven cuando quieran." }] },
+    novedades: { titulo: "Novedades de la plataforma", bajada: "Lo último que publicaron los sitios de la plataforma." },
+    testimonios_bajada: "Capturas y fotos de quienes ya venden con su propio sitio.",
+    planes: { titulo: "Planes",
+      gratis: { nombre: "Gratis", precio: "$ 0", items: ["Tu sitio con todos los módulos", "Productos, servicios y blog", "Cursos con lecciones públicas", "Documentos gratuitos", "Feed público de novedades"], boton: "Empezar gratis" },
+      premium: { nombre: "Premium", precio: "Para vender en serio", items: ["Todo lo del plan gratis", "Video y audio protegidos: acceso solo con suscripción activa", "Enlaces de acceso que vencen en minutos, no para siempre", "Documentos pagos con entrega segura", "Feed privado para cada curso"], boton: "Crear mi sitio" } },
+    cierre: { titulo: "Tu sitio te está esperando", boton: "Crear mi sitio gratis" },
+    pie: { linea: "Una plataforma de Aeonika para negocios, maestros y profesionales.", creditos: "La imagen de portada de esta página se elige desde la administración de la plataforma." }
+  };
+
+  async function cargarContenido() {
+    var caja = $("#a-contenido-form");
+    if (!caja) return;
+    var r = await TW.sb.from("config_plataforma").select("valor").eq("clave", "contenido").maybeSingle();
+    var guardado = {};
+    try { guardado = JSON.parse((r.data && r.data.valor) || "{}"); } catch (e) { guardado = {}; }
+    function val(ruta) {
+      var partes = ruta.split("."), nodos = [guardado, DEF_CONTENIDO], salida = "";
+      for (var n = 0; n < 2; n++) {
+        var nodo = nodos[n], ok = true;
+        for (var i = 0; i < partes.length; i++) {
+          if (nodo && typeof nodo === "object" && partes[i] in nodo) nodo = nodo[partes[i]];
+          else { ok = false; break; }
+        }
+        if (ok && typeof nodo === "string") { salida = nodo; break; }
+        if (ok && Array.isArray(nodo)) { salida = nodo.join("\n"); break; }
+      }
+      return salida;
+    }
+    function campo(ruta, etiqueta, area) {
+      var v = esc(val(ruta));
+      return "<label>" + etiqueta + (area
+        ? "<textarea data-c='" + ruta + "' rows='3'>" + v + "</textarea>"
+        : "<input type='text' data-c='" + ruta + "' value='" + v + "'>") + "</label>";
+    }
+    function grupo(titulo, abierto, campos) {
+      return "<details class='a-grupo'" + (abierto ? " open" : "") + "><summary>" + titulo + "</summary><div class='a-campos'>" + campos + "</div></details>";
+    }
+    function tarjetas(rutaBase, cantidad, etiqueta) {
+      var h = "";
+      for (var i = 0; i < cantidad; i++) {
+        h += campo(rutaBase + "." + i + ".t", etiqueta + " " + (i + 1) + " · título") +
+             campo(rutaBase + "." + i + ".x", etiqueta + " " + (i + 1) + " · texto", true);
+      }
+      return h;
+    }
+    caja.innerHTML = "<div class='a-portada'><h3>Textos de la página principal</h3>" +
+      "<p class='bajada'>Cada módulo de la portada, con sus textos. Lo que guardes acá reemplaza al texto de fábrica de esa parte.</p>" +
+      grupo("Presentación (hero)", true,
+        campo("hero.titulo", "Titular") + campo("hero.acento", "Palabra destacada del titular") +
+        campo("hero.bajada", "Bajada", true) + campo("hero.boton", "Botón principal") +
+        campo("hero.link_novedades", "Enlace «novedades»") + campo("hero.link_ejemplo", "Enlace del ejemplo")) +
+      grupo("Tarjeta de ejemplo del hero", false,
+        campo("vidrio.nombre", "Nombre del sitio de ejemplo") + campo("vidrio.link", "Dirección que se muestra") +
+        campo("vidrio.titulo", "Título de la tarjeta") + campo("vidrio.linea", "Línea bajo el título") +
+        campo("vidrio.filas.0.0", "Fila 1 · producto") + campo("vidrio.filas.0.1", "Fila 1 · precio") +
+        campo("vidrio.filas.1.0", "Fila 2 · producto") + campo("vidrio.filas.1.1", "Fila 2 · precio") +
+        campo("vidrio.filas.2.0", "Fila 3 · producto") + campo("vidrio.filas.2.1", "Fila 3 · precio (escribí Premium para la placa dorada)") +
+        campo("vidrio.pie", "Pie de la tarjeta")) +
+      grupo("Ejemplos y «Para quién»", false,
+        campo("ejemplos_titulo", "Título de la barra de ejemplos") +
+        campo("para_quien.titulo", "Título de la sección") + campo("para_quien.bajada", "Bajada", true) +
+        tarjetas("para_quien.tarjetas", 3, "Público")) +
+      grupo("Herramientas", false,
+        campo("herramientas.titulo", "Título de la sección") + campo("herramientas.bajada", "Bajada", true) +
+        tarjetas("herramientas.modulos", 8, "Módulo")) +
+      grupo("Cómo funciona", false,
+        campo("como.titulo", "Título de la sección") + tarjetas("como.pasos", 3, "Paso")) +
+      grupo("Novedades y testimonios", false,
+        campo("novedades.titulo", "Novedades · título") + campo("novedades.bajada", "Novedades · bajada", true) +
+        campo("testimonios_bajada", "Testimonios · bajada", true)) +
+      grupo("Planes", false,
+        campo("planes.titulo", "Título de la sección") +
+        campo("planes.gratis.nombre", "Plan gratis · nombre") + campo("planes.gratis.precio", "Plan gratis · precio") +
+        campo("planes.gratis.items", "Plan gratis · beneficios (uno por línea)", true) + campo("planes.gratis.boton", "Plan gratis · botón") +
+        campo("planes.premium.nombre", "Plan Premium · nombre") + campo("planes.premium.precio", "Plan Premium · precio") +
+        campo("planes.premium.items", "Plan Premium · beneficios (uno por línea)", true) + campo("planes.premium.boton", "Plan Premium · botón")) +
+      grupo("Cierre y pie de página", false,
+        campo("cierre.titulo", "Cierre · título") + campo("cierre.boton", "Cierre · botón") +
+        campo("pie.linea", "Pie · línea principal") + campo("pie.creditos", "Pie · línea secundaria")) +
+      "<div class='a-portada-form' style='margin-top:16px'><button class='btn btn-primario' id='a-contenido-guardar' type='button'>Guardar textos</button></div></div>";
+    $("#a-contenido-guardar").addEventListener("click", async function () {
+      var C = {};
+      caja.querySelectorAll("[data-c]").forEach(function (inp) {
+        var partes = inp.getAttribute("data-c").split(".");
+        var nodo = C;
+        for (var i = 0; i < partes.length - 1; i++) {
+          var k = partes[i];
+          if (nodo[k] === undefined) nodo[k] = /^\d+$/.test(partes[i + 1]) ? [] : {};
+          nodo = nodo[k];
+        }
+        var ultimo = partes[partes.length - 1];
+        nodo[ultimo] = (ultimo === "items")
+          ? inp.value.split("\n").map(function (l) { return l.trim(); }).filter(Boolean)
+          : inp.value.trim();
+      });
+      var r2 = await TW.sb.from("config_plataforma").upsert({ clave: "contenido", valor: JSON.stringify(C) }, { onConflict: "clave" });
+      if (r2.error) aviso(false, "No se pudo guardar: " + r2.error.message);
+      else aviso(true, "Textos guardados. Se ven al recargar la página principal.");
     });
   }
 

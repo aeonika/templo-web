@@ -37,6 +37,11 @@ a.titulo:hover { color: var(--color-accent-hi); }
 #a-tabs button { border: 1px solid var(--color-rule); border-radius: var(--radius-pill); background: var(--color-paper-3); padding: 9px 18px; box-shadow: none; }
 #a-tabs button:hover { transform: none; background: var(--color-paper-2); }
 #a-tabs button.activa { background: var(--color-paper-2); border-color: var(--color-accent); color: var(--color-ink); box-shadow: none; }
+.a-grupo { border: 1px solid var(--color-rule); border-radius: var(--radius-inner); background: var(--color-paper-3); padding: 4px 16px 16px; margin-top: var(--space-md); }
+.a-grupo summary { font-weight: 600; font-size: 16px; cursor: pointer; padding: 10px 0; color: var(--color-ink); }
+.a-campos { display: grid; gap: 10px; }
+.a-campos label { display: grid; gap: 4px; font-size: 14px; color: var(--color-ink-2); }
+.a-campos input, .a-campos textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--color-rule); border-radius: var(--radius-inner); background: var(--color-paper); color: var(--color-ink); font: inherit; font-size: 14.5px; }
 @media (max-width: 760px) {
   #p-burger { display: grid; margin-left: auto; }
   .p-nav-menu { display: none; position: absolute; top: 100%; left: 0; right: 0; margin-left: 0; flex-direction: column; align-items: stretch; gap: var(--space-xs); background: var(--color-paper-3); border-bottom: 1px solid var(--color-rule); padding: var(--space-sm); box-shadow: var(--shadow-card); }
