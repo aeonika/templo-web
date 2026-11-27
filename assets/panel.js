@@ -1090,8 +1090,41 @@
   var OPCIONES_QUILL = {
     theme: "snow",
     placeholder: "Escribí acá…",
-    modules: { toolbar: [["bold", "italic", "underline"], [{ header: 3 }], [{ list: "bullet" }], ["link", "clean"]] }
+    modules: { toolbar: [["bold", "italic", "underline"], [{ header: 3 }], [{ list: "bullet" }], ["link", "clean", "pleca"]] }
   };
+  // Pleca ornamental: divisor con linea en degradado y rombo central,
+  // como los ornamentos del diseño Premium. Es un embed de bloque de
+  // Quill que se guarda como <div class="s-pleca"> y las pantallas
+  // publicas lo dibujan con CSS (TW.textoRico conserva esa clase).
+  function registrarPleca() {
+    if (window.__plecaLista || !window.Quill) return;
+    window.__plecaLista = true;
+    var BlockEmbed = window.Quill.import("blots/block/embed");
+    class PlecaBlot extends BlockEmbed {
+      static create(value) {
+        var node = super.create();
+        node.setAttribute("data-estilo", value || "linea");
+        return node;
+      }
+      static value(node) { return node.getAttribute("data-estilo") || "linea"; }
+    }
+    PlecaBlot.blotName = "pleca";
+    PlecaBlot.tagName = "div";
+    PlecaBlot.className = "s-pleca";
+    window.Quill.register(PlecaBlot);
+  }
+  function conectarPleca(q) {
+    var tb = q.getModule("toolbar");
+    if (!tb) return;
+    tb.addHandler("pleca", function () {
+      var rango = q.getSelection(true);
+      var idx = rango ? rango.index : q.getLength();
+      q.insertEmbed(idx, "pleca", "linea", "user");
+      q.setSelection(idx + 1, 0, "silent");
+    });
+    var b = tb.container.querySelector(".ql-pleca");
+    if (b) b.textContent = "❖ Pleca";
+  }
   function htmlDeQuill(q) {
     var h = q && q.root ? q.root.innerHTML.trim() : "";
     return h === "<p><br></p>" ? "" : h;
@@ -1101,9 +1134,11 @@
     var montes = contenedor.querySelectorAll("[data-rico-campo]:not([data-q-listo])");
     if (!montes.length) return;
     cargarQuill().then(function () {
+      registrarPleca();
       montes.forEach(function (el) {
         el.setAttribute("data-q-listo", "1");
         el._quill = new window.Quill(el, OPCIONES_QUILL);
+        conectarPleca(el._quill);
       });
     }).catch(function () { /* sin red: el contenido queda visible sin editor */ });
   }
@@ -1120,7 +1155,9 @@
     ta.parentNode.insertBefore(monte, ta);
     ta.hidden = true;
     cargarQuill().then(function () {
+      registrarPleca();
       var q = new window.Quill(monte, OPCIONES_QUILL);
+      conectarPleca(q);
       q.on("text-change", function () { ta.value = htmlDeQuill(q); });
     }).catch(function () { ta.hidden = false; });
   }

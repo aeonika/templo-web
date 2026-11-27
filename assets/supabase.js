@@ -526,7 +526,9 @@
             return;
           }
           var href = h.tagName === "A" ? (h.getAttribute("href") || "") : "";
+          var esPleca = h.tagName === "DIV" && h.classList && h.classList.contains("s-pleca");
           Array.prototype.slice.call(h.attributes || []).forEach(function (at) { h.removeAttribute(at.name); });
+          if (esPleca) h.setAttribute("class", "s-pleca");
           if (h.tagName === "A") {
             if (/^https?:\/\//i.test(href)) { h.setAttribute("href", href); h.setAttribute("target", "_blank"); h.setAttribute("rel", "noopener"); }
             else { h.removeAttribute("href"); }
