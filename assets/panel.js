@@ -1133,11 +1133,14 @@
         var campoV = inpV ? inpV.closest(".c-campo") : null;
         if (campoV) campoV.style.display = "none";
       }
+      // Los editores de metodos de pago y de galeria existen en
+      // productos, cursos y documentos: se conectan para todo CRUD
+      // (cada preparar* no hace nada si su editor no esta en el form).
+      prepararMetodos(caja, editando && Array.isArray(editando.metodos_pago) ? editando.metodos_pago : []);
+      prepararGaleria(caja, editando && Array.isArray(editando.galeria) ? editando.galeria : []);
       if (cfg.tabla === "productos") {
         prepararCats(caja);
         prepararTalles(caja, editando && Array.isArray(editando.variantes) ? editando.variantes : []);
-        prepararMetodos(caja, editando && Array.isArray(editando.metodos_pago) ? editando.metodos_pago : []);
-        prepararGaleria(caja, editando && Array.isArray(editando.galeria) ? editando.galeria : []);
         var swFlash = caja.querySelector('[name="flash"]');
         if (swFlash) {
           var syncFlash = function () {
