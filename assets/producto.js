@@ -80,10 +80,8 @@
 
   var metodos = TW.metodosEfectivos(p, sitio.config);
   var pagosHtml = "";
-  if (Number(p.precio) > 0 && (metodos.length || p.instrucciones_pago)) {
-    pagosHtml = '<div class="s-pagos"><p class="s-pagos-t">Cómo pagar</p>' +
-      (metodos.length ? TW.htmlMetodos(metodos, sitio.config && sitio.config.pais) : "") +
-      (p.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(p.instrucciones_pago) + "</p>" : "") + "</div>";
+  if (Number(p.precio) > 0) {
+    pagosHtml = TW.htmlPagosInteractivo(metodos, sitio.config && sitio.config.pais, p.instrucciones_pago);
   }
   var comprobanteHtml = "";
   if (Number(p.precio) > 0) {
@@ -113,6 +111,7 @@
     '<div class="s-detalle-acciones">' + accionHtml + "</div>" +
     pagosHtml + comprobanteHtml +
     "</div></div></div></section>";
+  TW.conectarPagosInteractivo(main.querySelector(".pg"), sitio.config && sitio.config.pais);
   if (window.__finSplash) window.__finSplash();
 
   var imgGrande = document.getElementById("dprod-img");

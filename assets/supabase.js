@@ -418,6 +418,58 @@
         return '<p class="s-pagos-sub">' + TW.esc(TW.nombrePais(p)) + "</p>" + TW.htmlMetodosGrupo(grupos[p]);
       }).join("");
     },
+    // Flujo de pago interactivo: los metodos NO se muestran al entrar
+    // a la pantalla. El visitante toca «Pagar», elige su pais entre los
+    // disponibles (o Internacional) y recien ahi ve los metodos de ese
+    // pais, junto con las instrucciones del item.
+    htmlPagosInteractivo: function (metodos, paisSitio, instrucciones) {
+      metodos = metodos || [];
+      if (!metodos.length && !instrucciones) return "";
+      TW._pagos = TW._pagos || {};
+      TW._pgN = (TW._pgN || 0) + 1;
+      var clave = "pg" + TW._pgN;
+      TW._pagos[clave] = metodos;
+      var paises = [];
+      metodos.forEach(function (m) { var p = m.pais || "INT"; if (paises.indexOf(p) === -1) paises.push(p); });
+      paises.sort(function (a, b) {
+        var pa = a === (paisSitio || "AR") ? 0 : (a === "INT" ? 2 : 1);
+        var pb = b === (paisSitio || "AR") ? 0 : (b === "INT" ? 2 : 1);
+        return pa - pb;
+      });
+      return '<div class="s-pagos pg" data-pg="' + clave + '">' +
+        '<button class="btn btn-acento pg-abrir" type="button">' + (metodos.length ? "Pagar" : "Cómo pagar") + "</button>" +
+        '<div class="pg-caja" hidden>' +
+        (paises.length > 1 ? '<p class="s-pagos-t">Elegí desde dónde pagás:</p><div class="pg-paises">' +
+          paises.map(function (p) { return '<button class="pg-pais" type="button" data-pais="' + TW.esc(p) + '">' + TW.esc(TW.nombrePais(p)) + "</button>"; }).join("") + "</div>"
+          : (paises.length === 1 ? '<p class="s-pagos-t">Pagás desde ' + TW.esc(TW.nombrePais(paises[0])) + ":</p>" : "")) +
+        '<div class="pg-metodos"></div>' +
+        (instrucciones ? '<p class="s-pagos-nota">' + TW.esc(instrucciones) + "</p>" : "") +
+        "</div></div>";
+    },
+    conectarPagosInteractivo: function (contenedor, paisSitio) {
+      if (!contenedor) return;
+      var abrir = contenedor.querySelector(".pg-abrir");
+      var caja = contenedor.querySelector(".pg-caja");
+      if (!abrir || !caja) return;
+      var metodos = (TW._pagos || {})[contenedor.dataset.pg] || [];
+      var destino = caja.querySelector(".pg-metodos");
+      var botones = caja.querySelectorAll(".pg-pais");
+      var etiqueta = abrir.textContent;
+      function elegir(p) {
+        botones.forEach(function (b) { b.classList.toggle("activo", b.dataset.pais === p); });
+        if (destino) destino.innerHTML = TW.htmlMetodosGrupo(metodos.filter(function (m) { return (m.pais || "INT") === p; }));
+      }
+      abrir.addEventListener("click", function () {
+        var abierto = !caja.hidden;
+        caja.hidden = abierto;
+        abrir.textContent = abierto ? etiqueta : "Cerrar";
+        if (!abierto && destino && !destino.innerHTML && metodos.length) {
+          var def = (paisSitio && metodos.some(function (m) { return (m.pais || "INT") === paisSitio; })) ? paisSitio : (botones.length ? botones[0].dataset.pais : (metodos[0].pais || "INT"));
+          elegir(def);
+        }
+      });
+      botones.forEach(function (b) { b.addEventListener("click", function () { elegir(b.dataset.pais); }); });
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {

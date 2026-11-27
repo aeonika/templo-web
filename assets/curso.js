@@ -54,13 +54,7 @@
   // ambos, segun curso.pagos_modo (Panel > Cursos). Con las
   // instrucciones de pago del curso, si las cargo.
   var metodosCurso = TW.metodosEfectivos(curso, sitio.config);
-  var mediosHtml = "";
-  if (metodosCurso.length || curso.instrucciones_pago) {
-    mediosHtml = '<div class="s-pagos">' +
-      (metodosCurso.length ? '<p class="s-pagos-t">Medios de pago:</p>' + TW.htmlMetodos(metodosCurso, sitio.config && sitio.config.pais) : "") +
-      (curso.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(curso.instrucciones_pago) + "</p>" : "") +
-      "</div>";
-  }
+  var mediosHtml = TW.htmlPagosInteractivo(metodosCurso, sitio.config && sitio.config.pais, curso.instrucciones_pago);
   // Formulario para enviar el comprobante de pago (lo revisa el maestro
   // en su panel, seccion Comprobantes; al aprobarlo se activa el acceso).
   var comprobanteHtml = '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
@@ -105,6 +99,7 @@
     "</div>" +
     '<div id="aula-feed"></div>' +
     "</div></section>";
+  TW.conectarPagosInteractivo(main.querySelector(".pg"), sitio.config && sitio.config.pais);
 
   var btnSol = document.getElementById("btn-solicitar");
   if (btnSol) {

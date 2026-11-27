@@ -451,6 +451,10 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-comp { margin-top: 18px; border-top: 1px solid var(--borde); padding-top: 16px; }
 .s-comp-fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .s-comp-fila input[type="text"] { flex: 1; min-width: 180px; }
+.pg-caja { margin-top: 14px; }
+.pg-paises { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.pg-pais { border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .92rem; cursor: pointer; }
+.pg-pais.activo { background: var(--acento); border-color: var(--acento); color: var(--acento-texto); font-weight: 600; }
 .s-comp-fila input[type="text"], .s-comp-fila select { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; font: inherit; }
 .s-comp-estado { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
 .s-pagos-sub { font-weight: 600; font-size: 14px; color: var(--muted); margin: 14px 0 8px; }

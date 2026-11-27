@@ -62,11 +62,7 @@
   var comprobanteHtml = "";
   if (!gratis && !acceso) {
     var metodos = TW.metodosEfectivos(doc, sitio.config);
-    if (metodos.length || doc.instrucciones_pago) {
-      pagosHtml = '<div class="s-pagos"><p class="s-pagos-t">Cómo pagar</p>' +
-        (metodos.length ? TW.htmlMetodos(metodos, sitio.config && sitio.config.pais) : "") +
-        (doc.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(doc.instrucciones_pago) + "</p>" : "") + "</div>";
-    }
+    pagosHtml = TW.htmlPagosInteractivo(metodos, sitio.config && sitio.config.pais, doc.instrucciones_pago);
     if (usuario) {
       comprobanteHtml = '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
         '<div class="s-comp-fila"><input type="file" id="comp-file" accept="image/*,.pdf">' +
@@ -88,6 +84,7 @@
     '<div class="s-detalle-acciones">' + accionesHtml + "</div>" +
     pagosHtml + comprobanteHtml +
     "</div></section>";
+  TW.conectarPagosInteractivo(main.querySelector(".pg"), sitio.config && sitio.config.pais);
   if (window.__finSplash) window.__finSplash();
 
   var btnLeer = document.getElementById("dd-leer");
