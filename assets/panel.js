@@ -296,11 +296,11 @@
         { k: "imagen_url", et: "Imagen", tipo: "imagen", grande: true, max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = a consultar)", tipo: "number" },
         { k: "precio_oferta", et: "Precio de oferta (opcional)", tipo: "number" },
-        { k: "flash", et: "Oferta flash", tipo: "switch", virtual: true, desc: "La oferta muestra cuenta regresiva en tu sitio hasta la fecha de fin que elijas." },
+        { k: "flash", et: "Oferta flash", tipo: "switch", virtual: true, clase: "es-flash", desc: "La oferta muestra cuenta regresiva en tu sitio hasta la fecha de fin que elijas." },
         { k: "oferta_hasta", et: "La oferta flash termina", tipo: "fecha" },
         { k: "stock", et: "Stock total (vacío = sin control de stock)", tipo: "number" },
-        { k: "variantes", et: "Talles con su stock (si cargás talles, el stock total sale de ellos)", tipo: "talles" },
-        { k: "destacado", et: "Destacado en la vidriera", tipo: "switch", desc: "El producto aparece en la sección de destacados de tu sitio." },
+        { k: "variantes", et: "Talles y stock por talle", tipo: "talles2" },
+        { k: "destacado", et: "Destacado en la vidriera", tipo: "switch", clase: "es-destacado", desc: "El producto aparece en la sección de destacados de tu sitio." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
@@ -405,7 +405,7 @@
       return "<label>" + c.et + '<input type="datetime-local" name="' + c.k + '" value="' + esc(fv) + '"></label>';
     }
     if (c.tipo === "switch") {
-      return '<div class="c-switch-fila"><div class="c-switch-info"><span class="c-switch-et">' + c.et + "</span>" +
+      return '<div class="c-switch-fila' + (c.clase ? " " + c.clase : "") + '"><div class="c-switch-info"><span class="c-switch-et">' + c.et + "</span>" +
         (c.desc ? '<span class="c-switch-desc">' + c.desc + "</span>" : "") + "</div>" +
         '<input type="checkbox" class="mod-switch" name="' + c.k + '"' + (v ? " checked" : "") + "></div>";
     }
@@ -429,6 +429,16 @@
       var tv = Array.isArray(v) ? v.map(function (x) { return x.t + ":" + x.s; }).join(", ") : "";
       return "<label>" + c.et + '<input type="text" name="' + c.k + '" value="' + esc(tv) + '" placeholder="S:5, M:3, L:0"></label>';
     }
+    if (c.tipo === "talles2") {
+      return '<div class="c-campo">' + c.et +
+        '<div class="t-editor" data-talles><input type="hidden" name="' + c.k + '" value="[]">' +
+        '<div class="t-filas"></div>' +
+        '<div class="t-plantillas" data-t-plantillas></div>' +
+        '<div class="t-custom"><input type="text" data-t-nuevo placeholder="Talle especial: 4XL, Único, A medida…">' +
+        '<button type="button" class="btn btn-fantasma btn-chico" data-t-add>Agregar</button></div>' +
+        '<span class="c-ayuda">Tocá los talles de la plantilla para sumarlos y cargá el stock de cada uno. Si no cargás talles, manda el stock total.</span>' +
+        "</div></div>";
+    }
     return "<label>" + c.et + '<input type="' + (c.tipo === "number" ? "number" : "text") + '" name="' + c.k + '" value="' + esc(v) + '"' + (c.tipo === "number" ? ' step="any" min="0"' : "") + "></label>";
   }
   function leerCampos(form, campos) {
@@ -445,6 +455,10 @@
           var p = par.split(":");
           return { t: (p[0] || "").trim(), s: parseInt(p[1], 10) || 0 };
         }).filter(function (x) { return x.t; }) : [];
+      }
+      else if (c.tipo === "talles2") {
+        try { obj[c.k] = JSON.parse((f.get(c.k) || "[]").toString()); }
+        catch (e3) { obj[c.k] = []; }
       }
       else obj[c.k] = (f.get(c.k) || "").toString().trim();
     });
@@ -490,7 +504,7 @@
     var catsCache = null;
     cont.innerHTML = "<h2>" + cfg.titulo + "</h2><p class='bajada'>" + cfg.bajada + "</p>" +
       "<div class='p-cab-lista'><button class='btn btn-primario' id='cr-nuevo' type='button'>+ " + (cfg.nuevoTexto || "Nuevo") + "</button></div>" +
-      "<div class='p-bloque' id='cr-form' hidden></div><div class='p-bloque'><h3>Publicados y borradores</h3><div id='cr-lista' class='p-cards'></div></div>";
+      "<div class='p-bloque' id='cr-form' hidden></div><div class='p-bloque'><h3>Publicados y borradores<span class='p-orden-aviso' id='cr-aviso'></span></h3><div id='cr-lista' class='p-cards'></div></div>";
     async function cargarCats() {
       var s = new Set();
       var r1 = await TW.sb.from("categorias").select("nombre").eq("sitio_id", sitio.id).order("nombre");
@@ -524,6 +538,59 @@
       if (catsCache && catsCache.indexOf(nombre) >= 0) return;
       await TW.sb.from("categorias").insert({ sitio_id: sitio.id, nombre: nombre });
     }
+    function prepararTalles(caja, iniciales) {
+      var editor = caja.querySelector("[data-talles]");
+      if (!editor) return;
+      var filas = editor.querySelector(".t-filas");
+      var hidden = editor.querySelector('[name="variantes"]');
+      var plantillas = editor.querySelector("[data-t-plantillas]");
+      function sync() {
+        var arr = [];
+        filas.querySelectorAll(".t-fila").forEach(function (f) {
+          arr.push({ t: f.dataset.talle, s: parseInt(f.querySelector(".t-stock").value, 10) || 0 });
+        });
+        hidden.value = JSON.stringify(arr);
+        plantillas.querySelectorAll(".t-chip").forEach(function (ch) {
+          ch.classList.toggle("ya", arr.some(function (a) { return a.t === ch.dataset.talle; }));
+        });
+      }
+      function agregar(talle, stock, enfocar) {
+        talle = (talle || "").trim();
+        if (!talle) return;
+        var existe = null;
+        filas.querySelectorAll(".t-fila").forEach(function (f) { if (f.dataset.talle === talle) existe = f; });
+        if (existe) { if (enfocar) existe.querySelector(".t-stock").focus(); return; }
+        var div = document.createElement("div");
+        div.className = "t-fila";
+        div.dataset.talle = talle;
+        div.innerHTML = "<span class='t-nombre'>" + esc(talle) + "</span>" +
+          "<label class='t-stock-et'>Stock <input type='number' class='t-stock' min='0' step='1' value='" + (stock === "" || stock === null || stock === undefined ? "" : stock) + "'></label>" +
+          "<button type='button' class='c-chip-x t-x' aria-label='Quitar talle'>×</button>";
+        div.querySelector(".t-stock").addEventListener("input", sync);
+        div.querySelector(".t-x").addEventListener("click", function () { div.remove(); sync(); });
+        filas.appendChild(div);
+        sync();
+        if (enfocar) div.querySelector(".t-stock").focus();
+      }
+      var grupos = [
+        ["Letras", ["XS", "S", "M", "L", "XL", "XXL", "XXXL"]],
+        ["Números", ["35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48"]]
+      ];
+      plantillas.innerHTML = grupos.map(function (g) {
+        return "<span class='t-grupo-et'>" + g[0] + "</span>" + g[1].map(function (t) {
+          return "<button type='button' class='t-chip' data-talle='" + t + "'>" + t + "</button>";
+        }).join("");
+      }).join("");
+      plantillas.querySelectorAll(".t-chip").forEach(function (ch) {
+        ch.addEventListener("click", function () { agregar(ch.dataset.talle, "", true); });
+      });
+      var btnAdd = editor.querySelector("[data-t-add]");
+      var inpNuevo = editor.querySelector("[data-t-nuevo]");
+      btnAdd.addEventListener("click", function () { agregar(inpNuevo.value, "", true); inpNuevo.value = ""; inpNuevo.focus(); });
+      inpNuevo.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); btnAdd.click(); } });
+      (iniciales || []).forEach(function (v) { agregar(v.t, v.s, false); });
+      sync();
+    }
     async function pintarLista() {
       var q = TW.sb.from(cfg.tabla).select("*").eq("sitio_id", sitio.id);
       if (fijo) Object.keys(fijo).forEach(function (k) { q = q.eq(k, fijo[k]); });
@@ -534,15 +601,67 @@
         var media = x.imagen_url
           ? "<img src='" + esc(x.imagen_url) + "' alt='' loading='lazy'>"
           : "<span class='p-card-ph'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>" + iconoDe(cfg, x) + "</svg></span>";
-        return "<article class='p-card'>" +
+        return "<article class='p-card clicable' data-editar='" + x.id + "' data-id='" + x.id + "' title='Clic para ver y editar'>" +
           "<div class='p-card-media" + (cfg.tabla === "productos" ? " proporcion-cuadrada" : "") + "'>" + media + insigniasDe(cfg, x) + "</div>" +
           "<div class='p-card-cuerpo'><h4 class='p-card-titulo'>" + esc(x.titulo || x.nombre || "(sin título)") + "</h4>" +
           "<p class='p-card-detalle'>" + esc(cfg.resumen(x)) + "</p></div>" +
           "<div class='p-card-acciones'>" +
+          (cfg.orden === "orden" ? "<span class='p-grip' title='Arrastrar para ordenar' aria-hidden='true'><svg viewBox='0 0 24 24' fill='currentColor'><circle cx='9' cy='6' r='1.8'/><circle cx='15' cy='6' r='1.8'/><circle cx='9' cy='12' r='1.8'/><circle cx='15' cy='12' r='1.8'/><circle cx='9' cy='18' r='1.8'/><circle cx='15' cy='18' r='1.8'/></svg></span>" : "") +
           (cfg.extraBoton ? '<button class="btn btn-fantasma btn-chico" data-extra="' + x.id + '">' + cfg.extraBoton + "</button>" : "") +
           '<button class="btn btn-fantasma btn-chico" data-editar="' + x.id + '">Editar</button>' +
           '<button class="btn btn-peligro btn-chico" data-borrar="' + x.id + '">Borrar</button></div></article>';
       }).join("") : '<p class="p-vacio">Todavía no cargaste nada acá.</p>';
+      if (cfg.orden === "orden") activarOrden(lista);
+    }
+    function activarOrden(lista) {
+      var arrastrado = null;
+      lista.querySelectorAll(".p-card").forEach(function (card) {
+        card.draggable = true;
+        card.addEventListener("dragstart", function (ev) {
+          arrastrado = card;
+          card.classList.add("arrastrando");
+          ev.dataTransfer.effectAllowed = "move";
+          try { ev.dataTransfer.setData("text/plain", card.dataset.id); } catch (e) {}
+        });
+        card.addEventListener("dragend", function () {
+          card.classList.remove("arrastrando");
+          lista.querySelectorAll(".p-card").forEach(function (c) { c.classList.remove("sobre-antes", "sobre-despues"); });
+          arrastrado = null;
+        });
+        card.addEventListener("dragover", function (ev) {
+          if (!arrastrado || arrastrado === card) return;
+          ev.preventDefault();
+          ev.dataTransfer.dropEffect = "move";
+          var r = card.getBoundingClientRect();
+          var progreso = (ev.clientX - r.left) / r.width + (ev.clientY - r.top) / r.height;
+          card.classList.toggle("sobre-despues", progreso > 1);
+          card.classList.toggle("sobre-antes", progreso <= 1);
+        });
+        card.addEventListener("dragleave", function () { card.classList.remove("sobre-antes", "sobre-despues"); });
+        card.addEventListener("drop", async function (ev) {
+          ev.preventDefault();
+          if (!arrastrado || arrastrado === card) return;
+          var r = card.getBoundingClientRect();
+          var progreso = (ev.clientX - r.left) / r.width + (ev.clientY - r.top) / r.height;
+          lista.insertBefore(arrastrado, progreso > 1 ? card.nextSibling : card);
+          card.classList.remove("sobre-antes", "sobre-despues");
+          await guardarOrden(lista);
+        });
+      });
+    }
+    async function guardarOrden(lista) {
+      var aviso = $("#cr-aviso");
+      var cards = Array.from(lista.querySelectorAll(".p-card"));
+      try {
+        for (var i = 0; i < cards.length; i++) {
+          var r = await TW.sb.from(cfg.tabla).update({ orden: i + 1 }).eq("id", cards[i].dataset.id);
+          if (r.error) throw new Error(r.error.message);
+        }
+        if (aviso) { aviso.textContent = "Orden guardado"; setTimeout(function () { aviso.textContent = ""; }, 2500); }
+      } catch (e) {
+        if (aviso) aviso.textContent = "No se pudo guardar el orden";
+        pintarLista();
+      }
     }
     function pintarForm() {
       var caja = $("#cr-form");
@@ -581,10 +700,12 @@
       });
       if (cfg.tabla === "productos" && sitio.config && sitio.config.talle_sistema === "ninguno") {
         var inpV = caja.querySelector('[name="variantes"]');
-        if (inpV && inpV.closest("label")) inpV.closest("label").style.display = "none";
+        var campoV = inpV ? inpV.closest(".c-campo") : null;
+        if (campoV) campoV.style.display = "none";
       }
       if (cfg.tabla === "productos") {
         prepararCats(caja);
+        prepararTalles(caja, editando && Array.isArray(editando.variantes) ? editando.variantes : []);
         var swFlash = caja.querySelector('[name="flash"]');
         if (swFlash) {
           var syncFlash = function () {
@@ -630,22 +751,24 @@
       if (btnC) btnC.addEventListener("click", function () { editando = null; formVisible = false; pintarForm(); });
     }
     cont.addEventListener("click", async function (ev) {
-      var be = ev.target.closest("[data-editar]");
       var bb = ev.target.closest("[data-borrar]");
       var bx = ev.target.closest("[data-extra]");
+      var be = ev.target.closest("[data-editar]");
+      if (bb && confirm("¿Borrar este elemento? No se puede deshacer.")) {
+        await TW.sb.from(cfg.tabla).delete().eq("id", bb.dataset.borrar);
+        if (editando && editando.id === bb.dataset.borrar) { editando = null; formVisible = false; pintarForm(); }
+        pintarLista();
+        return;
+      }
+      if (bx && cfg.alExtra) { cfg.alExtra(bx.dataset.extra); return; }
       if (be) {
         var r = await TW.sb.from(cfg.tabla).select("*").eq("id", be.dataset.editar).maybeSingle();
+        if (!r.data) return;
         editando = r.data;
         formVisible = true;
         pintarForm();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-      if (bb && confirm("¿Borrar este elemento? No se puede deshacer.")) {
-        await TW.sb.from(cfg.tabla).delete().eq("id", bb.dataset.borrar);
-        if (editando && editando.id === bb.dataset.borrar) { editando = null; formVisible = false; pintarForm(); }
-        pintarLista();
-      }
-      if (bx && cfg.alExtra) cfg.alExtra(bx.dataset.extra);
     });
     $("#cr-nuevo").addEventListener("click", function () {
       editando = null;

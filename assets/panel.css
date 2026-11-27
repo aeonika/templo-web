@@ -346,3 +346,36 @@ body.con-drawer { overflow: hidden; }
 .c-chip-cat { display: inline-flex; align-items: center; gap: var(--space-2xs); }
 .c-chip-x { display: grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--color-muted); font-size: 14px; line-height: 1; cursor: pointer; }
 .c-chip-x:hover { color: var(--color-dusk); }
+
+/* Cajas con color propio: destacado (dorado) y oferta flash (acento);
+ * el color se intensifica cuando el interruptor esta activo. */
+.c-switch-fila.es-destacado { border-color: color-mix(in oklab, var(--color-accent-2) 55%, var(--color-rule)); background: color-mix(in oklab, var(--color-accent-2) 10%, var(--color-paper)); }
+.c-switch-fila.es-destacado:has(input:checked) { border-color: var(--color-accent-2); background: color-mix(in oklab, var(--color-accent-2) 22%, var(--color-paper)); }
+.c-switch-fila.es-flash { border-color: color-mix(in oklab, var(--color-accent) 45%, var(--color-rule)); background: color-mix(in oklab, var(--color-accent) 7%, var(--color-paper)); }
+.c-switch-fila.es-flash:has(input:checked) { border-color: var(--color-accent); background: color-mix(in oklab, var(--color-accent) 15%, var(--color-paper)); }
+
+/* Editor de talles con plantilla y stock por talle */
+.t-filas { display: grid; gap: var(--space-xs); }
+.t-filas:empty { display: none; }
+.t-fila { display: flex; align-items: center; gap: var(--space-sm); background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: var(--radius-inner); padding: var(--space-xs) var(--space-sm); }
+.t-nombre { font-weight: 600; min-width: 52px; color: var(--color-ink); }
+.t-stock-et { display: inline-flex; align-items: center; gap: var(--space-xs); font-size: 13.5px; }
+.t-stock { width: 92px; }
+.t-x { margin-left: auto; }
+.t-plantillas { display: flex; flex-wrap: wrap; gap: var(--space-2xs); align-items: center; margin-top: var(--space-sm); }
+.t-grupo-et { width: 100%; font-size: 12.5px; color: var(--color-muted); margin-top: var(--space-2xs); }
+.t-chip { border: 1px solid var(--color-rule); background: var(--color-paper-3); color: var(--color-ink); border-radius: var(--radius-pill); padding: var(--space-2xs) var(--space-sm); font: 600 13px var(--font-body); cursor: pointer; }
+.t-chip:hover { border-color: var(--color-accent); }
+.t-chip.ya { opacity: 0.45; }
+.t-custom { display: flex; gap: var(--space-xs); margin-top: var(--space-sm); }
+.t-custom input { flex: 1; }
+
+/* Tarjetas clicables y orden por arrastre */
+.p-card.clicable { cursor: pointer; }
+.p-card img { -webkit-user-drag: none; }
+.p-grip { display: grid; place-items: center; width: 22px; height: 22px; margin-right: auto; color: var(--color-muted); cursor: grab; }
+.p-grip svg { width: 16px; height: 16px; }
+.p-card.arrastrando { opacity: 0.45; }
+.p-card.sobre-antes { box-shadow: inset 0 3px 0 var(--color-accent), var(--shadow-card); }
+.p-card.sobre-despues { box-shadow: inset 0 -3px 0 var(--color-accent), var(--shadow-card); }
+.p-orden-aviso { color: var(--color-success); font-size: 13px; font-weight: 600; margin-left: var(--space-sm); }
