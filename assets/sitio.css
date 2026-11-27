@@ -313,16 +313,12 @@ html[data-maqueta="premium"] .btn-acento:hover { filter: brightness(1.07); color
   .s-wa-movil { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--acento); color: var(--acento-texto); flex: none; }
   .s-wa-movil svg { width: 20px; height: 20px; }
 }
-.s-rasgos { display: flex; flex-wrap: wrap; margin-top: 36px; border-top: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); }
-.s-rasgo { flex: 1 1 150px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 24px 14px; }
-.s-rasgo + .s-rasgo { border-left: 1px solid color-mix(in srgb, var(--borde) 60%, transparent); }
-.s-rasgo-ico { color: var(--acento); display: inline-flex; }
+.s-rasgos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-top: 36px; }
+.s-rasgo { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 24px 14px; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); }
+.s-rasgo-ico { color: var(--acento); display: inline-flex; padding: 10px; border-radius: 50%; background: color-mix(in srgb, var(--acento) 12%, transparent); }
 .s-rasgo-ico svg { width: 30px; height: 30px; }
 .s-rasgo-titulo { font: 600 15px var(--fuente-titulos); color: var(--texto); }
-@media (max-width: 640px) {
-  .s-rasgo { flex-basis: 42%; }
-  .s-rasgo + .s-rasgo { border-left: none; }
-}
+html[data-maqueta="premium"] .s-rasgo { border-color: color-mix(in srgb, var(--acento) 38%, var(--borde)); background: color-mix(in srgb, var(--tarjeta) 78%, transparent); backdrop-filter: blur(8px) saturate(1.15); }
 
 /* ============================== tema Premium · la escena manda ==============================
    Como la referencia: la foto ES la pagina. Sin cajas: marcos dorados,

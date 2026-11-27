@@ -165,6 +165,19 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .pl-op:hover { border-color: var(--color-accent); }
 .pl-op .s-pleca { margin: 6px auto 12px; }
 .pl-nombre { display: block; text-align: center; font-size: .9rem; color: var(--color-ink); }
+.pf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.pf-card { border: 1px solid var(--color-rule); border-radius: 14px; background: var(--color-paper-3); padding: 12px; display: grid; gap: 10px; }
+.pf-vista { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 16px 10px; border: 1px dashed var(--color-rule); border-radius: 10px; background: var(--color-paper); }
+.pf-vista-ico { color: var(--color-accent); display: inline-flex; }
+.pf-vista-ico svg { width: 30px; height: 30px; }
+.pf-vista-titulo { font-weight: 600; color: var(--color-ink); }
+.pf-quitar { position: absolute; top: 6px; right: 6px; border: none; background: transparent; color: var(--color-ink-2); font-size: 13px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+.pf-quitar:hover { color: var(--color-ink); background: var(--color-paper-2); }
+.pf-iconos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.pf-ico { border: 1px solid var(--color-rule); background: var(--color-paper); border-radius: 8px; padding: 6px; cursor: pointer; color: var(--color-ink-2); display: inline-flex; align-items: center; justify-content: center; }
+.pf-ico svg { width: 20px; height: 20px; }
+.pf-ico:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.pf-ico.activo { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-paper-2); }
 .mt-chip.sel { border-color: var(--color-accent); outline: 2px solid var(--color-accent); }
 .mt-toggle { display: flex; gap: var(--space-xs); }
 .mt-toggle button { flex: 1; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); border-radius: var(--radius-inner); padding: var(--space-xs); cursor: pointer; font: inherit; }

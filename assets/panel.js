@@ -1566,11 +1566,33 @@
     var configSitio = sitio.config || {};
     var rubrosDefs = [["general", "General"], ["ropa", "Indumentaria / ropa"], ["calzado", "Calzado"], ["comida", "Comida y bebidas"], ["servicios", "Servicios"], ["digital", "Productos digitales"]];
     var tallesDefs = [["letras", "En letras (XS, S, M, L, XL…)"], ["numeros", "En números (38, 40, 42…)"], ["ninguno", "Mi tienda no usa talles"]];
-    function filaRasgo(r) {
-      return "<div class='c-rasgo-fila'><label>Icono <select class='c-rasgo-icono'>" +
-        iconosPanel.map(function (o) { return "<option value='" + o[0] + "'" + (r && r.icono === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") +
-        "</select></label><label class='c-rasgo-texto'>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(r ? (r.titulo || "") : "") + "' placeholder='Servicios de hechicería'></label>" +
-        "<button type='button' class='btn btn-fantasma c-rasgo-quitar'>Quitar</button></div>";
+    // Los mismos dibujos SVG que usa el sitio publico (ICONOS en sitio.js).
+    var ICONOS_RASGO = {
+      vela: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.2 1.6 2 2.7 2 4a2 2 0 1 1-4 0c0-1.3.8-2.4 2-4z"/><path d="M7 21v-5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5"/><path d="M4.5 21h15"/></svg>',
+      luna: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z"/></svg>',
+      estrella: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>',
+      carta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8.2l.9 1.9 2.1.3-1.5 1.5.35 2.1L12 13l-1.85 1-.35-2.1-1.5-1.5 2.1-.3z"/></svg>',
+      libro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v13c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-13c-3.5 0-6 .5-8 2z"/><path d="M12 6.5v13"/></svg>',
+      cristal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l3 5-8 11L4 9z"/><path d="M4 9h16"/><path d="M12 20L9.2 9 12 4l2.8 5z"/></svg>',
+      ojo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+      llave: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14.5" r="4.5"/><path d="M11.3 11.2L20 2.5"/><path d="M16.8 5.7l2.7 2.7"/></svg>',
+      pocion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4"/><path d="M11 3v5.2L6.6 15a3 3 0 0 0 2.7 4.5h5.4a3 3 0 0 0 2.7-4.5L13 8.2V3"/><path d="M8.2 15h7.6"/></svg>',
+      planta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><path d="M12 14c0-3.8 2.8-5.8 6.5-5.8 0 3.8-2.3 6-6.5 5.8z"/><path d="M12 11.5c0-3.2-2.4-4.9-5.5-4.9 0 3.2 2 5.1 5.5 4.9z"/></svg>'
+    };
+    // Cada punto fuerte es una tarjeta: vista previa tal como se ve
+    // en el sitio, texto y selector de iconos en grilla (sin listas
+    // desplegables). El icono elegido vive en data-icono de la tarjeta.
+    function tarjetaPunto(r) {
+      var icono = r && ICONOS_RASGO[r.icono] ? r.icono : "estrella";
+      var titulo = r ? (r.titulo || "") : "";
+      return "<div class='pf-card' data-icono='" + icono + "'>" +
+        "<div class='pf-vista'><span class='pf-vista-ico'>" + ICONOS_RASGO[icono] + "</span>" +
+        "<span class='pf-vista-titulo'>" + (titulo ? esc(titulo) : "Tu punto fuerte") + "</span>" +
+        "<button type='button' class='pf-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
+        "<label>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(titulo) + "' placeholder='Servicios de hechicería'></label>" +
+        "<div class='pf-iconos'>" + iconosPanel.map(function (o) {
+          return "<button type='button' class='pf-ico" + (o[0] === icono ? " activo" : "") + "' data-ico='" + o[0] + "' title='" + o[1] + "'>" + ICONOS_RASGO[o[0]] + "</button>";
+        }).join("") + "</div></div>";
     }
     var metodosSitio = TW.metodosDeSitio(configSitio);
     cont.innerHTML =
@@ -1675,9 +1697,9 @@
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
           "<input type='checkbox' class='mod-switch' name='mod_" + m[0] + "'" + (mods[m[0]] !== false ? " checked" : "") + "></label>";
       }).join("") + "</div>" +
-      "<div class='p-bloque'><h3>Rasgos con iconos</h3><p class='p-ayuda'>Las cajitas con icono bajo tu presentación, como las de las webs de referencia. Agregá o quitá las que quieras (hasta 6).</p><div id='c-rasgos'>" +
-      (rasgosSitio.length ? rasgosSitio.map(filaRasgo).join("") : filaRasgo(null)) +
-      "</div><button type='button' class='btn btn-fantasma' id='c-rasgo-agregar'>+ Agregar rasgo</button></div>" +
+      "<div class='p-bloque'><h3>Puntos fuertes</h3><p class='p-ayuda'>Las tarjetas con icono que se ven en tu sitio, bajo tu presentación. Escribí el texto y tocá un icono para elegirlo: la vista previa muestra cómo va a quedar. Hasta 6.</p><div id='c-rasgos' class='pf-grid'>" +
+      (rasgosSitio.length ? rasgosSitio.map(tarjetaPunto).join("") : tarjetaPunto(null)) +
+      "</div><button type='button' class='btn btn-fantasma' id='c-rasgo-agregar'>+ Agregar punto fuerte</button></div>" +
       "<div class='p-bloque'><label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Sitio publicado</span><span class='mod-desc'>Visible para tus visitantes; si lo apagás, solo vos lo ves al editar</span></span>" +
       "<input type='checkbox' class='mod-switch' name='publicado'" + (sitio.publicado ? " checked" : "") + "></label>" +
       "<button class='btn btn-primario btn-bloque' type='submit'>Guardar cambios</button>" +
@@ -1807,14 +1829,29 @@
     if (fUrl && fMini) fUrl.addEventListener("input", function () { fMini.src = fUrl.value; fMini.hidden = !fUrl.value; });
     var contRasgos = $("#c-rasgos"), btnRasgo = $("#c-rasgo-agregar");
     if (btnRasgo && contRasgos) btnRasgo.addEventListener("click", function () {
-      if (contRasgos.querySelectorAll(".c-rasgo-fila").length >= 6) return;
+      if (contRasgos.querySelectorAll(".pf-card").length >= 6) return;
       var tmp = document.createElement("div");
-      tmp.innerHTML = filaRasgo(null);
+      tmp.innerHTML = tarjetaPunto(null);
       contRasgos.appendChild(tmp.firstChild);
     });
-    if (contRasgos) contRasgos.addEventListener("click", function (ev) {
-      if (ev.target.classList.contains("c-rasgo-quitar")) ev.target.closest(".c-rasgo-fila").remove();
-    });
+    if (contRasgos) {
+      contRasgos.addEventListener("click", function (ev) {
+        var quitar = ev.target.closest(".pf-quitar");
+        if (quitar) { quitar.closest(".pf-card").remove(); return; }
+        var ico = ev.target.closest(".pf-ico");
+        if (!ico) return;
+        var card = ico.closest(".pf-card");
+        card.dataset.icono = ico.dataset.ico;
+        card.querySelectorAll(".pf-ico").forEach(function (b) { b.classList.toggle("activo", b === ico); });
+        card.querySelector(".pf-vista-ico").innerHTML = ICONOS_RASGO[ico.dataset.ico] || "";
+      });
+      contRasgos.addEventListener("input", function (ev) {
+        if (!ev.target.classList.contains("c-rasgo-titulo")) return;
+        var card = ev.target.closest(".pf-card");
+        var vista = card && card.querySelector(".pf-vista-titulo");
+        if (vista) vista.textContent = ev.target.value.trim() || "Tu punto fuerte";
+      });
+    }
     mejorarConRico(document.querySelector("#f-sitio [name='quienes_somos']"));
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
@@ -1822,9 +1859,9 @@
       var nuevosMods = {};
       modulosDefs.forEach(function (m) { nuevosMods[m[0]] = !!f.get("mod_" + m[0]); });
       var rasgosNuevos = [];
-      document.querySelectorAll(".c-rasgo-fila").forEach(function (fila) {
-        var ti = fila.querySelector(".c-rasgo-titulo").value.trim();
-        if (ti) rasgosNuevos.push({ icono: fila.querySelector(".c-rasgo-icono").value, titulo: ti });
+      document.querySelectorAll(".pf-card").forEach(function (card) {
+        var ti = card.querySelector(".c-rasgo-titulo").value.trim();
+        if (ti) rasgosNuevos.push({ icono: card.dataset.icono || "estrella", titulo: ti });
       });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
