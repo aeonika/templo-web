@@ -1555,7 +1555,7 @@
       ],
       premium: [
         ["dorado", "Dorado cálido", "#0d0906", "#c9a45c"],
-        ["medianoche", "Negro cyan", "#030305", "#00e5ff"],
+        ["medianoche", "Oscuro cyan", "#030305", "#00e5ff"],
         ["violeta", "Violeta arcano", "#0d0a14", "#a78bfa"],
         ["esmeralda", "Verde esmeralda", "#0a120d", "#63b995"],
         ["terracota", "Claro terracota", "#f7f2e9", "#8a3324"]
