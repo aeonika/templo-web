@@ -302,7 +302,7 @@
       docs.map(function (d) {
         var gratis = Number(d.precio) === 0;
         var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
-        var estado = gratis ? '<span class="s-badge">Gratis</span>' : (misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "");
+        var estado = !gratis && misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "";
         return '<div class="s-doc"><div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
           '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div>';
       }).join("") + "</div>");
