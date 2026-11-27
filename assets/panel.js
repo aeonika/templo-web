@@ -9,76 +9,173 @@
   var tabActual = "inicio";
   var SERVICIOS_QR = ["Mercado Pago", "Cuenta DNI", "BNA+", "Ualá", "Brubank", "Naranja X", "Personal Pay", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Binance", "PayPal", "Wise", "Otro"];
   function ambitoDeServicio(s) { return ["Binance", "PayPal", "Wise"].indexOf(s) >= 0 ? "internacional" : "local"; }
-  // Editor de metodos de pago (fila): servicio + ambito + link o QR.
-  // Lo usan el bloque Medios de cobro del sitio y los formularios de
+  // Editor de metodos de pago como TARJETAS con logo del servicio.
+  // El estado vive en el elemento editor (el._metodos); «+ Agregar
+  // metodo» y «Editar» abren un modal compartido para llenar la
+  // tarjeta. Lo usan Medios de cobro del sitio y los formularios de
   // productos, cursos y documentos (metodos personalizados).
-  function filaMetodoHtml(m) {
-    m = m || {};
-    var serv = m.servicio || "Mercado Pago";
-    var amb = m.ambito || ambitoDeServicio(serv);
-    var tipo = m.tipo || "link";
-    var esQr = tipo === "qr";
-    return "<div class='mt-fila'>" +
-      "<label>Servicio <select class='mt-servicio'>" + SERVICIOS_QR.map(function (s) { return "<option value='" + s + "'" + (serv === s ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></label>" +
-      "<label>Ámbito <select class='mt-ambito'><option value='local'" + (amb === "local" ? " selected" : "") + ">Local (tu país)</option><option value='internacional'" + (amb === "internacional" ? " selected" : "") + ">Internacional</option></select></label>" +
-      "<label>Tipo <select class='mt-tipo'><option value='link'" + (!esQr ? " selected" : "") + ">Link de pago</option><option value='qr'" + (esQr ? " selected" : "") + ">Código QR</option></select></label>" +
-      "<span class='mt-valor-link'" + (esQr ? " hidden" : "") + "><label>Link <input type='text' class='mt-url' value='" + (!esQr ? esc(m.url || "") : "") + "' placeholder='https://…'></label></span>" +
-      "<span class='mt-valor-qr'" + (esQr ? "" : " hidden") + "><span class='c-fondo-fila'><img class='c-mini mt-mini' alt='' src='" + (esQr ? esc(m.url || "") : "") + "'" + (esQr && m.url ? "" : " hidden") + ">" +
-      "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' class='mt-file' accept='image/*' hidden></label></span>" +
-      "<input type='text' class='mt-url-qr' value='" + (esQr ? esc(m.url || "") : "") + "' placeholder='URL del QR (o subí la imagen)'></span>" +
-      "<span class='c-ayuda mt-estado'></span>" +
-      "<button type='button' class='btn btn-fantasma mt-quitar'>Quitar</button></div>";
+  var LOGOS_METODO = { "Mercado Pago": "mercadopago.com.ar", "Cuenta DNI": "bancoprovincia.com.ar", "BNA+": "bna.com.ar", "Ualá": "uala.com.ar", "Brubank": "brubank.com", "Naranja X": "naranjax.com", "Personal Pay": "personalpay.com.ar", "Banco Galicia": "galicia.com.ar", "Banco Macro": "macro.com.ar", "Santander": "santander.com.ar", "BBVA": "bbva.com.ar", "Binance": "binance.com", "PayPal": "paypal.com", "Wise": "wise.com" };
+  function logoMetodoHtml(servicio) {
+    var dom = LOGOS_METODO[servicio];
+    return "<span class='mt-logo'><span class='mt-logo-letra'>" + esc((servicio || "?").trim().charAt(0).toUpperCase() || "?") + "</span>" +
+      (dom ? "<img src='https://www.google.com/s2/favicons?domain=" + dom + "&sz=128' alt='' loading='lazy' onerror='this.remove()'>" : "") + "</span>";
   }
-  function leerFilasMetodos(contenedor) {
-    var out = [];
-    if (!contenedor) return out;
-    contenedor.querySelectorAll(".mt-fila").forEach(function (fila) {
-      var tipo = fila.querySelector(".mt-tipo").value;
-      var url = (tipo === "qr" ? fila.querySelector(".mt-url-qr").value : fila.querySelector(".mt-url").value).trim();
-      if (!url) return;
-      out.push({ servicio: fila.querySelector(".mt-servicio").value, ambito: fila.querySelector(".mt-ambito").value, tipo: tipo, url: url });
-    });
-    return out;
+  function tarjetaMetodoHtml(m, i) {
+    return "<div class='mt-card'>" + logoMetodoHtml(m.servicio) +
+      "<div class='mt-card-info'><strong>" + esc(m.servicio || "Método") + "</strong>" +
+      "<span class='mt-card-meta'>" + (m.ambito === "internacional" ? "Internacional" : "Local") + " · " + (m.tipo === "qr" ? "Código QR" : "Link de pago") + "</span>" +
+      "<span class='mt-card-url'>" + esc(m.url || "") + "</span></div>" +
+      (m.tipo === "qr" && m.url ? "<img class='mt-card-qr' src='" + esc(m.url) + "' alt=''>" : "") +
+      "<div class='mt-card-acciones'><button type='button' class='btn btn-fantasma btn-chico' data-mt-edit='" + i + "'>Editar</button>" +
+      "<button type='button' class='btn btn-fantasma btn-chico' data-mt-del='" + i + "'>Quitar</button></div></div>";
   }
-  function conectarMetodos(contenedor, botonAgregar) {
-    if (botonAgregar) botonAgregar.addEventListener("click", function () {
-      if (contenedor.querySelectorAll(".mt-fila").length >= 10) return;
-      var tmp = document.createElement("div");
-      tmp.innerHTML = filaMetodoHtml(null);
-      contenedor.appendChild(tmp.firstChild);
+  function crearEditorMetodos(el, iniciales) {
+    if (!el) return;
+    el._metodos = (iniciales || []).filter(function (m) { return m && m.url; }).map(function (m) {
+      return { servicio: m.servicio || "Otro", ambito: m.ambito === "internacional" ? "internacional" : "local", tipo: m.tipo === "qr" ? "qr" : "link", url: m.url || "" };
     });
-    contenedor.addEventListener("click", function (ev) {
-      if (ev.target.classList.contains("mt-quitar")) ev.target.closest(".mt-fila").remove();
+    el._pintar = function () {
+      var caja = el.querySelector(".mt-cards");
+      if (caja) caja.innerHTML = el._metodos.length ? el._metodos.map(tarjetaMetodoHtml).join("") : "<p class='p-nota'>Todavía no hay métodos cargados.</p>";
+    };
+    el._pintar();
+    if (!el._conectado) {
+      el._conectado = true;
+      el.addEventListener("click", function (ev) {
+        if (ev.target.closest("[data-mt-add]")) { abrirModalMetodo(el, -1); return; }
+        var ed = ev.target.closest("[data-mt-edit]");
+        if (ed) { abrirModalMetodo(el, Number(ed.getAttribute("data-mt-edit"))); return; }
+        var del = ev.target.closest("[data-mt-del]");
+        if (del) { el._metodos.splice(Number(del.getAttribute("data-mt-del")), 1); el._pintar(); }
+      });
+    }
+  }
+  function leerMetodosDe(el) {
+    if (!el || !el._metodos) return [];
+    return el._metodos.map(function (m) { return { servicio: m.servicio, ambito: m.ambito, tipo: m.tipo, url: m.url }; });
+  }
+  // Modal compartido para crear y editar una tarjeta de metodo.
+  var mtModalEstado = null;
+  function asegurarModalMetodo() {
+    var modal = document.getElementById("mt-modal");
+    if (modal) return modal;
+    document.body.insertAdjacentHTML("beforeend",
+      "<div class='mt-modal-fondo' id='mt-modal' hidden><div class='mt-modal' role='dialog' aria-modal='true'>" +
+      "<h3 id='mtm-titulo'>Método de pago</h3>" +
+      "<p class='mtm-paso'>1 · Elegí el servicio</p><div class='mt-chips' id='mtm-chips'></div>" +
+      "<label id='mtm-otro-wrap' hidden>Nombre del servicio <input type='text' id='mtm-otro' placeholder='Ej.: Banco Nación'></label>" +
+      "<p class='mtm-paso'>2 · Ámbito</p><div class='mt-toggle' id='mtm-ambito'><button type='button' data-amb='local'>Local (tu país)</button><button type='button' data-amb='internacional'>Internacional</button></div>" +
+      "<p class='mtm-paso'>3 · ¿Cómo cobra?</p><div class='mt-toggle' id='mtm-tipo'><button type='button' data-tipo='link'>Link de pago</button><button type='button' data-tipo='qr'>Código QR</button></div>" +
+      "<div id='mtm-link-wrap'><label>Link de pago <input type='text' id='mtm-url' placeholder='https://…'></label></div>" +
+      "<div id='mtm-qr-wrap' hidden><div class='c-fondo-fila'><img class='c-mini' id='mtm-qr-prev' alt='' hidden>" +
+      "<label class='btn btn-fantasma c-subir'>Subir imagen del QR<input type='file' id='mtm-qr-file' accept='image/*' hidden></label></div>" +
+      "<label>o pegá la URL del QR <input type='text' id='mtm-url-qr' placeholder='https://…'></label><p class='c-ayuda' id='mtm-qr-estado'></p></div>" +
+      "<p class='p-error' id='mtm-error'></p>" +
+      "<div class='p-acciones'><button type='button' class='btn btn-primario' id='mtm-guardar'>Guardar método</button>" +
+      "<button type='button' class='btn btn-fantasma' id='mtm-cancelar'>Cancelar</button></div>" +
+      "</div></div>");
+    modal = document.getElementById("mt-modal");
+    document.querySelector("#mtm-chips").addEventListener("click", function (ev) {
+      var chip = ev.target.closest("[data-serv]");
+      if (!chip || !mtModalEstado) return;
+      mtModalEstado.servicio = chip.getAttribute("data-serv");
+      if (mtModalEstado.servicio !== "Otro") mtModalEstado.ambito = ambitoDeServicio(mtModalEstado.servicio);
+      pintarModalMetodo();
     });
-    contenedor.addEventListener("change", function (ev) {
-      var fila = ev.target.closest(".mt-fila");
-      if (!fila) return;
-      if (ev.target.classList.contains("mt-tipo")) {
-        var esQr = ev.target.value === "qr";
-        fila.querySelector(".mt-valor-link").hidden = esQr;
-        fila.querySelector(".mt-valor-qr").hidden = !esQr;
-      }
-      if (ev.target.classList.contains("mt-servicio")) {
-        fila.querySelector(".mt-ambito").value = ambitoDeServicio(ev.target.value);
-      }
-      var inp = ev.target.closest(".mt-file");
-      if (inp && inp.files && inp.files[0]) {
-        var est = fila.querySelector(".mt-estado");
-        if (est) est.textContent = "Subiendo el QR…";
-        subirCloudinary(inp.files[0], false, { max: 800 }).then(function (datos) {
-          fila.querySelector(".mt-url-qr").value = datos.secure_url;
-          var mini = fila.querySelector(".mt-mini");
-          if (mini) { mini.src = datos.secure_url; mini.hidden = false; }
-          if (est) est.textContent = "QR subido.";
-        }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
-      }
+    document.querySelector("#mtm-ambito").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-amb]");
+      if (!b || !mtModalEstado) return;
+      mtModalEstado.ambito = b.getAttribute("data-amb");
+      pintarModalMetodo();
     });
-    contenedor.addEventListener("input", function (ev) {
-      if (ev.target.classList.contains("mt-url-qr")) {
-        var mini = ev.target.closest(".mt-fila").querySelector(".mt-mini");
-        if (mini) { mini.src = ev.target.value; mini.hidden = !ev.target.value; }
-      }
+    document.querySelector("#mtm-tipo").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-tipo]");
+      if (!b || !mtModalEstado) return;
+      mtModalEstado.tipo = b.getAttribute("data-tipo");
+      pintarModalMetodo();
     });
+    document.querySelector("#mtm-url-qr").addEventListener("input", function () {
+      var prev = document.querySelector("#mtm-qr-prev");
+      prev.src = this.value;
+      prev.hidden = !this.value;
+    });
+    document.querySelector("#mtm-qr-file").addEventListener("change", function () {
+      var arch = this.files[0];
+      if (!arch) return;
+      var est = document.querySelector("#mtm-qr-estado");
+      est.textContent = "Subiendo el QR…";
+      subirCloudinary(arch, false, { max: 800 }).then(function (datos) {
+        document.querySelector("#mtm-url-qr").value = datos.secure_url;
+        var prev = document.querySelector("#mtm-qr-prev");
+        prev.src = datos.secure_url;
+        prev.hidden = false;
+        est.textContent = "QR subido.";
+      }).catch(function (e2) { est.textContent = "No se pudo subir: " + e2.message; });
+    });
+    document.querySelector("#mtm-guardar").addEventListener("click", function () {
+      var st = mtModalEstado;
+      if (!st) return;
+      var servicio = st.servicio === "Otro" ? document.querySelector("#mtm-otro").value.trim() : st.servicio;
+      var url = (st.tipo === "qr" ? document.querySelector("#mtm-url-qr").value : document.querySelector("#mtm-url").value).trim();
+      var err = document.querySelector("#mtm-error");
+      if (!servicio) { err.textContent = "Escribí el nombre del servicio."; return; }
+      if (!url) { err.textContent = st.tipo === "qr" ? "Subí la imagen del QR o pegá su URL." : "Pegá el link de pago."; return; }
+      var nuevo = { servicio: servicio, ambito: st.ambito, tipo: st.tipo, url: url };
+      if (st.indice < 0) {
+        if (st.editor._metodos.length >= 10) { err.textContent = "Máximo 10 métodos por editor."; return; }
+        st.editor._metodos.push(nuevo);
+      } else {
+        st.editor._metodos[st.indice] = nuevo;
+      }
+      st.editor._pintar();
+      cerrarModalMetodo();
+    });
+    document.querySelector("#mtm-cancelar").addEventListener("click", cerrarModalMetodo);
+    modal.addEventListener("click", function (ev) { if (ev.target === modal) cerrarModalMetodo(); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") cerrarModalMetodo(); });
+    return modal;
+  }
+  function pintarModalMetodo() {
+    var st = mtModalEstado;
+    if (!st) return;
+    document.querySelector("#mtm-titulo").textContent = st.indice < 0 ? "Agregar método de pago" : "Editar método de pago";
+    document.querySelector("#mtm-chips").innerHTML = SERVICIOS_QR.map(function (s) {
+      return "<button type='button' class='mt-chip" + (st.servicio === s ? " sel" : "") + "' data-serv='" + esc(s) + "'>" + logoMetodoHtml(s) + "<span>" + esc(s) + "</span></button>";
+    }).join("");
+    document.querySelector("#mtm-otro-wrap").hidden = st.servicio !== "Otro";
+    document.querySelectorAll("#mtm-ambito button").forEach(function (b) { b.classList.toggle("sel", b.getAttribute("data-amb") === st.ambito); });
+    document.querySelectorAll("#mtm-tipo button").forEach(function (b) { b.classList.toggle("sel", b.getAttribute("data-tipo") === st.tipo); });
+    document.querySelector("#mtm-link-wrap").hidden = st.tipo === "qr";
+    document.querySelector("#mtm-qr-wrap").hidden = st.tipo !== "qr";
+    var prev = document.querySelector("#mtm-qr-prev");
+    var urlQr = document.querySelector("#mtm-url-qr").value;
+    prev.src = urlQr || "";
+    prev.hidden = !urlQr;
+    document.querySelector("#mtm-error").textContent = "";
+  }
+  function abrirModalMetodo(editor, indice) {
+    asegurarModalMetodo();
+    var base = indice >= 0 ? editor._metodos[indice] : null;
+    var serv = base ? base.servicio : "Mercado Pago";
+    var esConocido = SERVICIOS_QR.indexOf(serv) >= 0;
+    mtModalEstado = {
+      editor: editor,
+      indice: indice,
+      servicio: esConocido ? serv : "Otro",
+      ambito: base ? base.ambito : ambitoDeServicio(serv),
+      tipo: base ? base.tipo : "link"
+    };
+    document.querySelector("#mtm-otro").value = esConocido ? "" : serv;
+    document.querySelector("#mtm-url").value = base && base.tipo === "link" ? base.url : "";
+    document.querySelector("#mtm-url-qr").value = base && base.tipo === "qr" ? base.url : "";
+    document.querySelector("#mtm-qr-estado").textContent = "";
+    pintarModalMetodo();
+    document.getElementById("mt-modal").hidden = false;
+  }
+  function cerrarModalMetodo() {
+    var m = document.getElementById("mt-modal");
+    if (m) m.hidden = true;
+    mtModalEstado = null;
   }
   function filaGaleriaHtml(url) {
     return "<div class='g-fila'><img class='c-mini g-mini' alt='' src='" + esc(url || "") + "'" + (url ? "" : " hidden") + ">" +
@@ -829,7 +926,7 @@
     }
     if (c.tipo === "metodos") {
       return '<div class="c-campo">' + c.et +
-        '<div class="mt-editor" data-metodos><div class="mt-filas"></div>' +
+        '<div class="mt-editor" data-metodos><div class="mt-cards"></div>' +
         '<button type="button" class="btn btn-fantasma btn-chico" data-mt-add>+ Agregar método</button>' +
         '<span class="c-ayuda">Se usan solo si en «Métodos de pago» elegís «Personalizados» o «Del sitio + personalizados». Cada método: un servicio, local o internacional, como link o como QR.</span></div></div>';
     }
@@ -861,8 +958,8 @@
         catch (e3) { obj[c.k] = []; }
       }
       else if (c.tipo === "metodos") {
-        var em = form.querySelector("[data-metodos] .mt-filas");
-        obj[c.k] = em ? leerFilasMetodos(em) : [];
+        var em = form.querySelector("[data-metodos]");
+        obj[c.k] = em ? leerMetodosDe(em) : [];
       }
       else if (c.tipo === "galeria") {
         var eg = form.querySelector("[data-galeria] .g-filas");
@@ -948,14 +1045,7 @@
     }
     function prepararMetodos(caja, iniciales) {
       var editor = caja.querySelector("[data-metodos]");
-      if (!editor) return;
-      var filas = editor.querySelector(".mt-filas");
-      (iniciales || []).forEach(function (m) {
-        var t = document.createElement("div");
-        t.innerHTML = filaMetodoHtml(m);
-        filas.appendChild(t.firstChild);
-      });
-      conectarMetodos(filas, editor.querySelector("[data-mt-add]"));
+      if (editor) crearEditorMetodos(editor, iniciales);
     }
     function prepararGaleria(caja, iniciales) {
       var editor = caja.querySelector("[data-galeria]");
@@ -1382,8 +1472,8 @@
       "<label>Avisar «últimas unidades» cuando el stock sea de <input type='number' name='stock_bajo' min='0' step='1' value='" + esc(configSitio.stock_bajo !== undefined ? configSitio.stock_bajo : 3) + "'> o menos</label></div>" +
       "<div class='p-bloque'><h3>Medios de cobro</h3>" +
       "<p class='p-ayuda'>Los métodos generales de tu sitio: se usan en todos tus cursos, productos y documentos, salvo que un ítem tenga los suyos propios. Cada método puede ser un link de pago o un código QR, local (de tu país) o internacional.</p>" +
-      "<div id='c-metodos' class='mt-filas'>" + (metodosSitio.length ? metodosSitio.map(filaMetodoHtml).join("") : filaMetodoHtml(null)) + "</div>" +
-      "<button type='button' class='btn btn-fantasma' id='c-metodo-agregar'>+ Agregar método</button></div>" +
+      "<div class='mt-editor' id='c-metodos'><div class='mt-cards'></div>" +
+      "<button type='button' class='btn btn-fantasma' id='c-metodo-agregar' data-mt-add>+ Agregar método</button></div></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
@@ -1506,8 +1596,7 @@
         if (pfEst) pfEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
       }).catch(function (e2) { if (pfEst) pfEst.textContent = "No se pudo subir: " + e2.message; });
     });
-    var contMetodos = $("#c-metodos");
-    if (contMetodos) conectarMetodos(contMetodos, $("#c-metodo-agregar"));
+    crearEditorMetodos($("#c-metodos"), metodosSitio);
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
       var arch = fFile.files[0];
@@ -1553,7 +1642,7 @@
           avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
           stock_bajo: Number(f.get("stock_bajo")) || 0,
-          metodos_pago: leerFilasMetodos(document.getElementById("c-metodos")),
+          metodos_pago: leerMetodosDe(document.getElementById("c-metodos")),
           pago_mp: null,
           pago_paypal: null,
           pago_qr: null,
