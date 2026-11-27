@@ -322,3 +322,27 @@ body.con-drawer { overflow: hidden; }
   .p-card { transition: none; }
   .p-card:hover { transform: none; }
 }
+
+/* ============================== formulario bajo demanda ==============================
+ * El formulario de creacion/edicion arranca oculto: aparece con el boton
+ * «+ Nuevo …» de la cabecera o con Editar en una tarjeta, y se cierra al
+ * guardar o cancelar. */
+.p-cab-lista { display: flex; justify-content: flex-end; margin-bottom: var(--space-md); }
+#cr-form[hidden] { display: none; }
+
+/* Imagen protagonista en el formulario (variante grande) */
+.c-img-grande { background: var(--color-paper); border: 1.5px dashed var(--color-rule); border-radius: var(--radius-card); padding: var(--space-md); }
+.c-img-grande .c-img-prev { width: 220px; height: 165px; border-radius: var(--radius-inner); }
+
+/* Interruptores con descripcion (destacado, oferta flash) */
+.c-switch-fila { display: flex; align-items: center; gap: var(--space-md); background: var(--color-paper); border: 1px solid var(--color-rule); border-radius: var(--radius-inner); padding: var(--space-sm) var(--space-md); }
+.c-switch-info { flex: 1; display: grid; gap: var(--space-3xs); }
+.c-switch-et { font-weight: 600; color: var(--color-ink); font-size: 15px; }
+.c-switch-desc { color: var(--color-muted); font-size: 13px; }
+
+/* Categorias fijas: chips reutilizables con quitar */
+.c-cats { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+.c-cats:empty { display: none; }
+.c-chip-cat { display: inline-flex; align-items: center; gap: var(--space-2xs); }
+.c-chip-x { display: grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--color-muted); font-size: 14px; line-height: 1; cursor: pointer; }
+.c-chip-x:hover { color: var(--color-dusk); }

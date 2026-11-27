@@ -474,3 +474,26 @@ insert into public.miembros (sitio_id, usuario_id, origen, creado)
 
 -- 2026-11-26: foto de perfil del sitio (se muestra en un circulo en el hero)
 alter table sitios add column if not exists avatar_url text;
+
+-- 2026-11-27: categorias fijas por sitio. Se crean al vuelo desde el panel
+-- al guardar un producto con una categoria nueva y quedan guardadas para
+-- reutilizarlas; el panel tambien sugiere las que ya usan los productos.
+create table if not exists public.categorias (
+  id uuid primary key default gen_random_uuid(),
+  sitio_id uuid not null references public.sitios(id) on delete cascade,
+  nombre text not null,
+  creada timestamptz not null default now(),
+  unique (sitio_id, nombre)
+);
+alter table public.categorias enable row level security;
+drop policy if exists categorias_lectura on public.categorias;
+create policy categorias_lectura on public.categorias for select using (true);
+drop policy if exists categorias_crud on public.categorias;
+create policy categorias_crud on public.categorias for all
+  using (public.es_dueno(sitio_id)) with check (public.es_dueno(sitio_id));
+drop policy if exists admin_total on public.categorias;
+create policy admin_total on public.categorias for all to authenticated
+  using (public.es_admin_actual()) with check (public.es_admin_actual());
+insert into public.categorias (sitio_id, nombre)
+  select distinct sitio_id, categoria from public.productos where categoria <> ''
+  on conflict do nothing;

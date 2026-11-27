@@ -286,22 +286,23 @@
   // ============================================================ CRUD generico
   var CFG = {
     productos: {
-      titulo: "Productos y servicios", tabla: "productos", orden: "orden",
-      bajada: "Físicos, digitales o servicios. El botón de compra usa tu link de pago; sin link, el visitante consulta por WhatsApp. Con categoría, tu catálogo gana filtros; con stock, el sitio avisa «últimas unidades» y «agotado» solo; con precio de oferta y fecha de fin, la oferta es flash y muestra cuenta regresiva.",
+      titulo: "Productos y servicios", tabla: "productos", orden: "orden", nuevoTexto: "Nuevo producto",
+      bajada: "Físicos, digitales o servicios. El botón de compra usa tu link de pago; sin link, el visitante consulta por WhatsApp. Las categorías que uses quedan guardadas para reutilizarlas; con stock, el sitio avisa «últimas unidades» y «agotado» solo; la oferta flash muestra cuenta regresiva en tu sitio.",
       campos: [
         { k: "nombre", et: "Nombre", tipo: "text" },
         { k: "tipo", et: "Tipo", tipo: "select", opciones: [["fisico", "Físico"], ["digital", "Digital"], ["servicio", "Servicio"]] },
-        { k: "categoria", et: "Categoría (ej: Vestidos, Calzado, Básicos)", tipo: "text" },
+        { k: "categoria", et: "Categoría", tipo: "categoria" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", grande: true, max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = a consultar)", tipo: "number" },
         { k: "precio_oferta", et: "Precio de oferta (opcional)", tipo: "number" },
-        { k: "oferta_hasta", et: "La oferta termina (opcional: la vuelve oferta flash)", tipo: "fecha" },
+        { k: "flash", et: "Oferta flash", tipo: "switch", virtual: true, desc: "La oferta muestra cuenta regresiva en tu sitio hasta la fecha de fin que elijas." },
+        { k: "oferta_hasta", et: "La oferta flash termina", tipo: "fecha" },
         { k: "stock", et: "Stock total (vacío = sin control de stock)", tipo: "number" },
         { k: "variantes", et: "Talles con su stock (si cargás talles, el stock total sale de ellos)", tipo: "talles" },
-        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso)." },
+        { k: "destacado", et: "Destacado en la vidriera", tipo: "switch", desc: "El producto aparece en la sección de destacados de tu sitio." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
-        { k: "destacado", et: "Destacado en la vidriera", tipo: "check" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
       resumen: function (x) {
@@ -316,7 +317,7 @@
       }
     },
     articulos: {
-      titulo: "Artículos", tabla: "articulos", orden: "creado",
+      titulo: "Artículos", tabla: "articulos", orden: "creado", nuevoTexto: "Nuevo artículo",
       bajada: "Tu blog. El cuerpo acepta Markdown simple: **negrita**, *itálica*, [enlaces](url) y listas con guión.",
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
@@ -329,7 +330,7 @@
       resumen: function (x) { return x.publicado ? "Publicado" : "Borrador"; }
     },
     promociones: {
-      titulo: "Promociones", tabla: "promociones", orden: "orden",
+      titulo: "Promociones", tabla: "promociones", orden: "orden", nuevoTexto: "Nueva promoción",
       bajada: "Avisos y publicidad de tu sitio: lanzamientos, descuentos, eventos.",
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
@@ -342,7 +343,7 @@
       resumen: function (x) { return x.activa ? "Activa" : "Apagada"; }
     },
     documentos: {
-      titulo: "Documentos", tabla: "documentos", orden: "creado",
+      titulo: "Documentos", tabla: "documentos", orden: "creado", nuevoTexto: "Nuevo documento",
       bajada: "Tu repositorio. Precio 0 = gratis, con URL pública. Con precio, subí el archivo como privado y se entrega solo a quien tenga acceso, con enlace temporal.",
       archivo: { campoUrl: "url_publica", campoId: "cloudinary_id", privadoSegunPrecio: true },
       campos: [
@@ -357,7 +358,7 @@
       resumen: function (x) { return Number(x.precio) === 0 ? "Gratis" : TW.precio(x.precio, x.moneda); }
     },
     cursos: {
-      titulo: "Cursos y talleres", tabla: "cursos", orden: "creado",
+      titulo: "Cursos y talleres", tabla: "cursos", orden: "creado", nuevoTexto: "Nuevo curso",
       bajada: "Cada curso tiene sus lecciones: elegí «Lecciones» en un curso para cargarlas.",
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
@@ -370,7 +371,7 @@
       resumen: function (x) { return (x.precio != null ? TW.precio(x.precio, x.moneda) : "Gratis") + (x.publicado ? "" : " · borrador"); }
     },
     lecciones: {
-      titulo: "Lecciones", tabla: "lecciones", orden: "orden",
+      titulo: "Lecciones", tabla: "lecciones", orden: "orden", nuevoTexto: "Nueva lección",
       bajada: "Video, audio, documento o texto. Las vistas previas se ven sin suscripción. El resto: subí el archivo como privado (queda el ID de Cloudinary) y solo lo abren los alumnos activos, con enlace temporal.",
       archivo: { campoUrl: "url_publica", campoId: "cloudinary_id", privadoSegunCheck: "no" },
       campos: [
@@ -403,9 +404,21 @@
       var fv = v ? String(v).slice(0, 16) : "";
       return "<label>" + c.et + '<input type="datetime-local" name="' + c.k + '" value="' + esc(fv) + '"></label>';
     }
+    if (c.tipo === "switch") {
+      return '<div class="c-switch-fila"><div class="c-switch-info"><span class="c-switch-et">' + c.et + "</span>" +
+        (c.desc ? '<span class="c-switch-desc">' + c.desc + "</span>" : "") + "</div>" +
+        '<input type="checkbox" class="mod-switch" name="' + c.k + '"' + (v ? " checked" : "") + "></div>";
+    }
+    if (c.tipo === "categoria") {
+      return '<div class="c-campo">' + c.et +
+        '<input type="text" name="' + c.k + '" value="' + esc(v) + '" list="dl-categorias" placeholder="Elegí una o escribí una nueva" autocomplete="off">' +
+        '<datalist id="dl-categorias"></datalist>' +
+        '<span class="c-ayuda">Al guardar, la categoría queda fija para los próximos productos.</span>' +
+        '<span class="c-cats" id="cr-cats"></span></div>';
+    }
     if (c.tipo === "imagen") {
       return '<div class="c-campo">' + c.et +
-        '<span class="c-img"><img class="c-mini c-img-prev" src="' + esc(v) + '" alt=""' + (v ? "" : " hidden") + ">" +
+        '<span class="c-img' + (c.grande ? " c-img-grande" : "") + '"><img class="c-mini c-img-prev" src="' + esc(v) + '" alt=""' + (v ? "" : " hidden") + ">" +
         '<label class="btn btn-fantasma c-subir">Subir imagen<input type="file" class="c-img-file" data-max="' + (c.max || 1600) + '" accept="image/*" hidden></label>' +
         '<button type="button" class="c-url-toggle" data-url-toggle="">o pegar una URL</button>' +
         '<input type="text" class="c-url-input" name="' + c.k + '" value="' + esc(v) + '" placeholder="https://…" hidden></span>' +
@@ -422,7 +435,8 @@
     var f = new FormData(form);
     var obj = {};
     campos.forEach(function (c) {
-      if (c.tipo === "check") obj[c.k] = form.querySelector('[name="' + c.k + '"]').checked;
+      if (c.virtual) return;
+      if (c.tipo === "check" || c.tipo === "switch") obj[c.k] = form.querySelector('[name="' + c.k + '"]').checked;
       else if (c.tipo === "number") { var n = f.get(c.k); obj[c.k] = n === "" || n === null ? null : Number(n); }
       else if (c.tipo === "fecha") { var fv = (f.get(c.k) || "").toString().trim(); obj[c.k] = fv ? new Date(fv).toISOString() : null; }
       else if (c.tipo === "talles") {
@@ -472,8 +486,44 @@
 
   function crud(cont, cfg, fijo) {
     var editando = null;
+    var formVisible = false;
+    var catsCache = null;
     cont.innerHTML = "<h2>" + cfg.titulo + "</h2><p class='bajada'>" + cfg.bajada + "</p>" +
-      "<div class='p-bloque' id='cr-form'></div><div class='p-bloque'><h3>Publicados y borradores</h3><div id='cr-lista' class='p-cards'></div></div>";
+      "<div class='p-cab-lista'><button class='btn btn-primario' id='cr-nuevo' type='button'>+ " + (cfg.nuevoTexto || "Nuevo") + "</button></div>" +
+      "<div class='p-bloque' id='cr-form' hidden></div><div class='p-bloque'><h3>Publicados y borradores</h3><div id='cr-lista' class='p-cards'></div></div>";
+    async function cargarCats() {
+      var s = new Set();
+      var r1 = await TW.sb.from("categorias").select("nombre").eq("sitio_id", sitio.id).order("nombre");
+      (r1.data || []).forEach(function (c) { if (c.nombre) s.add(c.nombre); });
+      var r2 = await TW.sb.from("productos").select("categoria").eq("sitio_id", sitio.id);
+      (r2.data || []).forEach(function (p) { if (p.categoria) s.add(p.categoria); });
+      catsCache = Array.from(s).sort(function (a, b) { return a.localeCompare(b, "es"); });
+      return catsCache;
+    }
+    async function prepararCats(caja) {
+      var dl = caja.querySelector("#dl-categorias");
+      var zona = caja.querySelector("#cr-cats");
+      if (!dl && !zona) return;
+      var cats = await cargarCats();
+      if (dl) dl.innerHTML = cats.map(function (c) { return "<option value='" + esc(c) + "'></option>"; }).join("");
+      if (zona) {
+        zona.innerHTML = cats.map(function (c) {
+          return "<span class='c-chip c-chip-cat'>" + esc(c) + "<button type='button' class='c-chip-x' data-borrar-cat='" + esc(c) + "' aria-label='Quitar categoría'>×</button></span>";
+        }).join("");
+        zona.querySelectorAll("[data-borrar-cat]").forEach(function (b) {
+          b.addEventListener("click", async function () {
+            if (!confirm("¿Quitar la categoría «" + b.dataset.borrarCat + "» de la lista? Los productos que la usan la conservan.")) return;
+            await TW.sb.from("categorias").delete().eq("sitio_id", sitio.id).eq("nombre", b.dataset.borrarCat);
+            prepararCats(caja);
+          });
+        });
+      }
+    }
+    async function asegurarCategoria(nombre) {
+      if (!nombre) return;
+      if (catsCache && catsCache.indexOf(nombre) >= 0) return;
+      await TW.sb.from("categorias").insert({ sitio_id: sitio.id, nombre: nombre });
+    }
     async function pintarLista() {
       var q = TW.sb.from(cfg.tabla).select("*").eq("sitio_id", sitio.id);
       if (fijo) Object.keys(fijo).forEach(function (k) { q = q.eq(k, fijo[k]); });
@@ -496,12 +546,16 @@
     }
     function pintarForm() {
       var caja = $("#cr-form");
-      caja.innerHTML = "<h3>" + (editando ? "Editar" : "Nuevo") + "</h3><form id='cr-f'>" +
-        cfg.campos.map(function (c) { return campoHtml(c, editando ? editando[c.k] : undefined); }).join("") +
+      if (!formVisible) { caja.hidden = true; caja.innerHTML = ""; return; }
+      caja.hidden = false;
+      caja.innerHTML = "<h3>" + (editando ? "Editar" : (cfg.nuevoTexto || "Nuevo")) + "</h3><form id='cr-f'>" +
+        cfg.campos.map(function (c) {
+          return campoHtml(c, c.k === "flash" ? !!(editando && editando.oferta_hasta) : (editando ? editando[c.k] : undefined));
+        }).join("") +
         (cfg.archivo ? '<label>Subir archivo a Cloudinary <input type="file" id="cr-archivo"></label>' +
           '<p class="p-nota" id="cr-subida-nota">Si el contenido es pago se sube como privado y se completa el ID; si es gratis, la URL pública.</p>' : "") +
         '<div class="p-acciones"><button class="btn btn-primario" type="submit">Guardar</button>' +
-        (editando ? '<button class="btn btn-fantasma" type="button" id="cr-cancelar">Cancelar</button>' : "") +
+        '<button class="btn btn-fantasma" type="button" id="cr-cancelar">Cancelar</button>' +
         "</div><p class='p-error' id='cr-error'></p></form>";
       caja.querySelectorAll(".c-img-file").forEach(function (inp) {
         inp.addEventListener("change", function () {
@@ -529,9 +583,25 @@
         var inpV = caja.querySelector('[name="variantes"]');
         if (inpV && inpV.closest("label")) inpV.closest("label").style.display = "none";
       }
+      if (cfg.tabla === "productos") {
+        prepararCats(caja);
+        var swFlash = caja.querySelector('[name="flash"]');
+        if (swFlash) {
+          var syncFlash = function () {
+            var lf = caja.querySelector('[name="oferta_hasta"]');
+            if (lf && lf.closest("label")) lf.closest("label").style.display = swFlash.checked ? "" : "none";
+          };
+          swFlash.addEventListener("change", syncFlash);
+          syncFlash();
+        }
+      }
       $("#cr-f").addEventListener("submit", async function (ev) {
         ev.preventDefault();
         var obj = leerCampos(ev.target, cfg.campos);
+        if (cfg.tabla === "productos") {
+          var swF = ev.target.querySelector('[name="flash"]');
+          if (swF && !swF.checked) obj.oferta_hasta = null;
+        }
         obj.sitio_id = sitio.id;
         if (fijo) Object.assign(obj, fijo);
         var archivo = cfg.archivo ? $("#cr-archivo").files[0] : null;
@@ -547,7 +617,9 @@
             ? await TW.sb.from(cfg.tabla).update(obj).eq("id", editando.id)
             : await TW.sb.from(cfg.tabla).insert(obj);
           if (r.error) throw new Error(r.error.message);
+          if (cfg.tabla === "productos") await asegurarCategoria(obj.categoria);
           editando = null;
+          formVisible = false;
           pintarForm();
           pintarLista();
         } catch (e) {
@@ -555,7 +627,7 @@
         }
       });
       var btnC = $("#cr-cancelar");
-      if (btnC) btnC.addEventListener("click", function () { editando = null; pintarForm(); });
+      if (btnC) btnC.addEventListener("click", function () { editando = null; formVisible = false; pintarForm(); });
     }
     cont.addEventListener("click", async function (ev) {
       var be = ev.target.closest("[data-editar]");
@@ -564,14 +636,22 @@
       if (be) {
         var r = await TW.sb.from(cfg.tabla).select("*").eq("id", be.dataset.editar).maybeSingle();
         editando = r.data;
+        formVisible = true;
         pintarForm();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
       if (bb && confirm("¿Borrar este elemento? No se puede deshacer.")) {
         await TW.sb.from(cfg.tabla).delete().eq("id", bb.dataset.borrar);
+        if (editando && editando.id === bb.dataset.borrar) { editando = null; formVisible = false; pintarForm(); }
         pintarLista();
       }
       if (bx && cfg.alExtra) cfg.alExtra(bx.dataset.extra);
+    });
+    $("#cr-nuevo").addEventListener("click", function () {
+      editando = null;
+      formVisible = true;
+      pintarForm();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
     pintarForm();
     pintarLista();
