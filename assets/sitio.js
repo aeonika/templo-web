@@ -319,6 +319,15 @@
   }
 
   main.innerHTML = html || '<p class="s-error">Este sitio todavia no publico contenido.</p>';
+  // La barra solo enlaza a secciones que existen de verdad: si un modulo
+  // esta desactivado o quedo vacio, su seccion no se renderiza y el
+  // enlace sobra. «Quien soy» cuenta como vacio si el sitio no tiene
+  // descripcion ni texto de presentacion.
+  nav.querySelectorAll('.s-links a[href^="#"]').forEach(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    var sec = document.getElementById(id);
+    if (!sec || (id === "quienes" && !sitio.descripcion && !sitio.quienes_somos)) a.remove();
+  });
   // Membresia del sitio: unirse, o chip de miembro (la membresia es de
   // este sitio solamente; no conecta con otros sitios de la plataforma)
   var zonaMiembro = document.getElementById("s-miembro");
