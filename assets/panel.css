@@ -137,12 +137,15 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .mt-chip > span:not(.mt-logo) { min-width: 0; overflow-wrap: anywhere; font-size: 13.5px; line-height: 1.25; }
 .mt-datos { display: grid; gap: var(--space-xs); }
 .ql-mount { margin-top: 6px; }
-.ql-mount .ql-toolbar { border: 1px solid var(--color-rule); border-bottom: none; border-radius: 10px 10px 0 0; background: var(--color-paper-2); }
+/* La barra de Quill es HERMANA anterior del .ql-mount, no hija: se la
+   marca con la clase .barra-rico desde conectarPleca(). */
+.barra-rico { border: 1px solid var(--color-rule); border-bottom: none; border-radius: 10px 10px 0 0; background: var(--color-paper-2); }
+.barra-rico button.ql-pleca { width: auto; height: 24px; padding: 3px 8px; font-size: .85rem; color: var(--color-ink); display: inline-flex; align-items: center; gap: 5px; float: none; }
+.barra-rico button.ql-pleca svg { float: none; height: 10px; }
 .ql-mount .ql-container { border: 1px solid var(--color-rule); border-radius: 0 0 10px 10px; background: var(--color-paper); font: inherit; }
 .ql-mount .ql-editor { min-height: 96px; line-height: 1.55; }
 .ql-mount.grande .ql-editor { min-height: 180px; }
 .ql-mount .ql-editor h3 { font-size: 1.05rem; }
-.ql-mount .ql-toolbar button.ql-pleca { width: auto; height: 24px; padding: 3px 8px; font-size: .85rem; color: var(--color-ink); display: inline-flex; align-items: center; gap: 5px; float: none; vertical-align: top; }
 .s-pleca { position: relative; display: block; height: 9px; margin: 18px auto; max-width: 340px; background: linear-gradient(90deg, transparent, var(--color-accent), transparent) center / 100% 1px no-repeat; }
 .s-pleca::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; background: var(--color-accent); transform: translate(-50%, -50%) rotate(45deg); }
 .s-pleca[data-estilo="simple"]::after { content: none; }

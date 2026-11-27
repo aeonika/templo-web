@@ -1116,6 +1116,7 @@
   function conectarPleca(q) {
     var tb = q.getModule("toolbar");
     if (!tb) return;
+    tb.container.classList.add("barra-rico");
     tb.addHandler("pleca", function () {
       var rango = q.getSelection(true);
       var idx = rango ? rango.index : q.getLength();
