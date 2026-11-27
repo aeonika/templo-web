@@ -193,7 +193,7 @@
       "<div class='p-bloque d-anim' style='--i:8'><h3>Actividad reciente</h3><div id='d-actividad'><p class='p-vacio'>Cargando…</p></div></div>" +
       "</div>";
     cont.querySelectorAll("[data-ir]").forEach(function (b) {
-      b.addEventListener("click", function () { irA(b.getAttribute("data-ir")); });
+      b.addEventListener("click", function () { b.blur(); irA(b.getAttribute("data-ir")); });
     });
     $("#d-editar").addEventListener("click", function () { irA("sitio"); });
     $("#d-copiar").addEventListener("click", async function () {

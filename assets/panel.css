@@ -267,8 +267,6 @@ body.con-drawer { overflow: hidden; }
 .d-url { font-weight: 600; color: var(--color-accent-hi); word-break: break-all; margin: 0 0 var(--space-md); }
 .d-sub { margin-top: var(--space-lg); }
 .p-bloque h3.d-sub { margin-top: var(--space-lg); }
-.d-stat:focus { outline: none; }
-.d-stat:focus-visible { border-color: var(--color-accent); box-shadow: var(--glow-accent); }
 .d-rapidas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); }
 .d-rapidas .btn { justify-content: flex-start; }
 @media (max-width: 820px) {
