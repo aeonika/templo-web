@@ -454,8 +454,7 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-comp-fila input[type="text"], .s-comp-fila select { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; font: inherit; }
 .s-comp-estado { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
 .s-pagos-sub { font-weight: 600; font-size: 14px; color: var(--muted); margin: 14px 0 8px; }
-.s-doc-pagos { margin: 4px 0 14px; }
-.s-doc-pagos summary { cursor: pointer; font-weight: 600; color: var(--acento); }
+.s-doc h3 a { color: inherit; text-decoration: none; }
 .s-tarjeta-acciones { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .s-galeria { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
 .s-galeria img { width: 150px; height: 150px; object-fit: cover; border-radius: 12px; border: 1px solid var(--borde); }

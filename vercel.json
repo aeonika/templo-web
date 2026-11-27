@@ -15,6 +15,10 @@
   {
    "source": "/producto/:slug/:producto",
    "destination": "/producto.html?s=:slug&p=:producto"
+  },
+  {
+   "source": "/documento/:slug/:documento",
+   "destination": "/documento.html?s=:slug&d=:documento"
   }
  ]
 }

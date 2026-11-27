@@ -158,7 +158,7 @@ create table if not exists public.documentos (
 -- La fila completa de `documentos` (con cloudinary_id) queda protegida
 -- por RLS; esta vista solo expone lo que un visitante puede ver.
 create or replace view public.documentos_indice as
-  select id, sitio_id, titulo, descripcion, precio, moneda, link_pago, creado
+  select id, sitio_id, titulo, descripcion, precio, moneda, link_pago, creado, pagos_modo, metodos_pago, instrucciones_pago
   from public.documentos where publicado;
 grant select on public.documentos_indice to anon, authenticated;
 

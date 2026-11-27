@@ -295,40 +295,17 @@
       var racc = await TW.sb.from("accesos_documentos").select("documento_id").eq("alumno_id", usuario.id).eq("estado", "activa");
       (racc.data || []).forEach(function (x) { misAccesos[x.documento_id] = true; });
     }
-    var docsPagos = docs.filter(function (d) { return Number(d.precio) > 0; });
-    var metodosSitio = TW.metodosDeSitio(sitio.config);
-    var algunConSitio = docsPagos.some(function (d) { return (d.pagos_modo || "sitio") !== "propios"; });
-    var mediosDocs = "";
-    if (docsPagos.length && ((algunConSitio && metodosSitio.length) || usuario)) {
-      mediosDocs = '<div class="s-pagos">' +
-        (algunConSitio && metodosSitio.length ? '<p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p>' + TW.htmlMetodos(metodosSitio, sitio.config && sitio.config.pais) : "") +
-        (usuario ? '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
-          '<div class="s-comp-fila"><select id="comp-doc">' + docsPagos.map(function (d) { return '<option value="' + d.id + '">' + TW.esc(d.titulo) + "</option>"; }).join("") + "</select>" +
-          '<input type="file" id="comp-file-d" accept="image/*,.pdf">' +
-          '<button class="btn" id="comp-enviar-d" type="button">Enviar comprobante</button></div>' +
-          '<p class="s-comp-estado" id="comp-estado-d"></p></div>' : "") +
-        "</div>";
-    }
-    function detallePagosDoc(d) {
-      if (Number(d.precio) <= 0) return "";
-      var propios = (d.pagos_modo || "sitio") !== "sitio";
-      var mets = propios ? TW.metodosEfectivos(d, sitio.config) : [];
-      if (!mets.length && !d.instrucciones_pago) return "";
-      return '<details class="s-doc-pagos"><summary>Cómo pagar este documento</summary>' +
-        (mets.length ? TW.htmlMetodos(mets, sitio.config && sitio.config.pais) : "") +
-        (d.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(d.instrucciones_pago) + "</p>" : "") + "</details>";
-    }
+    // En el indice NO se muestran medios de pago: cada documento abre
+    // su pantalla de detalle (/documento/<slug>/<id>) con el precio,
+    // los medios e instrucciones y el envio de comprobante.
     html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
       docs.map(function (d) {
         var gratis = Number(d.precio) === 0;
-        var accion;
-        if (gratis) accion = '<button class="btn btn-acento" data-doc-gratis="' + d.id + '">Leer</button>';
-        else if (misAccesos[d.id]) accion = '<button class="btn btn-acento" data-doc-abrir="' + d.id + '">Abrir</button>';
-        else if (d.link_pago) accion = '<a class="btn btn-acento" href="' + TW.esc(d.link_pago) + '" target="_blank" rel="noopener">Comprar</a>';
-        else accion = wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : "";
-        return '<div class="s-doc"><div><h3>' + TW.esc(d.titulo) + "</h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
-          '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + accion + "</div></div>" + detallePagosDoc(d);
-      }).join("") + "</div>" + mediosDocs);
+        var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
+        var estado = gratis ? '<span class="s-badge">Gratis</span>' : (misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "");
+        return '<div class="s-doc"><div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
+          '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div>';
+      }).join("") + "</div>");
   }
 
   // Feed publico del maestro
@@ -438,46 +415,5 @@
     Object.keys(porId).forEach(function (id) { var sec = document.getElementById(id); if (sec) spy.observe(sec); });
   }
 
-  // Envio de comprobante por un documento pago
-  var btnCompD = document.getElementById("comp-enviar-d");
-  if (btnCompD) {
-    btnCompD.addEventListener("click", async function () {
-      var est = document.getElementById("comp-estado-d");
-      var arch = document.getElementById("comp-file-d").files[0];
-      if (!arch) { est.textContent = "Elegí el archivo del comprobante (foto o PDF)."; return; }
-      btnCompD.disabled = true;
-      est.textContent = "Subiendo el comprobante…";
-      try {
-        var datos = await TW.subirComprobante(arch);
-        var usuarioD = await TW.usuario();
-        var r = await TW.sb.from("comprobantes").insert({
-          sitio_id: sitio.id, alumno_id: usuarioD.id,
-          documento_id: document.getElementById("comp-doc").value,
-          archivo_url: datos.secure_url, nota: ""
-        });
-        if (r.error) throw new Error(r.error.message);
-        est.textContent = "Comprobante enviado. El maestro lo revisa y te da el acceso.";
-        btnCompD.textContent = "Enviado";
-      } catch (e) {
-        est.textContent = "No se pudo enviar: " + e.message;
-        btnCompD.disabled = false;
-      }
-    });
-  }
-
-  // Acciones de documentos
-  main.addEventListener("click", async function (ev) {
-    var bg = ev.target.closest("[data-doc-gratis]");
-    var ba = ev.target.closest("[data-doc-abrir]");
-    if (bg) {
-      var rd = await TW.sb.from("documentos").select("url_publica").eq("id", bg.dataset.docGratis).maybeSingle();
-      if (rd.data && rd.data.url_publica) window.open(rd.data.url_publica, "_blank");
-    }
-    if (ba) {
-      ba.textContent = "Abriendo…";
-      var url = await TW.urlFirmada({ documento_id: ba.dataset.docAbrir });
-      if (url) window.open(url, "_blank"); else ba.textContent = "Sin acceso";
-    }
-  });
   if (window.__finSplash) window.__finSplash();
 })();
