@@ -171,6 +171,8 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .pf-vista-ico { color: var(--color-accent); display: inline-flex; }
 .pf-vista-ico svg { width: 30px; height: 30px; }
 .pf-vista-titulo { font-weight: 600; color: var(--color-ink); }
+.pf-vista-desc { font-size: .85rem; color: var(--color-ink-2); line-height: 1.4; }
+.pf-vista-desc:empty { display: none; }
 .pf-quitar { position: absolute; top: 6px; right: 6px; border: none; background: transparent; color: var(--color-ink-2); font-size: 13px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
 .pf-quitar:hover { color: var(--color-ink); background: var(--color-paper-2); }
 .pf-iconos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }

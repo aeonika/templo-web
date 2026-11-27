@@ -1561,7 +1561,7 @@
     var maquetaSitio = sitio.maqueta === "premium" ? "premium" : "clasica";
     var urlSitio = "sitio/" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
-    var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"]];
+    var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"], ["camion", "Envíos"], ["paquete", "Paquete"], ["remera", "Ropa"], ["comida", "Comida"], ["tarjeta", "Tarjeta / pagos"], ["billete", "Efectivo"], ["reloj", "Horario"], ["pin", "Ubicación"], ["escudo", "Garantía"], ["etiqueta", "Ofertas"], ["regalo", "Regalo"], ["calendario", "Reservas / turnos"], ["check", "Check"], ["corazon", "Corazón"], ["casa", "Local"]];
     var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
     var configSitio = sitio.config || {};
     var rubrosDefs = [["general", "General"], ["ropa", "Indumentaria / ropa"], ["calzado", "Calzado"], ["comida", "Comida y bebidas"], ["servicios", "Servicios"], ["digital", "Productos digitales"]];
@@ -1577,7 +1577,22 @@
       ojo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
       llave: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14.5" r="4.5"/><path d="M11.3 11.2L20 2.5"/><path d="M16.8 5.7l2.7 2.7"/></svg>',
       pocion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4"/><path d="M11 3v5.2L6.6 15a3 3 0 0 0 2.7 4.5h5.4a3 3 0 0 0 2.7-4.5L13 8.2V3"/><path d="M8.2 15h7.6"/></svg>',
-      planta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><path d="M12 14c0-3.8 2.8-5.8 6.5-5.8 0 3.8-2.3 6-6.5 5.8z"/><path d="M12 11.5c0-3.2-2.4-4.9-5.5-4.9 0 3.2 2 5.1 5.5 4.9z"/></svg>'
+      planta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-7"/><path d="M12 14c0-3.8 2.8-5.8 6.5-5.8 0 3.8-2.3 6-6.5 5.8z"/><path d="M12 11.5c0-3.2-2.4-4.9-5.5-4.9 0 3.2 2 5.1 5.5 4.9z"/></svg>',
+      camion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h12v10H2z"/><path d="M14 10h3.6L21 13.4V16h-7z"/><circle cx="6.5" cy="17.8" r="1.9"/><circle cx="16.8" cy="17.8" r="1.9"/><path d="M8.4 17.8h6.5"/></svg>',
+      paquete: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8L12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/><path d="M7.5 5.6l9 5"/></svg>',
+      remera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8.2 3.5L3 7l1.8 3.4L7 9v11.5h10V9l2.2 1.4L21 7l-5.2-3.5a3.9 3.9 0 0 1-7.6 0z"/></svg>',
+      comida: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.8v6.4M4 2.8v3.6a2.5 2.5 0 0 0 5 0V2.8"/><path d="M6.5 9.2v12"/><path d="M17.5 2.8c-1.7 1.3-2.6 3.5-2.6 5.9 0 1.9 1 3.1 2.6 3.1v9.4"/><path d="M17.5 2.8v18.4" opacity="0"/></svg>',
+      tarjeta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>',
+      billete: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.8 9.8h.01M18.2 14.2h.01"/></svg>',
+      reloj: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3 2"/></svg>',
+      pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.2S5.4 15.9 5.4 10.2a6.6 6.6 0 0 1 13.2 0c0 5.7-6.6 11-6.6 11z"/><circle cx="12" cy="10.2" r="2.4"/></svg>',
+      escudo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l7.2 2.8v5.6c0 4.8-3.4 7.9-7.2 9.8C8.2 19.1 4.8 16 4.8 11.2V5.6z"/><path d="M8.8 11.8l2.2 2.2 4.2-4.4"/></svg>',
+      etiqueta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4L13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.6" cy="7.6" r="1.3"/></svg>',
+      regalo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9"/><path d="M12 8v13"/><path d="M12 8s-4.2.2-4.2-2A1.9 1.9 0 0 1 11.5 5C12.3 6 12 8 12 8zM12 8s4.2.2 4.2-2A1.9 1.9 0 0 0 12.5 5C11.7 6 12 8 12 8z"/></svg>',
+      calendario: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.6l5.2 5L20 6.8"/></svg>',
+      corazon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.4C6.8 16.4 3.4 13.2 3.4 9.7A4.5 4.5 0 0 1 7.9 5.2c1.7 0 3.2.9 4.1 2.3a5.2 5.2 0 0 1 4.1-2.3 4.5 4.5 0 0 1 4.5 4.5c0 3.5-3.4 6.7-8.6 10.7z"/></svg>',
+      casa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11L12 3.5 20.5 11"/><path d="M5.8 9.3V20.5h12.4V9.3"/><path d="M9.8 20.5v-5.6h4.4v5.6"/></svg>'
     };
     // Cada punto fuerte es una tarjeta: vista previa tal como se ve
     // en el sitio, texto y selector de iconos en grilla (sin listas
@@ -1585,11 +1600,14 @@
     function tarjetaPunto(r) {
       var icono = r && ICONOS_RASGO[r.icono] ? r.icono : "estrella";
       var titulo = r ? (r.titulo || "") : "";
+      var desc = r ? (r.descripcion || "") : "";
       return "<div class='pf-card' data-icono='" + icono + "'>" +
         "<div class='pf-vista'><span class='pf-vista-ico'>" + ICONOS_RASGO[icono] + "</span>" +
         "<span class='pf-vista-titulo'>" + (titulo ? esc(titulo) : "Tu punto fuerte") + "</span>" +
+        "<span class='pf-vista-desc'>" + esc(desc) + "</span>" +
         "<button type='button' class='pf-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
-        "<label>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(titulo) + "' placeholder='Servicios de hechicería'></label>" +
+        "<label>Título <input type='text' class='c-rasgo-titulo' value='" + esc(titulo) + "' placeholder='Envíos a todo el país'></label>" +
+        "<label>Descripción (opcional) <input type='text' class='c-rasgo-desc' value='" + esc(desc) + "' placeholder='Salidas todos los días, llega en 24-48 h'></label>" +
         "<div class='pf-iconos'>" + iconosPanel.map(function (o) {
           return "<button type='button' class='pf-ico" + (o[0] === icono ? " activo" : "") + "' data-ico='" + o[0] + "' title='" + o[1] + "'>" + ICONOS_RASGO[o[0]] + "</button>";
         }).join("") + "</div></div>";
@@ -1846,10 +1864,16 @@
         card.querySelector(".pf-vista-ico").innerHTML = ICONOS_RASGO[ico.dataset.ico] || "";
       });
       contRasgos.addEventListener("input", function (ev) {
-        if (!ev.target.classList.contains("c-rasgo-titulo")) return;
         var card = ev.target.closest(".pf-card");
-        var vista = card && card.querySelector(".pf-vista-titulo");
-        if (vista) vista.textContent = ev.target.value.trim() || "Tu punto fuerte";
+        if (!card) return;
+        if (ev.target.classList.contains("c-rasgo-titulo")) {
+          var vista = card.querySelector(".pf-vista-titulo");
+          if (vista) vista.textContent = ev.target.value.trim() || "Tu punto fuerte";
+        }
+        if (ev.target.classList.contains("c-rasgo-desc")) {
+          var vistaD = card.querySelector(".pf-vista-desc");
+          if (vistaD) vistaD.textContent = ev.target.value;
+        }
       });
     }
     mejorarConRico(document.querySelector("#f-sitio [name='quienes_somos']"));
@@ -1861,7 +1885,11 @@
       var rasgosNuevos = [];
       document.querySelectorAll(".pf-card").forEach(function (card) {
         var ti = card.querySelector(".c-rasgo-titulo").value.trim();
-        if (ti) rasgosNuevos.push({ icono: card.dataset.icono || "estrella", titulo: ti });
+        if (!ti) return;
+        var de = card.querySelector(".c-rasgo-desc").value.trim();
+        var item = { icono: card.dataset.icono || "estrella", titulo: ti };
+        if (de) item.descripcion = de;
+        rasgosNuevos.push(item);
       });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
