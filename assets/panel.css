@@ -86,7 +86,7 @@ textarea.grande { min-height: 200px; }
 .p-ok { color: var(--color-success); font-size: 14px; margin: 0; }
 
 .p-panel { display: block; }
-.p-tabs { display: grid; gap: var(--space-2xs); overflow-y: auto; flex: 1; align-content: start; padding: 0 var(--space-sm); }
+.p-tabs { display: grid; gap: var(--space-2xs); overflow-y: auto; overscroll-behavior: contain; flex: 1; align-content: start; padding: 0 var(--space-sm); }
 .p-tabs button { display: flex; align-items: center; gap: var(--space-sm); text-align: left; background: transparent; border: 1px solid transparent; color: var(--color-ink-2); padding: 10px 14px; border-radius: var(--radius-inner); font: 500 15px var(--font-body); cursor: pointer; transition: background-color .18s ease, color .18s ease, transform .18s ease; }
 .p-tabs button svg { width: 19px; height: 19px; flex: none; }
 .p-tabs button:hover { background: var(--color-paper-2); transform: translateX(3px); }
@@ -228,7 +228,7 @@ textarea.grande { min-height: 200px; }
  * El menu hamburguesa abre este cajon lateral (escritorio y movil):
  * identidad del sitio arriba, secciones en el medio, sesion al pie. */
 body.con-drawer { overflow: hidden; }
-.p-drawer { position: fixed; top: 0; left: 0; z-index: 80; width: min(300px, 86vw); height: 100svh; display: flex; flex-direction: column; background: var(--color-paper-3); border-right: 1px solid var(--color-rule); box-shadow: var(--shadow-card); transform: translateX(-106%); transition: transform .34s cubic-bezier(.32, .72, .24, 1); }
+.p-drawer { position: fixed; top: 0; left: 0; z-index: 80; width: min(300px, 86vw); height: 100svh; height: 100dvh; overscroll-behavior: contain; display: flex; flex-direction: column; background: var(--color-paper-3); border-right: 1px solid var(--color-rule); box-shadow: var(--shadow-card); transform: translateX(-106%); transition: transform .34s cubic-bezier(.32, .72, .24, 1); }
 .p-drawer.abierto { transform: translateX(0); }
 .p-drawer-fondo { position: fixed; inset: 0; z-index: 70; background: var(--scrim); animation: p-fondo .25s ease both; }
 @keyframes p-fondo { from { opacity: 0; } }
