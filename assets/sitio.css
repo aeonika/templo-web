@@ -451,10 +451,23 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-comp { margin-top: 18px; border-top: 1px solid var(--borde); padding-top: 16px; }
 .s-comp-fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .s-comp-fila input[type="text"] { flex: 1; min-width: 180px; }
-.pg-caja { margin-top: 14px; }
-.pg-paises { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
-.pg-pais { border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .92rem; cursor: pointer; }
+.pg-modal-fondo { position: fixed; inset: 0; z-index: 300; background: color-mix(in srgb, var(--fondo) 74%, transparent); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.pg-modal-fondo[hidden] { display: none; }
+.pg-modal { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 18px; width: 100%; max-width: 520px; max-height: 85svh; overflow-y: auto; padding: 20px 22px; box-shadow: 0 24px 60px rgb(0 0 0 / .45); }
+.pg-modal-cab { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pg-modal-cab .s-pagos-t { margin: 0; font-size: 1.05rem; }
+.pg-cerrar { background: none; border: none; color: var(--muted); font-size: 1.05rem; line-height: 1; cursor: pointer; padding: 6px; }
+.pg-cerrar:hover { color: var(--texto); }
+.pg-modal-sub { color: var(--muted); margin: 12px 0 0; }
+.pg-paises { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+.pg-pais { border: 1px solid var(--borde); background: var(--fondo); color: var(--texto); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .92rem; cursor: pointer; }
 .pg-pais.activo { background: var(--acento); border-color: var(--acento); color: var(--acento-texto); font-weight: 600; }
+.s-pago-ico { position: relative; display: inline-flex; width: 24px; height: 24px; border-radius: 7px; overflow: hidden; background: var(--blanco); flex: none; vertical-align: middle; }
+.s-pago-ico img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.s-pago-letra { margin: auto; font-weight: 700; font-size: .8rem; color: var(--acento); }
+.s-pago-btn { display: inline-flex; align-items: center; gap: 9px; }
+.s-qr-item figcaption { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.s-datos-t { display: flex; align-items: center; gap: 8px; }
 .s-comp-fila input[type="text"], .s-comp-fila select { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; font: inherit; }
 .s-comp-estado { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
 .s-pagos-sub { font-weight: 600; font-size: 14px; color: var(--muted); margin: 14px 0 8px; }

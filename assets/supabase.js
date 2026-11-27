@@ -376,21 +376,29 @@
       if (modo === "ambos") return TW.metodosDeSitio(cfg).concat(propios);
       return TW.metodosDeSitio(cfg);
     },
+    // Dominio de cada servicio para traer su icono (favicon). Si el
+    // servicio no esta en el mapa, se muestra la inicial como icono.
+    LOGOS_METODO: { "Mercado Pago": "mercadopago.com.ar", "Cuenta DNI": "bancoprovincia.com.ar", "BNA+": "bna.com.ar", "Ualá": "uala.com.ar", "Brubank": "brubank.com", "Naranja X": "naranjax.com", "Personal Pay": "personalpay.com.ar", "Banco Galicia": "galicia.com.ar", "Banco Macro": "macro.com.ar", "Santander": "santander.com.ar", "BBVA": "bbva.com.ar", "Modo": "modo.com.ar", "Binance": "binance.com", "PayPal": "paypal.com", "Wise": "wise.com", "Payoneer": "payoneer.com", "Skrill": "skrill.com", "Cuenta RUT / BancoEstado": "bancoestado.cl", "Mach": "somosmach.cl", "Tenpo": "tenpo.cl", "Webpay / Transbank": "transbank.cl", "Banco de Chile": "bancochile.cl", "Khipu": "khipu.com", "Nequi": "nequi.com.co", "Daviplata": "daviplata.com", "Bancolombia": "bancolombia.com", "PSE": "pse.com.co", "Banco de Bogotá": "bancodebogota.com", "OXXO": "oxxo.com", "BBVA México": "bbva.mx", "Santander México": "santander.com.mx", "Banco Azteca": "bancoazteca.com.mx", "Clip": "clip.mx", "Yape": "yape.com.pe", "Plin": "plin.pe", "BCP": "viabcp.com", "Interbank": "interbank.pe", "BBVA Perú": "bbva.pe", "Prex": "prexcard.com", "OCA": "oca.com.uy", "Banco República (BROU)": "brou.com.uy", "Bizum": "bizum.es", "CaixaBank": "caixabank.es", "Revolut": "revolut.com", "Banco de Venezuela": "banvenez.com", "Banesco": "banesco.com", "Mercantil": "mercantilbanco.com", "Zelle": "zellepay.com", "Banco Unión": "bancounion.com.bo", "Tigo Money": "tigo.com", "Banco Itaú": "itau.com.py", "Visión Banco": "visionbanco.com", "Banco Pichincha": "pichincha.com", "Banco Guayaquil": "bancoguayaquil.com", "Produbanco": "produbanco.com.ec", "Banco Nacional": "bncr.fi.cr", "Banco de Costa Rica": "bancobcr.com" },
+    logoMetodoHtml: function (servicio) {
+      var dom = TW.LOGOS_METODO[servicio || ""];
+      return '<span class="s-pago-ico"><span class="s-pago-letra">' + TW.esc((servicio || "?").trim().charAt(0).toUpperCase() || "?") + "</span>" +
+        (dom ? '<img src="https://www.google.com/s2/favicons?domain=' + dom + '&sz=128" alt="" loading="lazy" onerror="this.remove()">' : "") + "</span>";
+    },
     // HTML de un grupo de metodos: botones para los links y figuras con
-    // el nombre del servicio para los QR.
+    // el nombre del servicio para los QR. Cada metodo lleva su icono.
     htmlMetodosGrupo: function (metodos) {
       var links = metodos.filter(function (m) { return m.tipo !== "qr" && m.tipo !== "datos"; });
       var qrs = metodos.filter(function (m) { return m.tipo === "qr"; });
       var conDatos = metodos.filter(function (m) { return m.tipo === "datos"; });
       return (links.length ? '<div class="s-pagos-btns">' + links.map(function (m) {
-        return '<a class="btn" href="' + TW.esc(m.url) + '" target="_blank" rel="noopener">' + TW.esc(m.servicio || "Pagar") + "</a>";
+        return '<a class="btn s-pago-btn" href="' + TW.esc(m.url) + '" target="_blank" rel="noopener">' + TW.logoMetodoHtml(m.servicio) + "<span>" + TW.esc(m.servicio || "Pagar") + "</span></a>";
       }).join("") + "</div>" : "") +
       (qrs.length ? '<div class="s-qrs">' + qrs.map(function (m) {
-        return '<figure class="s-qr-item"><figcaption>' + TW.esc(m.servicio || "QR") + '</figcaption>' +
+        return '<figure class="s-qr-item"><figcaption>' + TW.logoMetodoHtml(m.servicio) + "<span>" + TW.esc(m.servicio || "QR") + '</span></figcaption>' +
           '<img class="s-qr" src="' + TW.esc(m.url) + '" alt="Código QR de ' + TW.esc(m.servicio || "pago") + '"></figure>';
       }).join("") + "</div>" : "") +
       (conDatos.length ? '<div class="s-datos-lista">' + conDatos.map(function (m) {
-        return '<div class="s-datos"><p class="s-datos-t">' + TW.esc(m.servicio || "Transferencia") + "</p>" +
+        return '<div class="s-datos"><p class="s-datos-t">' + TW.logoMetodoHtml(m.servicio) + "<span>" + TW.esc(m.servicio || "Transferencia") + "</span></p>" +
           (m.datos || []).map(function (d) {
             return '<p class="s-datos-fila"><span>' + TW.esc(d.etiqueta) + ":</span> <strong>" + TW.esc(d.valor) + "</strong></p>";
           }).join("") + "</div>";
@@ -418,10 +426,11 @@
         return '<p class="s-pagos-sub">' + TW.esc(TW.nombrePais(p)) + "</p>" + TW.htmlMetodosGrupo(grupos[p]);
       }).join("");
     },
-    // Flujo de pago interactivo: los metodos NO se muestran al entrar
-    // a la pantalla. El visitante toca «Pagar», elige su pais entre los
-    // disponibles (o Internacional) y recien ahi ve los metodos de ese
-    // pais, junto con las instrucciones del item.
+    // Flujo de pago en MODAL: los metodos NO se muestran al entrar a
+    // la pantalla. El visitante toca «Pagar» y se abre un modal al
+    // centro con los paises disponibles (o Internacional); elige el
+    // suyo y recien ahi ve los metodos de ese pais, cada uno con su
+    // icono, junto con las instrucciones del item.
     htmlPagosInteractivo: function (metodos, paisSitio, instrucciones) {
       metodos = metodos || [];
       if (!metodos.length && !instrucciones) return "";
@@ -438,36 +447,41 @@
       });
       return '<div class="s-pagos pg" data-pg="' + clave + '">' +
         '<button class="btn btn-acento pg-abrir" type="button">' + (metodos.length ? "Pagar" : "Cómo pagar") + "</button>" +
-        '<div class="pg-caja" hidden>' +
-        (paises.length > 1 ? '<p class="s-pagos-t">Elegí desde dónde pagás:</p><div class="pg-paises">' +
+        '<div class="pg-modal-fondo" hidden><div class="pg-modal" role="dialog" aria-modal="true" aria-label="Métodos de pago">' +
+        '<div class="pg-modal-cab"><p class="s-pagos-t">Cómo pagar</p>' +
+        '<button class="pg-cerrar" type="button" aria-label="Cerrar">✕</button></div>' +
+        (paises.length > 1 ? '<p class="pg-modal-sub">Elegí desde dónde pagás:</p><div class="pg-paises">' +
           paises.map(function (p) { return '<button class="pg-pais" type="button" data-pais="' + TW.esc(p) + '">' + TW.esc(TW.nombrePais(p)) + "</button>"; }).join("") + "</div>"
-          : (paises.length === 1 ? '<p class="s-pagos-t">Pagás desde ' + TW.esc(TW.nombrePais(paises[0])) + ":</p>" : "")) +
+          : (paises.length === 1 ? '<p class="pg-modal-sub">Pagás desde ' + TW.esc(TW.nombrePais(paises[0])) + ":</p>" : "")) +
         '<div class="pg-metodos"></div>' +
         (instrucciones ? '<p class="s-pagos-nota">' + TW.esc(instrucciones) + "</p>" : "") +
-        "</div></div>";
+        "</div></div></div>";
     },
     conectarPagosInteractivo: function (contenedor, paisSitio) {
       if (!contenedor) return;
       var abrir = contenedor.querySelector(".pg-abrir");
-      var caja = contenedor.querySelector(".pg-caja");
-      if (!abrir || !caja) return;
+      var fondo = contenedor.querySelector(".pg-modal-fondo");
+      if (!abrir || !fondo) return;
       var metodos = (TW._pagos || {})[contenedor.dataset.pg] || [];
-      var destino = caja.querySelector(".pg-metodos");
-      var botones = caja.querySelectorAll(".pg-pais");
-      var etiqueta = abrir.textContent;
+      var destino = fondo.querySelector(".pg-metodos");
+      var botones = fondo.querySelectorAll(".pg-pais");
       function elegir(p) {
         botones.forEach(function (b) { b.classList.toggle("activo", b.dataset.pais === p); });
         if (destino) destino.innerHTML = TW.htmlMetodosGrupo(metodos.filter(function (m) { return (m.pais || "INT") === p; }));
       }
+      function cerrar() { fondo.hidden = true; document.body.style.overflow = ""; }
       abrir.addEventListener("click", function () {
-        var abierto = !caja.hidden;
-        caja.hidden = abierto;
-        abrir.textContent = abierto ? etiqueta : "Cerrar";
-        if (!abierto && destino && !destino.innerHTML && metodos.length) {
+        fondo.hidden = false;
+        document.body.style.overflow = "hidden";
+        if (destino && !destino.innerHTML && metodos.length) {
           var def = (paisSitio && metodos.some(function (m) { return (m.pais || "INT") === paisSitio; })) ? paisSitio : (botones.length ? botones[0].dataset.pais : (metodos[0].pais || "INT"));
           elegir(def);
         }
       });
+      var btnCerrar = fondo.querySelector(".pg-cerrar");
+      if (btnCerrar) btnCerrar.addEventListener("click", cerrar);
+      fondo.addEventListener("click", function (ev) { if (ev.target === fondo) cerrar(); });
+      document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !fondo.hidden) cerrar(); });
       botones.forEach(function (b) { b.addEventListener("click", function () { elegir(b.dataset.pais); }); });
     },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
