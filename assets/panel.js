@@ -341,10 +341,10 @@
   async function refrescar() {
     user = await TW.usuario();
     $("#p-cargando").hidden = true;
+    await TW.aplicarMarca();
     if (window.TW && TW.finSplash) TW.finSplash();
     $("#btn-salir").hidden = !user;
     $("#p-burger").hidden = !user;
-    TW.aplicarMarca();
     $("#p-usuario").textContent = user ? user.email : "";
     $("#vista-auth").hidden = !!user;
     $("#vista-panel").hidden = !user;

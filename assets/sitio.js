@@ -26,7 +26,7 @@
   }
   var sitio = rs.data;
   var mod = sitio.modulos || {};
-  document.title = sitio.nombre + " · TemploWeb";
+  document.title = sitio.nombre + (TW.marcaNombre && TW.marcaNombre() ? " · " + TW.marcaNombre() : "");
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
   var MAQUETA_PREMIUM = ["dorado", "medianoche", "violeta", "esmeralda", "terracota"];
   var esPremium = sitio.maqueta ? sitio.maqueta === "premium" : MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;

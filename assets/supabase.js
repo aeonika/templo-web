@@ -93,17 +93,20 @@
     // Marca de la plataforma (nombre y logo) que el Master guarda en
     // config_plataforma: pinta el nombre en .marca-nombre, reemplaza el
     // signo de fabrica (.marca-signo) por el logo si hay uno cargado y lo
-    // usa como icono de la pestaña. Sin valores guardados, no toca nada.
-    aplicarMarca: async function () {
-      if (!sb) return;
-      var r = await sb.from("config_plataforma").select("clave, valor").in("clave", ["marca_nombre", "marca_logo_url"]);
-      var datos = {};
-      (r.data || []).forEach(function (x) { datos[x.clave] = x.valor; });
-      var nombre = (datos.marca_nombre || "").trim();
-      var logo = (datos.marca_logo_url || "").trim();
+    // usa como icono de la pestaña. La marca se cachea en el navegador:
+    // al entrar se pinta al instante la ultima conocida (sin esperar a
+    // la base) y despues se refresca con la guardada, asi ningun valor
+    // de fabrica llega a verse en pantalla.
+    marcaNombre: function () {
+      try { var c = JSON.parse(localStorage.getItem("tw_marca") || "{}"); return (c.nombre || "").trim(); } catch (e) { return ""; }
+    },
+    pintarMarca: function (nombre, logo, anterior) {
       if (nombre) {
         document.querySelectorAll(".marca-nombre").forEach(function (el) { el.textContent = nombre; });
-        document.title = document.title.replace("TemploWeb", nombre);
+        var viejos = ["TemploWeb", (anterior || "").trim()];
+        for (var i = 0; i < viejos.length; i++) {
+          if (viejos[i] && document.title.indexOf(viejos[i]) >= 0) { document.title = document.title.replace(viejos[i], nombre); break; }
+        }
       }
       if (logo) {
         document.querySelectorAll(".marca-signo").forEach(function (el) {
@@ -125,6 +128,21 @@
         if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
         fav.href = logo;
       }
+    },
+    aplicarMarca: async function () {
+      var cache = {};
+      try { cache = JSON.parse(localStorage.getItem("tw_marca") || "{}"); } catch (e) { cache = {}; }
+      if (cache.nombre || cache.logo) TW.pintarMarca((cache.nombre || "").trim(), (cache.logo || "").trim(), "");
+      if (!sb) return;
+      try {
+        var r = await sb.from("config_plataforma").select("clave, valor").in("clave", ["marca_nombre", "marca_logo_url"]);
+        var datos = {};
+        (r.data || []).forEach(function (x) { datos[x.clave] = x.valor; });
+        var nombre = (datos.marca_nombre || "").trim();
+        var logo = (datos.marca_logo_url || "").trim();
+        TW.pintarMarca(nombre, logo, (cache.nombre || "").trim());
+        try { localStorage.setItem("tw_marca", JSON.stringify({ nombre: nombre, logo: logo })); } catch (e) {}
+      } catch (e) { /* sin conexion: queda la marca cacheada */ }
     },
     // Pantalla de carga: cada pagina trae un #splash visible desde el
     // primer pintado, que tapa el destello de los valores de fabrica
