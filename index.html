@@ -249,6 +249,8 @@ setTimeout(window.__finSplash, 8000);
       var track = document.getElementById("l-testis-track");
       var total = track.children.length;
       if (total < 2) return;
+      if (track.scrollWidth <= caja.clientWidth + 2) { caja.classList.add("estatico"); return; }
+      track.style.justifyContent = "flex-start";
       var dots = Array.prototype.slice.call(caja.querySelectorAll(".l-testis-dots button"));
       var idx = 0, timer = null;
       var reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

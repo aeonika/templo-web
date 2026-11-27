@@ -357,6 +357,8 @@
     var track = caja.querySelector(".s-testis-track");
     var total = track ? track.children.length : 0;
     if (!track || total < 2) return;
+    if (track.scrollWidth <= caja.clientWidth + 2) { caja.classList.add("estatico"); return; }
+    track.style.justifyContent = "flex-start";
     var dots = Array.prototype.slice.call(caja.querySelectorAll(".s-testis-dots button"));
     var idx = 0, timer = null;
     var reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
