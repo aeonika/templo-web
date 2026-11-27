@@ -161,17 +161,18 @@
         return '<span class="s-talle' + (Number(v.s) > 0 ? "" : " s-talle-sin") + '">' + TW.esc(v.t) + "</span>";
       }).join("") + "</div>";
     }
+    var urlDetalle = "/producto/" + encodeURIComponent(sitio.slug) + "/" + p.id;
     var boton = agotado
       ? '<span class="btn s-btn-agotado">Sin stock</span>'
       : (p.link_pago
         ? '<a class="btn btn-acento" href="' + TW.esc(p.link_pago) + '" target="_blank" rel="noopener">Comprar</a>'
         : (wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : ""));
     return '<article class="s-tarjeta' + (agotado ? " s-agotada" : "") + '" data-categoria="' + TW.esc(p.categoria || "") + '">' +
-      (p.imagen_url ? '<img src="' + TW.esc(p.imagen_url) + '" alt="">' : "") +
+      (p.imagen_url ? '<a href="' + urlDetalle + '"><img src="' + TW.esc(p.imagen_url) + '" alt=""></a>' : "") +
       '<div class="s-tarjeta-cuerpo"><p class="s-tipo">' + tipo + "</p><h3>" + TW.esc(p.nombre) + "</h3>" +
       "<p>" + TW.esc(p.descripcion) + "</p>" +
       precioHtml + stockHtml + tallesHtml +
-      boton + "</div></article>";
+      '<div class="s-tarjeta-acciones">' + boton + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div></article>';
   }
   function seccion(id, titulo, bajada, contenido) {
     if (!contenido) return "";
@@ -294,26 +295,28 @@
       var racc = await TW.sb.from("accesos_documentos").select("documento_id").eq("alumno_id", usuario.id).eq("estado", "activa");
       (racc.data || []).forEach(function (x) { misAccesos[x.documento_id] = true; });
     }
-    var cfgPagos = sitio.config || {};
     var docsPagos = docs.filter(function (d) { return Number(d.precio) > 0; });
-    var qrsPagos = (Array.isArray(cfgPagos.pagos_qr) ? cfgPagos.pagos_qr.filter(function (q) { return q && q.url; }) : []);
-    if (!qrsPagos.length && cfgPagos.pago_qr) qrsPagos = [{ servicio: "", url: cfgPagos.pago_qr }];
+    var metodosSitio = TW.metodosDeSitio(sitio.config);
+    var algunConSitio = docsPagos.some(function (d) { return (d.pagos_modo || "sitio") !== "propios"; });
     var mediosDocs = "";
-    if (docsPagos.length && (cfgPagos.pago_mp || cfgPagos.pago_paypal || qrsPagos.length)) {
-      mediosDocs = '<div class="s-pagos"><p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p><div class="s-pagos-btns">' +
-        (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
-        (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
-        "</div>" +
-        (qrsPagos.length ? '<div class="s-qrs">' + qrsPagos.map(function (q) {
-          return '<figure class="s-qr-item">' + (q.servicio ? "<figcaption>" + TW.esc(q.servicio) + "</figcaption>" : "") +
-            '<img class="s-qr" src="' + TW.esc(q.url) + '" alt="Código QR de ' + TW.esc(q.servicio || "pago") + '"></figure>';
-        }).join("") + "</div>" : "") +
+    if (docsPagos.length && ((algunConSitio && metodosSitio.length) || usuario)) {
+      mediosDocs = '<div class="s-pagos">' +
+        (algunConSitio && metodosSitio.length ? '<p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p>' + TW.htmlMetodos(metodosSitio) : "") +
         (usuario ? '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
           '<div class="s-comp-fila"><select id="comp-doc">' + docsPagos.map(function (d) { return '<option value="' + d.id + '">' + TW.esc(d.titulo) + "</option>"; }).join("") + "</select>" +
           '<input type="file" id="comp-file-d" accept="image/*,.pdf">' +
           '<button class="btn" id="comp-enviar-d" type="button">Enviar comprobante</button></div>' +
           '<p class="s-comp-estado" id="comp-estado-d"></p></div>' : "") +
         "</div>";
+    }
+    function detallePagosDoc(d) {
+      if (Number(d.precio) <= 0) return "";
+      var propios = (d.pagos_modo || "sitio") !== "sitio";
+      var mets = propios ? TW.metodosEfectivos(d, sitio.config) : [];
+      if (!mets.length && !d.instrucciones_pago) return "";
+      return '<details class="s-doc-pagos"><summary>Cómo pagar este documento</summary>' +
+        (mets.length ? TW.htmlMetodos(mets) : "") +
+        (d.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(d.instrucciones_pago) + "</p>" : "") + "</details>";
     }
     html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
       docs.map(function (d) {
@@ -324,7 +327,7 @@
         else if (d.link_pago) accion = '<a class="btn btn-acento" href="' + TW.esc(d.link_pago) + '" target="_blank" rel="noopener">Comprar</a>';
         else accion = wa ? '<a class="btn" href="' + wa + '" target="_blank" rel="noopener">Consultar</a>' : "";
         return '<div class="s-doc"><div><h3>' + TW.esc(d.titulo) + "</h3><p>" + TW.esc(d.descripcion) + "</p></div>" +
-          '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + accion + "</div></div>";
+          '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + accion + "</div></div>" + detallePagosDoc(d);
       }).join("") + "</div>" + mediosDocs);
   }
 

@@ -453,6 +453,22 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-comp-fila input[type="text"] { flex: 1; min-width: 180px; }
 .s-comp-fila input[type="text"], .s-comp-fila select { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; font: inherit; }
 .s-comp-estado { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
+.s-pagos-sub { font-weight: 600; font-size: 14px; color: var(--muted); margin: 14px 0 8px; }
+.s-doc-pagos { margin: 4px 0 14px; }
+.s-doc-pagos summary { cursor: pointer; font-weight: 600; color: var(--acento); }
+.s-tarjeta-acciones { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.s-galeria { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.s-galeria img { width: 150px; height: 150px; object-fit: cover; border-radius: 12px; border: 1px solid var(--borde); }
+.s-detalle { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+@media (max-width: 760px) { .s-detalle { grid-template-columns: 1fr; } }
+.s-detalle-img { width: 100%; border-radius: 16px; border: 1px solid var(--borde); display: block; }
+.s-detalle .s-galeria { margin-top: 10px; }
+.s-galeria-btn { padding: 0; border: 2px solid transparent; border-radius: 12px; background: none; cursor: pointer; }
+.s-galeria-btn.activa { border-color: var(--acento); }
+.s-galeria-btn img { width: 76px; height: 76px; }
+.s-detalle-desc { white-space: pre-line; }
+.s-precio-grande { font-size: 26px; }
+.s-detalle-acciones { margin-top: 16px; }
 
 /* Chip de membresía del sitio (hero) */
 .s-miembro-chip { display: inline-flex; align-items: center; border: 1.5px solid var(--acento); color: var(--acento); border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 14px; }

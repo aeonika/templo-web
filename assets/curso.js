@@ -50,21 +50,15 @@
   var rl = await TW.sb.from("lecciones_indice").select("*").eq("curso_id", curso.id).order("orden");
   var lecciones = rl.data || [];
 
-  // Medios de cobro del sitio (Panel > Mi sitio > Medios de cobro):
-  // links de Mercado Pago y PayPal, y los QR cargados (uno por servicio).
-  var cfgPagos = sitio.config || {};
-  var qrsPagos = (Array.isArray(cfgPagos.pagos_qr) ? cfgPagos.pagos_qr.filter(function (q) { return q && q.url; }) : []);
-  if (!qrsPagos.length && cfgPagos.pago_qr) qrsPagos = [{ servicio: "", url: cfgPagos.pago_qr }];
+  // Medios de cobro efectivos del curso: los del sitio, los propios o
+  // ambos, segun curso.pagos_modo (Panel > Cursos). Con las
+  // instrucciones de pago del curso, si las cargo.
+  var metodosCurso = TW.metodosEfectivos(curso, sitio.config);
   var mediosHtml = "";
-  if (cfgPagos.pago_mp || cfgPagos.pago_paypal || qrsPagos.length) {
-    mediosHtml = '<div class="s-pagos"><p class="s-pagos-t">Medios de pago:</p><div class="s-pagos-btns">' +
-      (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
-      (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
-      "</div>" +
-      (qrsPagos.length ? '<div class="s-qrs">' + qrsPagos.map(function (q) {
-        return '<figure class="s-qr-item">' + (q.servicio ? "<figcaption>" + TW.esc(q.servicio) + "</figcaption>" : "") +
-          '<img class="s-qr" src="' + TW.esc(q.url) + '" alt="Código QR de ' + TW.esc(q.servicio || "pago") + '"></figure>';
-      }).join("") + '</div><p class="s-pagos-nota">Escaneá el QR de tu servicio para pagar y después solicitá el acceso.</p>' : "") +
+  if (metodosCurso.length || curso.instrucciones_pago) {
+    mediosHtml = '<div class="s-pagos">' +
+      (metodosCurso.length ? '<p class="s-pagos-t">Medios de pago:</p>' + TW.htmlMetodos(metodosCurso) : "") +
+      (curso.instrucciones_pago ? '<p class="s-pagos-nota">' + TW.esc(curso.instrucciones_pago) + "</p>" : "") +
       "</div>";
   }
   // Formulario para enviar el comprobante de pago (lo revisa el maestro
@@ -97,6 +91,7 @@
     "<h1>" + TW.esc(curso.titulo) + "</h1>" +
     (curso.descripcion ? "<p>" + TW.esc(curso.descripcion) + "</p>" : "") +
     (curso.precio != null ? '<p class="s-precio">' + TW.precio(curso.precio, curso.moneda) + "</p>" : "") +
+    (Array.isArray(curso.galeria) && curso.galeria.length ? '<div class="s-galeria">' + curso.galeria.map(function (u) { return '<img src="' + TW.esc(u) + '" alt="">'; }).join("") + "</div>" : "") +
     '<div class="aula-estado">' + estadoHtml + "</div>" +
     '<div id="aula-player"></div>' +
     '<div class="aula-lecciones">' +

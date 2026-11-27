@@ -8,6 +8,120 @@
   var sitio = null;
   var tabActual = "inicio";
   var SERVICIOS_QR = ["Mercado Pago", "Cuenta DNI", "BNA+", "Ualá", "Brubank", "Naranja X", "Personal Pay", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Binance", "PayPal", "Wise", "Otro"];
+  function ambitoDeServicio(s) { return ["Binance", "PayPal", "Wise"].indexOf(s) >= 0 ? "internacional" : "local"; }
+  // Editor de metodos de pago (fila): servicio + ambito + link o QR.
+  // Lo usan el bloque Medios de cobro del sitio y los formularios de
+  // productos, cursos y documentos (metodos personalizados).
+  function filaMetodoHtml(m) {
+    m = m || {};
+    var serv = m.servicio || "Mercado Pago";
+    var amb = m.ambito || ambitoDeServicio(serv);
+    var tipo = m.tipo || "link";
+    var esQr = tipo === "qr";
+    return "<div class='mt-fila'>" +
+      "<label>Servicio <select class='mt-servicio'>" + SERVICIOS_QR.map(function (s) { return "<option value='" + s + "'" + (serv === s ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select></label>" +
+      "<label>Ámbito <select class='mt-ambito'><option value='local'" + (amb === "local" ? " selected" : "") + ">Local (tu país)</option><option value='internacional'" + (amb === "internacional" ? " selected" : "") + ">Internacional</option></select></label>" +
+      "<label>Tipo <select class='mt-tipo'><option value='link'" + (!esQr ? " selected" : "") + ">Link de pago</option><option value='qr'" + (esQr ? " selected" : "") + ">Código QR</option></select></label>" +
+      "<span class='mt-valor-link'" + (esQr ? " hidden" : "") + "><label>Link <input type='text' class='mt-url' value='" + (!esQr ? esc(m.url || "") : "") + "' placeholder='https://…'></label></span>" +
+      "<span class='mt-valor-qr'" + (esQr ? "" : " hidden") + "><span class='c-fondo-fila'><img class='c-mini mt-mini' alt='' src='" + (esQr ? esc(m.url || "") : "") + "'" + (esQr && m.url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' class='mt-file' accept='image/*' hidden></label></span>" +
+      "<input type='text' class='mt-url-qr' value='" + (esQr ? esc(m.url || "") : "") + "' placeholder='URL del QR (o subí la imagen)'></span>" +
+      "<span class='c-ayuda mt-estado'></span>" +
+      "<button type='button' class='btn btn-fantasma mt-quitar'>Quitar</button></div>";
+  }
+  function leerFilasMetodos(contenedor) {
+    var out = [];
+    if (!contenedor) return out;
+    contenedor.querySelectorAll(".mt-fila").forEach(function (fila) {
+      var tipo = fila.querySelector(".mt-tipo").value;
+      var url = (tipo === "qr" ? fila.querySelector(".mt-url-qr").value : fila.querySelector(".mt-url").value).trim();
+      if (!url) return;
+      out.push({ servicio: fila.querySelector(".mt-servicio").value, ambito: fila.querySelector(".mt-ambito").value, tipo: tipo, url: url });
+    });
+    return out;
+  }
+  function conectarMetodos(contenedor, botonAgregar) {
+    if (botonAgregar) botonAgregar.addEventListener("click", function () {
+      if (contenedor.querySelectorAll(".mt-fila").length >= 10) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = filaMetodoHtml(null);
+      contenedor.appendChild(tmp.firstChild);
+    });
+    contenedor.addEventListener("click", function (ev) {
+      if (ev.target.classList.contains("mt-quitar")) ev.target.closest(".mt-fila").remove();
+    });
+    contenedor.addEventListener("change", function (ev) {
+      var fila = ev.target.closest(".mt-fila");
+      if (!fila) return;
+      if (ev.target.classList.contains("mt-tipo")) {
+        var esQr = ev.target.value === "qr";
+        fila.querySelector(".mt-valor-link").hidden = esQr;
+        fila.querySelector(".mt-valor-qr").hidden = !esQr;
+      }
+      if (ev.target.classList.contains("mt-servicio")) {
+        fila.querySelector(".mt-ambito").value = ambitoDeServicio(ev.target.value);
+      }
+      var inp = ev.target.closest(".mt-file");
+      if (inp && inp.files && inp.files[0]) {
+        var est = fila.querySelector(".mt-estado");
+        if (est) est.textContent = "Subiendo el QR…";
+        subirCloudinary(inp.files[0], false, { max: 800 }).then(function (datos) {
+          fila.querySelector(".mt-url-qr").value = datos.secure_url;
+          var mini = fila.querySelector(".mt-mini");
+          if (mini) { mini.src = datos.secure_url; mini.hidden = false; }
+          if (est) est.textContent = "QR subido.";
+        }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
+      }
+    });
+    contenedor.addEventListener("input", function (ev) {
+      if (ev.target.classList.contains("mt-url-qr")) {
+        var mini = ev.target.closest(".mt-fila").querySelector(".mt-mini");
+        if (mini) { mini.src = ev.target.value; mini.hidden = !ev.target.value; }
+      }
+    });
+  }
+  function filaGaleriaHtml(url) {
+    return "<div class='g-fila'><img class='c-mini g-mini' alt='' src='" + esc(url || "") + "'" + (url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' class='g-file' accept='image/*' hidden></label>" +
+      "<input type='text' class='g-url' value='" + esc(url || "") + "' placeholder='https://… (o subí la imagen)'>" +
+      "<button type='button' class='btn btn-fantasma g-quitar'>Quitar</button></div>";
+  }
+  function leerFilasGaleria(contenedor) {
+    var out = [];
+    if (!contenedor) return out;
+    contenedor.querySelectorAll(".g-fila").forEach(function (fila) {
+      var u = fila.querySelector(".g-url").value.trim();
+      if (u) out.push(u);
+    });
+    return out;
+  }
+  function conectarGaleria(contenedor, botonAgregar) {
+    if (botonAgregar) botonAgregar.addEventListener("click", function () {
+      if (contenedor.querySelectorAll(".g-fila").length >= 8) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = filaGaleriaHtml("");
+      contenedor.appendChild(tmp.firstChild);
+    });
+    contenedor.addEventListener("click", function (ev) {
+      if (ev.target.classList.contains("g-quitar")) ev.target.closest(".g-fila").remove();
+    });
+    contenedor.addEventListener("change", function (ev) {
+      var inp = ev.target.closest(".g-file");
+      if (!inp || !inp.files || !inp.files[0]) return;
+      var fila = inp.closest(".g-fila");
+      subirCloudinary(inp.files[0], false, { max: 1600 }).then(function (datos) {
+        fila.querySelector(".g-url").value = datos.secure_url;
+        var mini = fila.querySelector(".g-mini");
+        if (mini) { mini.src = datos.secure_url; mini.hidden = false; }
+      });
+    });
+    contenedor.addEventListener("input", function (ev) {
+      if (ev.target.classList.contains("g-url")) {
+        var mini = ev.target.closest(".g-fila").querySelector(".g-mini");
+        if (mini) { mini.src = ev.target.value; mini.hidden = !ev.target.value; }
+      }
+    });
+  }
   function $(s) { return document.querySelector(s); }
   function esc(s) { return TW.esc(s); }
 
@@ -330,7 +444,7 @@
       "<div id='cp-lista'><p class='p-vacio'>Cargando…</p></div>";
     var lista = document.getElementById("cp-lista");
     var r = await TW.sb.from("comprobantes")
-      .select("*, perfiles:alumno_id ( nombre ), cursos:curso_id ( titulo ), documentos:documento_id ( titulo )")
+      .select("*, perfiles:alumno_id ( nombre ), cursos:curso_id ( titulo ), documentos:documento_id ( titulo ), productos:producto_id ( nombre )")
       .eq("sitio_id", sitio.id).order("creado", { ascending: false }).limit(100);
     if (r.error) { lista.innerHTML = "<p class='p-error'>No se pudieron cargar: " + esc(r.error.message) + "</p>"; return; }
     var filas = r.data || [];
@@ -341,7 +455,7 @@
     var orden = { pendiente: 0, aprobado: 1, rechazado: 2 };
     filas.sort(function (a, b) { return (orden[a.estado] - orden[b.estado]) || (a.creado < b.creado ? 1 : -1); });
     lista.innerHTML = "<div class='p-bloque'><div class='p-lista'>" + filas.map(function (c) {
-      var que = c.cursos ? "Curso: " + c.cursos.titulo : (c.documentos ? "Documento: " + c.documentos.titulo : "Pago");
+      var que = c.cursos ? "Curso: " + c.cursos.titulo : (c.documentos ? "Documento: " + c.documentos.titulo : (c.productos ? "Producto: " + c.productos.nombre : "Pago"));
       var pill = c.estado === "pendiente" ? "<span class='p-pill p-pill-pend'>Pendiente</span>"
         : c.estado === "aprobado" ? "<span class='p-pill p-pill-ok'>Aprobado</span>" : "<span class='p-pill p-pill-mal'>Rechazado</span>";
       return "<div class='p-fila-lista'><div class='crece'><strong>" + esc(c.perfiles ? c.perfiles.nombre : "Alumno") + "</strong> " + pill +
@@ -498,11 +612,9 @@
           var blob = await new Promise(function (res) { cv.toBlob(res, "image/png"); });
           var archivo = new File([blob], "qr-cobro.png", { type: "image/png" });
           var datos = await subirCloudinary(archivo, false, { max: 1024 });
-          var cfg = Object.assign({}, sitio.config || {});
-          var lista = Array.isArray(cfg.pagos_qr) ? cfg.pagos_qr.slice() : [];
-          if (cfg.pago_qr && !lista.length) lista.push({ servicio: "", url: cfg.pago_qr });
-          lista.push({ servicio: serv, url: datos.secure_url });
-          cfg.pagos_qr = lista; cfg.pago_qr = null;
+          var lista = TW.metodosDeSitio(sitio.config);
+          lista.push({ servicio: serv, ambito: ambitoDeServicio(serv), tipo: "qr", url: datos.secure_url });
+          var cfg = Object.assign({}, sitio.config || {}, { metodos_pago: lista, pago_mp: null, pago_paypal: null, pago_qr: null, pagos_qr: null });
           var r = await TW.sb.from("sitios").update({ config: cfg }).eq("id", sitio.id).select().maybeSingle();
           if (r.error) throw new Error(r.error.message);
           sitio = r.data;
@@ -567,6 +679,10 @@
         { k: "variantes", et: "Talles y stock por talle", tipo: "talles2" },
         { k: "destacado", et: "Destacado en la vidriera", tipo: "switch", clase: "es-destacado", desc: "El producto aparece en la sección de destacados de tu sitio." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
+        { k: "galeria", et: "Más imágenes (galería de la pantalla de detalle)", tipo: "galeria" },
+        { k: "pagos_modo", et: "Métodos de pago de este ítem", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este ítem)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
+        { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
@@ -616,6 +732,9 @@
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
         { k: "precio", et: "Precio (0 = gratis)", tipo: "number", def: 0 },
         { k: "link_pago", et: "Link de pago", tipo: "text" },
+        { k: "pagos_modo", et: "Métodos de pago de este documento", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este documento)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
+        { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
         { k: "url_publica", et: "URL pública (solo documentos gratis)", tipo: "text" },
         { k: "cloudinary_id", et: "ID de Cloudinary (documentos pagos)", tipo: "text" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
@@ -631,6 +750,10 @@
         { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = gratis)", tipo: "number" },
         { k: "link_pago", et: "Link de pago de la suscripción", tipo: "text" },
+        { k: "galeria", et: "Más imágenes (galería del aula)", tipo: "galeria" },
+        { k: "pagos_modo", et: "Métodos de pago de este curso", tipo: "select", opciones: [["sitio", "Los del sitio (generales)"], ["propios", "Personalizados (solo los de este curso)"], ["ambos", "Los del sitio + personalizados"]], def: "sitio" },
+        { k: "metodos_pago", et: "Métodos personalizados", tipo: "metodos" },
+        { k: "instrucciones_pago", et: "Instrucciones de pago (opcional)", tipo: "textarea" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
       resumen: function (x) { return (x.precio != null ? TW.precio(x.precio, x.moneda) : "Gratis") + (x.publicado ? "" : " · borrador"); }
@@ -704,6 +827,18 @@
         '<span class="c-ayuda">Tocá los talles de la plantilla para sumarlos y cargá el stock de cada uno. Si no cargás talles, manda el stock total.</span>' +
         "</div></div>";
     }
+    if (c.tipo === "metodos") {
+      return '<div class="c-campo">' + c.et +
+        '<div class="mt-editor" data-metodos><div class="mt-filas"></div>' +
+        '<button type="button" class="btn btn-fantasma btn-chico" data-mt-add>+ Agregar método</button>' +
+        '<span class="c-ayuda">Se usan solo si en «Métodos de pago» elegís «Personalizados» o «Del sitio + personalizados». Cada método: un servicio, local o internacional, como link o como QR.</span></div></div>';
+    }
+    if (c.tipo === "galeria") {
+      return '<div class="c-campo">' + c.et +
+        '<div class="g-editor" data-galeria><div class="g-filas"></div>' +
+        '<button type="button" class="btn btn-fantasma btn-chico" data-g-add>+ Agregar imagen</button>' +
+        '<span class="c-ayuda">Imágenes extra que se ven en la pantalla de detalle, además de la principal.</span></div></div>';
+    }
     return "<label>" + c.et + '<input type="' + (c.tipo === "number" ? "number" : "text") + '" name="' + c.k + '" value="' + esc(v) + '"' + (c.tipo === "number" ? ' step="any" min="0"' : "") + "></label>";
   }
   function leerCampos(form, campos) {
@@ -724,6 +859,14 @@
       else if (c.tipo === "talles2") {
         try { obj[c.k] = JSON.parse((f.get(c.k) || "[]").toString()); }
         catch (e3) { obj[c.k] = []; }
+      }
+      else if (c.tipo === "metodos") {
+        var em = form.querySelector("[data-metodos] .mt-filas");
+        obj[c.k] = em ? leerFilasMetodos(em) : [];
+      }
+      else if (c.tipo === "galeria") {
+        var eg = form.querySelector("[data-galeria] .g-filas");
+        obj[c.k] = eg ? leerFilasGaleria(eg) : [];
       }
       else obj[c.k] = (f.get(c.k) || "").toString().trim();
     });
@@ -802,6 +945,28 @@
       if (!nombre) return;
       if (catsCache && catsCache.indexOf(nombre) >= 0) return;
       await TW.sb.from("categorias").insert({ sitio_id: sitio.id, nombre: nombre });
+    }
+    function prepararMetodos(caja, iniciales) {
+      var editor = caja.querySelector("[data-metodos]");
+      if (!editor) return;
+      var filas = editor.querySelector(".mt-filas");
+      (iniciales || []).forEach(function (m) {
+        var t = document.createElement("div");
+        t.innerHTML = filaMetodoHtml(m);
+        filas.appendChild(t.firstChild);
+      });
+      conectarMetodos(filas, editor.querySelector("[data-mt-add]"));
+    }
+    function prepararGaleria(caja, iniciales) {
+      var editor = caja.querySelector("[data-galeria]");
+      if (!editor) return;
+      var filas = editor.querySelector(".g-filas");
+      (iniciales || []).forEach(function (u) {
+        var t = document.createElement("div");
+        t.innerHTML = filaGaleriaHtml(u);
+        filas.appendChild(t.firstChild);
+      });
+      conectarGaleria(filas, editor.querySelector("[data-g-add]"));
     }
     function prepararTalles(caja, iniciales) {
       var editor = caja.querySelector("[data-talles]");
@@ -971,6 +1136,8 @@
       if (cfg.tabla === "productos") {
         prepararCats(caja);
         prepararTalles(caja, editando && Array.isArray(editando.variantes) ? editando.variantes : []);
+        prepararMetodos(caja, editando && Array.isArray(editando.metodos_pago) ? editando.metodos_pago : []);
+        prepararGaleria(caja, editando && Array.isArray(editando.galeria) ? editando.galeria : []);
         var swFlash = caja.querySelector('[name="flash"]');
         if (swFlash) {
           var syncFlash = function () {
@@ -1120,19 +1287,7 @@
         "</select></label><label class='c-rasgo-texto'>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(r ? (r.titulo || "") : "") + "' placeholder='Servicios de hechicería'></label>" +
         "<button type='button' class='btn btn-fantasma c-rasgo-quitar'>Quitar</button></div>";
     }
-    function filaQr(q) {
-      var sel = (q && q.servicio) || "Mercado Pago";
-      return "<div class='c-qr-fila'><label>Servicio <select class='c-qr-servicio'>" +
-        SERVICIOS_QR.map(function (s) { return "<option value='" + s + "'" + (sel === s ? " selected" : "") + ">" + s + "</option>"; }).join("") +
-        "</select></label>" +
-        "<div class='c-fondo-fila'><img class='c-mini c-qr-mini' alt='' src='" + esc(q ? (q.url || "") : "") + "'" + (q && q.url ? "" : " hidden") + ">" +
-        "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' class='c-qr-file' accept='image/*' hidden></label></div>" +
-        "<input type='text' class='c-qr-url' value='" + esc(q ? (q.url || "") : "") + "' placeholder='https://… (o subí la imagen del QR)'>" +
-        "<span class='c-ayuda c-qr-estado'></span>" +
-        "<button type='button' class='btn btn-fantasma c-qr-quitar'>Quitar QR</button></div>";
-    }
-    var qrsSitio = Array.isArray(configSitio.pagos_qr) ? configSitio.pagos_qr.filter(function (q) { return q && q.url; }) : [];
-    if (!qrsSitio.length && configSitio.pago_qr) qrsSitio = [{ servicio: "", url: configSitio.pago_qr }];
+    var metodosSitio = TW.metodosDeSitio(configSitio);
     cont.innerHTML =
       "<div class='p-bloque c-resumen'>" +
         "<div class='c-url'><span class='c-url-texto'>" + esc(urlAbsoluta) + "</span>" +
@@ -1223,12 +1378,9 @@
       "</select></label></div>" +
       "<label>Avisar «últimas unidades» cuando el stock sea de <input type='number' name='stock_bajo' min='0' step='1' value='" + esc(configSitio.stock_bajo !== undefined ? configSitio.stock_bajo : 3) + "'> o menos</label></div>" +
       "<div class='p-bloque'><h3>Medios de cobro</h3>" +
-      "<p class='p-ayuda'>Los medios que ven tus alumnos para pagarte un curso o un documento, además del link de pago propio de cada curso. Los cargás una sola vez y se usan en todo tu sitio.</p>" +
-      "<div class='p-dos'><label>Link de Mercado Pago <input type='text' name='pago_mp' value='" + esc(configSitio.pago_mp || "") + "' placeholder='https://link.mercadopago.com.ar/…'></label>" +
-      "<label>Link de PayPal <input type='text' name='pago_paypal' value='" + esc(configSitio.pago_paypal || "") + "' placeholder='https://paypal.me/…'></label></div>" +
-      "<p class='p-ayuda'>Códigos QR para cobrar: podés cargar varios, uno por servicio (tu Mercado Pago, tu banco, Binance…). El alumno los ve junto a los botones de pago y escanea el que le conviene.</p>" +
-      "<div id='c-qrs'>" + (qrsSitio.length ? qrsSitio.map(filaQr).join("") : filaQr(null)) + "</div>" +
-      "<button type='button' class='btn btn-fantasma' id='c-qr-agregar'>+ Agregar otro QR</button></div>" +
+      "<p class='p-ayuda'>Los métodos generales de tu sitio: se usan en todos tus cursos, productos y documentos, salvo que un ítem tenga los suyos propios. Cada método puede ser un link de pago o un código QR, local (de tu país) o internacional.</p>" +
+      "<div id='c-metodos' class='mt-filas'>" + (metodosSitio.length ? metodosSitio.map(filaMetodoHtml).join("") : filaMetodoHtml(null)) + "</div>" +
+      "<button type='button' class='btn btn-fantasma' id='c-metodo-agregar'>+ Agregar método</button></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
@@ -1351,37 +1503,8 @@
         if (pfEst) pfEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
       }).catch(function (e2) { if (pfEst) pfEst.textContent = "No se pudo subir: " + e2.message; });
     });
-    var contQrs = $("#c-qrs"), btnQr = $("#c-qr-agregar");
-    if (btnQr && contQrs) btnQr.addEventListener("click", function () {
-      if (contQrs.querySelectorAll(".c-qr-fila").length >= 6) return;
-      var tmp = document.createElement("div");
-      tmp.innerHTML = filaQr(null);
-      contQrs.appendChild(tmp.firstChild);
-    });
-    if (contQrs) {
-      contQrs.addEventListener("click", function (ev) {
-        if (ev.target.classList.contains("c-qr-quitar")) ev.target.closest(".c-qr-fila").remove();
-      });
-      contQrs.addEventListener("change", function (ev) {
-        var inp = ev.target.closest(".c-qr-file");
-        if (!inp || !inp.files || !inp.files[0]) return;
-        var fila = inp.closest(".c-qr-fila");
-        var est = fila.querySelector(".c-qr-estado");
-        if (est) est.textContent = "Subiendo el QR…";
-        subirCloudinary(inp.files[0], false, { max: 800 }).then(function (datos) {
-          fila.querySelector(".c-qr-url").value = datos.secure_url;
-          var mini = fila.querySelector(".c-qr-mini");
-          if (mini) { mini.src = datos.secure_url; mini.hidden = false; }
-          if (est) est.textContent = "QR subido. Tocá «Guardar cambios» para aplicarlo.";
-        }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
-      });
-      contQrs.addEventListener("input", function (ev) {
-        var inp = ev.target.closest(".c-qr-url");
-        if (!inp) return;
-        var mini = inp.closest(".c-qr-fila").querySelector(".c-qr-mini");
-        if (mini) { mini.src = inp.value; mini.hidden = !inp.value; }
-      });
-    }
+    var contMetodos = $("#c-metodos");
+    if (contMetodos) conectarMetodos(contMetodos, $("#c-metodo-agregar"));
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
       var arch = fFile.files[0];
@@ -1427,12 +1550,11 @@
           avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
           stock_bajo: Number(f.get("stock_bajo")) || 0,
-          pago_mp: String(f.get("pago_mp") || "").trim() || null,
-          pago_paypal: String(f.get("pago_paypal") || "").trim() || null,
+          metodos_pago: leerFilasMetodos(document.getElementById("c-metodos")),
+          pago_mp: null,
+          pago_paypal: null,
           pago_qr: null,
-          pagos_qr: Array.from(document.querySelectorAll(".c-qr-fila")).map(function (fila) {
-            return { servicio: fila.querySelector(".c-qr-servicio").value, url: fila.querySelector(".c-qr-url").value.trim() };
-          }).filter(function (q) { return q.url; })
+          pagos_qr: null
         }),
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();

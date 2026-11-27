@@ -543,3 +543,20 @@ create policy qrs_dueno on public.qrs for select to authenticated using (public.
 create policy qrs_dueno_crea on public.qrs for insert to authenticated with check (public.es_dueno(sitio_id));
 create policy qrs_dueno_borra on public.qrs for delete to authenticated using (public.es_dueno(sitio_id));
 create policy qrs_admin on public.qrs for all to authenticated using (public.es_admin_actual()) with check (public.es_admin_actual());
+
+-- Metodos de pago por item y galerias (2026-11-27).
+-- Cada item elige con pagos_modo: 'sitio' (los generales de
+-- sitios.config.metodos_pago), 'propios' o 'ambos'. Un metodo es
+-- { servicio, ambito: local|internacional, tipo: link|qr, url }.
+alter table public.productos add column if not exists metodos_pago jsonb;
+alter table public.productos add column if not exists pagos_modo text not null default 'sitio';
+alter table public.productos add column if not exists instrucciones_pago text not null default '';
+alter table public.productos add column if not exists galeria jsonb not null default '[]'::jsonb;
+alter table public.cursos add column if not exists metodos_pago jsonb;
+alter table public.cursos add column if not exists pagos_modo text not null default 'sitio';
+alter table public.cursos add column if not exists instrucciones_pago text not null default '';
+alter table public.cursos add column if not exists galeria jsonb not null default '[]'::jsonb;
+alter table public.documentos add column if not exists metodos_pago jsonb;
+alter table public.documentos add column if not exists pagos_modo text not null default 'sitio';
+alter table public.documentos add column if not exists instrucciones_pago text not null default '';
+alter table public.comprobantes add column if not exists producto_id uuid references public.productos (id) on delete set null;

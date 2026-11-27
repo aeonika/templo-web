@@ -199,6 +199,60 @@
       if (!up.ok) throw new Error(datos.error ? datos.error.message : "La subida falló");
       return datos;
     },
+    // ---- Metodos de pago ----------------------------------------------
+    // Un metodo: { servicio, ambito: "local"|"internacional",
+    //              tipo: "link"|"qr", url }.
+    // Los generales viven en sitios.config.metodos_pago; cada producto,
+    // curso o documento puede tener los suyos (columna metodos_pago) y
+    // elegir con pagos_modo: "sitio" (default), "propios" o "ambos".
+    metodosDeSitio: function (cfg) {
+      cfg = cfg || {};
+      if (Array.isArray(cfg.metodos_pago) && cfg.metodos_pago.length) {
+        return cfg.metodos_pago.filter(function (m) { return m && m.url; });
+      }
+      // Legado: campos sueltos anteriores a metodos_pago.
+      var out = [];
+      if (cfg.pago_mp) out.push({ servicio: "Mercado Pago", ambito: "local", tipo: "link", url: cfg.pago_mp });
+      if (cfg.pago_paypal) out.push({ servicio: "PayPal", ambito: "internacional", tipo: "link", url: cfg.pago_paypal });
+      var qrs = Array.isArray(cfg.pagos_qr) ? cfg.pagos_qr : (cfg.pago_qr ? [{ servicio: "", url: cfg.pago_qr }] : []);
+      qrs.forEach(function (q) {
+        if (!q || !q.url) return;
+        var inter = ["Binance", "PayPal", "Wise"].indexOf(q.servicio) >= 0;
+        out.push({ servicio: q.servicio || "QR", ambito: inter ? "internacional" : "local", tipo: "qr", url: q.url });
+      });
+      return out;
+    },
+    metodosEfectivos: function (item, cfg) {
+      var propios = item && Array.isArray(item.metodos_pago) ? item.metodos_pago.filter(function (m) { return m && m.url; }) : [];
+      var modo = (item && item.pagos_modo) || "sitio";
+      if (modo === "propios") return propios;
+      if (modo === "ambos") return TW.metodosDeSitio(cfg).concat(propios);
+      return TW.metodosDeSitio(cfg);
+    },
+    // HTML de un grupo de metodos: botones para los links y figuras con
+    // el nombre del servicio para los QR.
+    htmlMetodosGrupo: function (metodos) {
+      var links = metodos.filter(function (m) { return m.tipo !== "qr"; });
+      var qrs = metodos.filter(function (m) { return m.tipo === "qr"; });
+      return (links.length ? '<div class="s-pagos-btns">' + links.map(function (m) {
+        return '<a class="btn" href="' + TW.esc(m.url) + '" target="_blank" rel="noopener">' + TW.esc(m.servicio || "Pagar") + "</a>";
+      }).join("") + "</div>" : "") +
+      (qrs.length ? '<div class="s-qrs">' + qrs.map(function (m) {
+        return '<figure class="s-qr-item"><figcaption>' + TW.esc(m.servicio || "QR") + '</figcaption>' +
+          '<img class="s-qr" src="' + TW.esc(m.url) + '" alt="Código QR de ' + TW.esc(m.servicio || "pago") + '"></figure>';
+      }).join("") + "</div>" : "");
+    },
+    // HTML completo: agrupa por ambito si hay de los dos.
+    htmlMetodos: function (metodos) {
+      if (!metodos || !metodos.length) return "";
+      var locales = metodos.filter(function (m) { return m.ambito !== "internacional"; });
+      var inter = metodos.filter(function (m) { return m.ambito === "internacional"; });
+      if (locales.length && inter.length) {
+        return '<p class="s-pagos-sub">Desde tu país</p>' + TW.htmlMetodosGrupo(locales) +
+          '<p class="s-pagos-sub">Internacional</p>' + TW.htmlMetodosGrupo(inter);
+      }
+      return TW.htmlMetodosGrupo(metodos);
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {

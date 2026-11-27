@@ -11,6 +11,10 @@
   {
    "source": "/curso/:slug/:curso",
    "destination": "/curso.html?s=:slug&c=:curso"
+  },
+  {
+   "source": "/producto/:slug/:producto",
+   "destination": "/producto.html?s=:slug&p=:producto"
   }
  ]
 }
