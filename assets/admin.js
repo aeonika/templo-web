@@ -151,7 +151,7 @@
 
   var DEF_CONTENIDO = {
     hero: { titulo: "Tu proyecto, en tu propio", acento: "sitio", bajada: "Tu tienda, tus cursos, tus servicios y tu blog en un solo lugar, sin saber programar.", boton: "Crear mi sitio gratis", link_novedades: "Ver sitios y novedades", link_ejemplo: "Ejemplo real: una tienda de ropa" },
-    vidrio: { nombre: "Tienda Aurora", link: "templo-web.app/aurora", titulo: "Ofertas de la semana", linea: "Pedidos por WhatsApp · envíos en el día", filas: [["Combo desayuno artesanal", "$ 12.500"], ["Velas aromáticas de soja", "$ 6.900"], ["Curso de panadería en video", "Premium"]], pie: "Ejemplo: así se ve un sitio en TemploWeb" },
+    vidrio: { nombre: "Tienda Aurora", link: "templo-web.app/aurora", titulo: "Ofertas de la semana", linea: "Pedidos por WhatsApp · envíos en el día", filas: [["Combo desayuno artesanal", "$ 12.500"], ["Velas aromáticas de soja", "$ 6.900"], ["Curso de panadería en video", "Premium"]] },
     ejemplos_titulo: "Sitios de ejemplo, hechos con la plataforma",
     para_quien: { titulo: "Un sitio para cada proyecto", bajada: "La misma plataforma, tres formas de usarla. El aspecto premium y el panel simple son los mismos para todos.", tarjetas: [
       { t: "Tiendas y emprendimientos", x: "Tu catálogo con precios y fotos, promociones de la semana y contacto directo por WhatsApp para recibir pedidos." },
@@ -307,7 +307,7 @@
     var actual = (r.data && r.data.valor) || "";
     caja.innerHTML = "<div class='a-portada'>" +
       "<h3>Portada de la página principal</h3>" +
-      "<p class='bajada'>La imagen grande que se ve al entrar a TemploWeb. Pegá la dirección de una imagen o subí una nueva.</p>" +
+      "<p class='bajada'>La imagen grande que se ve al entrar a la página principal. Pegá la dirección de una imagen o subí una nueva.</p>" +
       (actual ? "<img class='a-portada-img' src='" + esc(actual) + "' alt='Portada actual'>" : "") +
       "<div class='a-portada-form'>" +
       "<input type='url' id='a-portada-url' class='a-url' placeholder='https://…' value='" + esc(actual) + "' hidden>" +

@@ -18,6 +18,9 @@ window.__finSplash = function () {
 };
 setTimeout(window.__finSplash, 8000);
 </script>
+<script>
+try { var _ps = location.pathname.split("/").filter(Boolean); var _sl = _ps[1] || new URLSearchParams(location.search).get("s") || ""; var _tm = JSON.parse(localStorage.getItem("tw_tema_" + _sl) || "null"); if (_tm && _tm.tema) { document.documentElement.dataset.tema = _tm.tema; if (_tm.maqueta) document.documentElement.dataset.maqueta = _tm.maqueta; } } catch (e) {}
+</script>
 <noscript><style>#splash{display:none}</style></noscript>
 </head>
 <body>

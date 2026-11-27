@@ -127,6 +127,7 @@
         var fav = document.querySelector('link[rel="icon"]');
         if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
         fav.href = logo;
+        document.querySelectorAll(".splash-marca").forEach(function (im) { im.src = logo; });
       }
     },
     aplicarMarca: async function () {

@@ -31,6 +31,7 @@
   var MAQUETA_PREMIUM = ["dorado", "medianoche", "violeta", "esmeralda", "terracota"];
   var esPremium = sitio.maqueta ? sitio.maqueta === "premium" : MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
   document.documentElement.dataset.maqueta = esPremium ? "premium" : (sitio.tema || "crepusculo");
+  try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();
     if (!fondoHex || fondoHex.indexOf("var(") === 0) fondoHex = "#0a0c11";
@@ -90,7 +91,7 @@
   footer.innerHTML = '<div class="contenedor"><p><strong>' + TW.esc(sitio.nombre) + "</strong></p>" +
     (sitio.footer_texto ? "<p>" + TW.esc(sitio.footer_texto) + "</p>" : "") +
     (redesHtml ? "<p>" + redesHtml + "</p>" : "") +
-    '<p class="credito">Sitio creado con <a href="/index.html">TemploWeb</a></p></div>';
+    '<p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
   if (wa) {
     var flot = document.createElement("a");
     flot.className = "s-wa-flotante";

@@ -60,7 +60,7 @@ setTimeout(window.__finSplash, 8000);
         <div class="vidrio-fila"><span>Velas aromáticas de soja</span><span class="vidrio-precio">$ 6.900</span></div>
         <div class="vidrio-fila"><span>Curso de panadería en video</span><span class="vidrio-precio-premium">Premium</span></div>
       </div>
-      <div class="vidrio-pie">Ejemplo: así se ve un sitio en TemploWeb</div>
+      <div class="vidrio-pie">Ejemplo: así se ve un sitio en <span class="marca-nombre"></span></div>
       </div>
     </div>
   </div>
@@ -311,7 +311,6 @@ setTimeout(window.__finSplash, 8000);
     poner(".vidrio-link", C.vidrio.link);
     poner(".vidrio-titulo", C.vidrio.titulo);
     poner(".vidrio-linea", C.vidrio.linea);
-    poner(".vidrio-pie", C.vidrio.pie);
     if (Array.isArray(C.vidrio.filas)) document.querySelectorAll(".vidrio-fila").forEach(function (f2, i) {
       var d = C.vidrio.filas[i];
       if (!d) return;

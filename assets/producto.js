@@ -21,6 +21,7 @@
   var sitio = rs.data;
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
   document.documentElement.dataset.maqueta = sitio.maqueta ? (sitio.maqueta === "premium" ? "premium" : sitio.tema || "crepusculo") : (["dorado", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo"));
+  try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
   if (window.TW && TW.splashSitio) TW.splashSitio(sitio);
   document.getElementById("s-nav").innerHTML =
@@ -28,7 +29,7 @@
     TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="/panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
-    '<div class="contenedor"><p class="credito">Sitio creado con <a href="/index.html">TemploWeb</a></p></div>';
+    '<div class="contenedor"><p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
 
   var rp = await TW.sb.from("productos").select("*").eq("id", prodId).eq("sitio_id", sitio.id).eq("publicado", true).maybeSingle();
   if (!rp.data) { error("Este producto no existe."); return; }
