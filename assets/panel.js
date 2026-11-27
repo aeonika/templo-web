@@ -467,7 +467,7 @@
       ]
     };
     var maquetaSitio = sitio.maqueta === "premium" ? "premium" : "clasica";
-    var urlSitio = "sitio.html?s=" + sitio.slug;
+    var urlSitio = "sitio/" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
     var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"]];
     var rasgosSitio = Array.isArray(sitio.rasgos) ? sitio.rasgos : [];
@@ -599,13 +599,13 @@
       if (caja) caja.innerHTML = partes.join("");
     })();
     $("#c-copiar").addEventListener("click", async function () {
-      try { await navigator.clipboard.writeText(new URL("sitio.html?s=" + sitio.slug, location.href).href); $("#c-copiar").textContent = "Copiado"; }
+      try { await navigator.clipboard.writeText(new URL("sitio/" + sitio.slug, location.href).href); $("#c-copiar").textContent = "Copiado"; }
       catch (e) { $("#c-copiar").textContent = "Copiá la dirección de arriba"; }
       setTimeout(function () { var b = $("#c-copiar"); if (b) b.textContent = "Copiar"; }, 2000);
     });
     function recargarPrevia() {
       var ifr = $("#c-iframe");
-      if (ifr) ifr.src = "sitio.html?s=" + sitio.slug + "&t=" + Date.now();
+      if (ifr) ifr.src = "sitio/" + sitio.slug + "?t=" + Date.now();
     }
     $("#c-recargar").addEventListener("click", recargarPrevia);
     // cambio de dirección (slug) con advertencias
@@ -629,12 +629,12 @@
       if (r.error || !r.data) { e.textContent = "No se pudo cambiar: " + (r.error ? r.error.message : "error desconocido"); return; }
       var viejo = sitio.slug;
       sitio = r.data;
-      var nuevaAbs = new URL("sitio.html?s=" + nuevo, location.href).href;
+      var nuevaAbs = new URL("sitio/" + nuevo, location.href).href;
       cont.querySelector(".c-url-texto").textContent = nuevaAbs;
       var abrir = cont.querySelector(".c-url a");
-      if (abrir) abrir.setAttribute("href", "sitio.html?s=" + nuevo);
-      cont.querySelector(".c-marco-url").textContent = "sitio.html?s=" + nuevo;
-      $("#c-iframe").src = "sitio.html?s=" + nuevo;
+      if (abrir) abrir.setAttribute("href", "sitio/" + nuevo);
+      cont.querySelector(".c-marco-url").textContent = "sitio/" + nuevo;
+      $("#c-iframe").src = "sitio/" + nuevo;
       $("#c-slug-aviso").hidden = true;
       $("#ok-slug").textContent = "Dirección cambiada: ahora tu sitio es " + nuevaAbs + ". La anterior (" + viejo + ") redirige sola a la nueva.";
     });
@@ -905,7 +905,7 @@
       var sitioS = s.sitios || {};
       return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' + esc((s.cursos && s.cursos.titulo) || "Curso") +
         '</span><div class="detalle">' + esc(sitioS.nombre || "") + " · estado: " + esc(s.estado) + "</div></div>" +
-        (s.estado === "activa" ? '<a class="btn btn-primario btn-chico" href="curso.html?s=' + encodeURIComponent(sitioS.slug || "") + "&c=" + s.curso_id + '">Ir al aula</a>' : "") + "</div>";
+        (s.estado === "activa" ? '<a class="btn btn-primario btn-chico" href="curso/' + encodeURIComponent(sitioS.slug || "") + "/" + s.curso_id + '">Ir al aula</a>' : "") + "</div>";
     }).join("");
     html += (rd.data || []).map(function (a2) {
       return '<div class="p-fila-lista"><div class="crece"><span class="titulo">' + esc((a2.documentos && a2.documentos.titulo) || "Documento") +

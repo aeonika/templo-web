@@ -8,6 +8,7 @@
   var params = new URLSearchParams(location.search);
   var slug = params.get("s");
   var cursoId = params.get("c");
+  if (!slug || !cursoId) { var mRuta = location.pathname.match(/^\/curso\/([^/?#]+)\/([^/?#]+)/); if (mRuta) { slug = slug || decodeURIComponent(mRuta[1]); cursoId = cursoId || decodeURIComponent(mRuta[2]); } }
   function error(msg) { main.innerHTML = '<p class="s-error">' + TW.esc(msg) + "</p>"; if (window.__finSplash) window.__finSplash(); }
   if (!window.TW || !TW.sb) { error("La plataforma todavia no esta conectada."); return; }
   if (!slug || !cursoId) { error("Falta indicar el curso."); return; }
@@ -16,7 +17,7 @@
   if (!rs.data) {
     // El sitio pudo haber cambiado de dirección: la anterior redirige a la nueva.
     var ra = await TW.sb.from("sitios").select("slug").eq("slug_anterior", slug).eq("publicado", true).maybeSingle();
-    if (ra.data && ra.data.slug) { location.replace("curso.html?s=" + encodeURIComponent(ra.data.slug) + "&c=" + encodeURIComponent(cursoId)); return; }
+    if (ra.data && ra.data.slug) { location.replace("/curso/" + encodeURIComponent(ra.data.slug) + "/" + encodeURIComponent(cursoId)); return; }
     error("Este sitio no existe."); return;
   }
   var sitio = rs.data;
@@ -25,7 +26,7 @@
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
   if (window.TW && TW.splashSitio) TW.splashSitio(sitio);
   document.getElementById("s-nav").innerHTML =
-    '<div class="s-nav-in"><a class="s-marca" href="sitio.html?s=' + encodeURIComponent(slug) + '">' +
+    '<div class="s-nav-in"><a class="s-marca" href="/sitio/' + encodeURIComponent(slug) + '">' +
     TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
@@ -68,7 +69,7 @@
 
   main.innerHTML =
     '<section class="aula-cabecera"><div class="contenedor">' +
-    '<p><a href="sitio.html?s=' + encodeURIComponent(slug) + '#cursos">← Todos los cursos</a></p>' +
+    '<p><a href="/sitio/' + encodeURIComponent(slug) + '#cursos">← Todos los cursos</a></p>' +
     "<h1>" + TW.esc(curso.titulo) + "</h1>" +
     (curso.descripcion ? "<p>" + TW.esc(curso.descripcion) + "</p>" : "") +
     (curso.precio != null ? '<p class="s-precio">' + TW.precio(curso.precio, curso.moneda) + "</p>" : "") +

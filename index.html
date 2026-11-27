@@ -46,7 +46,7 @@ setTimeout(window.__finSplash, 8000);
       <div class="hero-acciones">
         <a class="btn btn-primario btn-grande" href="panel.html#registro">Crear mi sitio gratis</a>
         <a class="hero-link" href="#novedades">Ver sitios y novedades</a>
-        <a class="hero-link" href="s/luna-indumentaria">Ejemplo real: una tienda de ropa</a>
+        <a class="hero-link" href="sitio/luna-indumentaria">Ejemplo real: una tienda de ropa</a>
       </div>
     </div>
     <div class="hero-lado">
@@ -71,10 +71,10 @@ setTimeout(window.__finSplash, 8000);
     <div class="container">
       <p class="ejemplos-titulo">Sitios de ejemplo, hechos con la plataforma</p>
       <div class="ejemplos-links">
-        <a href="s/luna-indumentaria">Luna Indumentaria (ropa)</a>
-        <a href="s/sabores-de-barrio">Sabores de Barrio (comida)</a>
-        <a href="s/oraculo-y-luna">Oráculo &amp; Luna (tarot)</a>
-        <a href="s/aula-abierta">Aula Abierta (cursos)</a>
+        <a href="sitio/luna-indumentaria">Luna Indumentaria (ropa)</a>
+        <a href="sitio/sabores-de-barrio">Sabores de Barrio (comida)</a>
+        <a href="sitio/oraculo-y-luna">Oráculo &amp; Luna (tarot)</a>
+        <a href="sitio/aula-abierta">Aula Abierta (cursos)</a>
       </div>
     </div>
   </section>
@@ -236,7 +236,7 @@ setTimeout(window.__finSplash, 8000);
     var fecha = new Date(p.creada).toLocaleDateString("es-AR", { day: "numeric", month: "short" });
     return '<article class="feed-item">' +
       (p.imagen_url ? '<img class="feed-img" src="' + TW.esc(p.imagen_url) + '" alt="">' : "") +
-      '<div class="feed-cuerpo"><p class="feed-meta"><a href="sitio.html?s=' + TW.esc(s.slug || "") + '">' +
+      '<div class="feed-cuerpo"><p class="feed-meta"><a href="sitio/' + TW.esc(s.slug || "") + '">' +
       TW.esc(s.nombre || "Un sitio") + '</a> · ' + fecha + '</p>' +
       '<p class="feed-texto">' + TW.esc(p.texto) + "</p></div></article>";
   }).join("");

@@ -7,6 +7,7 @@
   var footer = document.getElementById("s-footer");
   var params = new URLSearchParams(location.search);
   var slug = params.get("s");
+  if (!slug) { var mRuta = location.pathname.match(/^\/(?:sitio|s)\/([^/?#]+)/); if (mRuta) slug = decodeURIComponent(mRuta[1]); }
   var artSlug = params.get("a");
 
   function error(msg) {
@@ -20,7 +21,7 @@
   if (rs.error || !rs.data) {
     // El sitio pudo haber cambiado de dirección: la anterior redirige a la nueva.
     var ra = await TW.sb.from("sitios").select("slug").eq("slug_anterior", slug).eq("publicado", true).maybeSingle();
-    if (ra.data && ra.data.slug) { location.replace("sitio.html?s=" + encodeURIComponent(ra.data.slug) + (artSlug ? "&a=" + encodeURIComponent(artSlug) : "")); return; }
+    if (ra.data && ra.data.slug) { location.replace("/sitio/" + encodeURIComponent(ra.data.slug) + (artSlug ? "?a=" + encodeURIComponent(artSlug) : "")); return; }
     error("Este sitio no existe o no esta publicado."); return;
   }
   var sitio = rs.data;
@@ -48,7 +49,7 @@
   }
 
   TW.splashSitio(sitio);
-  var base = "sitio.html?s=" + encodeURIComponent(slug);
+  var base = "/sitio/" + encodeURIComponent(slug);
   var wa = sitio.whatsapp ? "https://wa.me/" + String(sitio.whatsapp).replace(/[^0-9]/g, "") : null;
 
   // ---------- navegacion
@@ -266,7 +267,7 @@
           (c.imagen_url ? '<img src="' + TW.esc(c.imagen_url) + '" alt="">' : "") +
           '<div class="s-tarjeta-cuerpo"><h3>' + TW.esc(c.titulo) + "</h3><p>" + TW.esc(c.descripcion) + "</p>" +
           (c.precio != null ? '<p class="s-precio">' + TW.precio(c.precio, c.moneda) + "</p>" : "") +
-          '<a class="btn btn-acento" href="curso.html?s=' + encodeURIComponent(slug) + "&c=" + c.id + '">Ver el curso</a>' +
+          '<a class="btn btn-acento" href="/curso/' + encodeURIComponent(slug) + "/" + c.id + '">Ver el curso</a>' +
           "</div></article>";
       }).join("") + "</div>");
   }
@@ -279,7 +280,7 @@
           (a2.imagen_url ? '<img class="s-articulo-img" src="' + TW.esc(a2.imagen_url) + '" alt="">' : "") +
           '<div class="s-articulo-cuerpo"><p class="fecha">' +
           new Date(a2.creado).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) + "</p>" +
-          '<h3><a href="' + base + "&a=" + encodeURIComponent(a2.slug) + '">' + TW.esc(a2.titulo) + "</a></h3>" +
+          '<h3><a href="' + base + "?a=" + encodeURIComponent(a2.slug) + '">' + TW.esc(a2.titulo) + "</a></h3>" +
           "<p>" + TW.esc(a2.extracto) + "</p></div></article>";
       }).join("") + "</div>");
   }

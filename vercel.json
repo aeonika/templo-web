@@ -1,1 +1,16 @@
-{"rewrites":[{"destination":"/sitio.html?s=:slug","source":"/s/:slug"}]}
+{
+ "rewrites": [
+  {
+   "source": "/sitio/:slug",
+   "destination": "/sitio.html?s=:slug"
+  },
+  {
+   "source": "/s/:slug",
+   "destination": "/sitio.html?s=:slug"
+  },
+  {
+   "source": "/curso/:slug/:curso",
+   "destination": "/curso.html?s=:slug&c=:curso"
+  }
+ ]
+}

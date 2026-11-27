@@ -220,7 +220,7 @@
     if (!rs.data || !rs.data.length) { lista.innerHTML = "<p class='p-vacio'>Todavía no hay sitios.</p>"; return; }
     lista.innerHTML = rs.data.map(function (s) {
       return "<div class='a-fila'>" +
-        "<div class='crece'><a class='titulo' href='sitio.html?s=" + esc(s.slug) + "' target='_blank' rel='noopener'>" + esc(s.nombre) + "</a>" +
+        "<div class='crece'><a class='titulo' href='sitio/" + esc(s.slug) + "' target='_blank' rel='noopener'>" + esc(s.nombre) + "</a>" +
         "<div class='detalle'>/" + esc(s.slug) + " · de " + esc(duenos[s.dueno_id] || "—") + " · " + fecha(s.creado) + "</div></div>" +
         "<label class='a-campo'>Plan <select data-plan='" + s.id + "'>" +
         "<option value='gratis'" + (s.plan === "gratis" ? " selected" : "") + ">Gratis</option>" +
@@ -249,7 +249,7 @@
     if (!r.data.length) { lista.innerHTML = "<p class='p-vacio'>Todavía no hay usuarios.</p>"; return; }
     lista.innerHTML = r.data.map(function (u) {
       var sitio = u.sitio_slug
-        ? "<a href='sitio.html?s=" + esc(u.sitio_slug) + "' target='_blank' rel='noopener'>" + esc(u.sitio_nombre) + "</a> · plan " + esc(u.plan)
+        ? "<a href='sitio/" + esc(u.sitio_slug) + "' target='_blank' rel='noopener'>" + esc(u.sitio_nombre) + "</a> · plan " + esc(u.plan)
         : "sin sitio";
       return "<div class='a-fila'>" +
         "<div class='crece'><span class='titulo'>" + esc(u.nombre || "(sin nombre)") + "</span>" +
