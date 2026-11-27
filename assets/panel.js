@@ -554,7 +554,9 @@
       "<label class='btn btn-fantasma c-subir'>Subir foto<input type='file' id='c-perfil-file' accept='image/*' hidden></label>" +
       "<button type='button' class='c-url-toggle' data-url-toggle='c-perfil'>o pegar una URL</button></div>" +
       "<input type='text' name='avatar_url' id='c-perfil' class='c-url-input' value='" + esc(sitio.avatar_url || "") + "' placeholder='https://…' hidden>" +
-      "<span class='c-ayuda' id='c-perfil-estado'>Una foto tuya o de tu marca: se muestra en un círculo junto al nombre de tu sitio. Tamaño sugerido: 800 × 800 px.</span></div></div>" +
+      "<span class='c-ayuda' id='c-perfil-estado'>Una foto tuya o de tu marca: se muestra en un círculo junto al nombre de tu sitio. Tamaño sugerido: 800 × 800 px.</span>" +
+      "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Mostrar en el sitio</span><span class='mod-desc'>Prende o apaga el círculo con tu foto en la web, sin borrar la foto</span></span>" +
+      "<input type='checkbox' class='mod-switch' name='avatar_visible'" + (configSitio.avatar_visible !== false ? " checked" : "") + "></label></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
       "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
@@ -731,6 +733,7 @@
         rasgos: rasgosNuevos,
         rubro: f.get("rubro") || "general",
         config: Object.assign({}, sitio.config || {}, {
+          avatar_visible: !!f.get("avatar_visible"),
           talle_sistema: f.get("talle_sistema") || "letras",
           stock_bajo: Number(f.get("stock_bajo")) || 0
         }),

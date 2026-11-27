@@ -201,7 +201,7 @@
       (sitio.email ? '<a class="btn" href="mailto:' + TW.esc(sitio.email) + '">Email</a>' : "") +
       '<span id="s-miembro"></span>' +
       "</div>";
-    var avatarHtml = sitio.avatar_url ? '<img class="s-avatar" src="' + TW.esc(sitio.avatar_url) + '" alt="">' : "";
+    var avatarHtml = (sitio.avatar_url && !(sitio.config && sitio.config.avatar_visible === false)) ? '<img class="s-avatar" src="' + TW.esc(sitio.avatar_url) + '" alt="">' : "";
     if (sitio.foto_url) {
       html += '<section class="s-hero s-hero--portada" id="quienes">' +
         '<img class="s-portada-img" src="' + TW.esc(sitio.foto_url) + '" alt="">' +
