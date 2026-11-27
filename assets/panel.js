@@ -21,19 +21,19 @@
       (dom ? "<img src='https://www.google.com/s2/favicons?domain=" + dom + "&sz=128' alt='' loading='lazy' onerror='this.remove()'>" : "") + "</span>";
   }
   function tarjetaMetodoHtml(m, i) {
+    var tipoTxt = m.tipo === "qr" ? "Código QR" : (m.tipo === "datos" ? "Datos para transferir" : "Link de pago");
+    var resumen = m.tipo === "datos" ? (m.datos || []).map(function (d) { return d.etiqueta + ": " + d.valor; }).join(" · ") : (m.url || "");
     return "<div class='mt-card'>" + logoMetodoHtml(m.servicio) +
       "<div class='mt-card-info'><strong>" + esc(m.servicio || "Método") + "</strong>" +
-      "<span class='mt-card-meta'>" + esc(TW.nombrePais(m.pais || "INT")) + " · " + (m.tipo === "qr" ? "Código QR" : "Link de pago") + "</span>" +
-      "<span class='mt-card-url'>" + esc(m.url || "") + "</span></div>" +
+      "<span class='mt-card-meta'>" + esc(TW.nombrePais(m.pais || "INT")) + " · " + tipoTxt + "</span>" +
+      "<span class='mt-card-url'>" + esc(resumen) + "</span></div>" +
       (m.tipo === "qr" && m.url ? "<img class='mt-card-qr' src='" + esc(m.url) + "' alt=''>" : "") +
       "<div class='mt-card-acciones'><button type='button' class='btn btn-fantasma btn-chico' data-mt-edit='" + i + "'>Editar</button>" +
       "<button type='button' class='btn btn-fantasma btn-chico' data-mt-del='" + i + "'>Quitar</button></div></div>";
   }
   function crearEditorMetodos(el, iniciales) {
     if (!el) return;
-    el._metodos = (iniciales || []).filter(function (m) { return m && m.url; }).map(function (m) {
-      return { servicio: m.servicio || "Otro", pais: m.pais || (m.ambito === "internacional" ? "INT" : ((sitio && sitio.config && sitio.config.pais) || "AR")), tipo: m.tipo === "qr" ? "qr" : "link", url: m.url || "" };
-    });
+    el._metodos = (iniciales || []).map(function (m) { return TW.normalizarMetodo(m, paisDelSitio()); }).filter(Boolean);
     el._pintar = function () {
       var caja = el.querySelector(".mt-cards");
       if (caja) caja.innerHTML = el._metodos.length ? el._metodos.map(tarjetaMetodoHtml).join("") : "<p class='p-nota'>Todavía no hay métodos cargados.</p>";
@@ -52,7 +52,11 @@
   }
   function leerMetodosDe(el) {
     if (!el || !el._metodos) return [];
-    return el._metodos.map(function (m) { return { servicio: m.servicio, pais: m.pais, tipo: m.tipo, url: m.url }; });
+    return el._metodos.map(function (m) {
+      var o = { servicio: m.servicio, pais: m.pais, tipo: m.tipo, url: m.url || "" };
+      if (m.tipo === "datos") o.datos = m.datos;
+      return o;
+    });
   }
   // Modal compartido para crear y editar una tarjeta de metodo.
   // Paso 1: el pais (los servicios que se ofrecen son los de ese
@@ -62,7 +66,7 @@
   function paisDelSitio() { return (sitio && sitio.config && sitio.config.pais) || "AR"; }
   function serviciosDePais(cod) {
     var p = TW.PAISES[cod];
-    return (p ? p.servicios.slice() : []).concat(["Otro"]);
+    return (p ? p.servicios.map(function (s) { return s.n; }) : []).concat(["Otro"]);
   }
   function asegurarModalMetodo() {
     var modal = document.getElementById("mt-modal");
@@ -70,11 +74,12 @@
     document.body.insertAdjacentHTML("beforeend",
       "<div class='mt-modal-fondo' id='mt-modal' hidden><div class='mt-modal' role='dialog' aria-modal='true'>" +
       "<h3 id='mtm-titulo'>Método de pago</h3>" +
-      "<p class='mtm-paso'>1 · País del método</p><div class='mt-chips' id='mtm-paises'></div>" +
+      "<label>1 · País del método <select id='mtm-pais'></select></label>" +
       "<p class='mtm-paso'>2 · Servicio</p><div class='mt-chips' id='mtm-chips'></div>" +
       "<label id='mtm-otro-wrap' hidden>Nombre del servicio <input type='text' id='mtm-otro' placeholder='Ej.: Banco Nación'></label>" +
-      "<p class='mtm-paso'>3 · ¿Cómo cobra?</p><div class='mt-toggle' id='mtm-tipo'><button type='button' data-tipo='link'>Link de pago</button><button type='button' data-tipo='qr'>Código QR</button></div>" +
+      "<p class='mtm-paso'>3 · ¿Cómo cobra?</p><div class='mt-toggle' id='mtm-tipo'></div>" +
       "<div id='mtm-link-wrap'><label>Link de pago <input type='text' id='mtm-url' placeholder='https://…'></label></div>" +
+      "<div id='mtm-datos-wrap' class='mt-datos' hidden></div>" +
       "<div id='mtm-qr-wrap' hidden><div class='c-fondo-fila'><img class='c-mini' id='mtm-qr-prev' alt='' hidden>" +
       "<label class='btn btn-fantasma c-subir'>Subir imagen del QR<input type='file' id='mtm-qr-file' accept='image/*' hidden></label></div>" +
       "<label>o pegá la URL del QR <input type='text' id='mtm-url-qr' placeholder='https://…'></label><p class='c-ayuda' id='mtm-qr-estado'></p></div>" +
@@ -83,19 +88,23 @@
       "<button type='button' class='btn btn-fantasma' id='mtm-cancelar'>Cancelar</button></div>" +
       "</div></div>");
     modal = document.getElementById("mt-modal");
-    document.querySelector("#mtm-paises").addEventListener("click", function (ev) {
-      var chip = ev.target.closest("[data-pais]");
-      if (!chip || !mtModalEstado) return;
-      mtModalEstado.pais = chip.getAttribute("data-pais");
+    document.querySelector("#mtm-pais").addEventListener("change", function () {
+      if (!mtModalEstado) return;
+      mtModalEstado.pais = this.value;
       var servs = serviciosDePais(mtModalEstado.pais);
-      if (servs.indexOf(mtModalEstado.servicio) < 0) mtModalEstado.servicio = servs[0];
+      if (servs.indexOf(mtModalEstado.servicio) < 0) { mtModalEstado.servicio = servs[0]; mtModalEstado.valores = {}; }
       pintarModalMetodo();
     });
     document.querySelector("#mtm-chips").addEventListener("click", function (ev) {
       var chip = ev.target.closest("[data-serv]");
       if (!chip || !mtModalEstado) return;
-      mtModalEstado.servicio = chip.getAttribute("data-serv");
+      var nuevoServ = chip.getAttribute("data-serv");
+      if (nuevoServ !== mtModalEstado.servicio) { mtModalEstado.servicio = nuevoServ; mtModalEstado.valores = {}; }
       pintarModalMetodo();
+    });
+    document.querySelector("#mtm-datos-wrap").addEventListener("input", function (ev) {
+      var inp = ev.target.closest("[data-campo]");
+      if (inp && mtModalEstado) mtModalEstado.valores[inp.getAttribute("data-campo")] = inp.value;
     });
     document.querySelector("#mtm-tipo").addEventListener("click", function (ev) {
       var b = ev.target.closest("[data-tipo]");
@@ -125,11 +134,19 @@
       var st = mtModalEstado;
       if (!st) return;
       var servicio = st.servicio === "Otro" ? document.querySelector("#mtm-otro").value.trim() : st.servicio;
-      var url = (st.tipo === "qr" ? document.querySelector("#mtm-url-qr").value : document.querySelector("#mtm-url").value).trim();
       var err = document.querySelector("#mtm-error");
       if (!servicio) { err.textContent = "Escribí el nombre del servicio."; return; }
-      if (!url) { err.textContent = st.tipo === "qr" ? "Subí la imagen del QR o pegá su URL." : "Pegá el link de pago."; return; }
-      var nuevo = { servicio: servicio, pais: st.pais, tipo: st.tipo, url: url };
+      var nuevo;
+      if (st.tipo === "datos") {
+        var info = TW.servicioInfo(st.pais, servicio);
+        var datos = info.c.map(function (et) { return { etiqueta: et, valor: (st.valores[et] || "").trim() }; }).filter(function (d) { return d.valor; });
+        if (!datos.length) { err.textContent = "Completá al menos el primer dato (el CBU, el número o el correo, según el servicio)."; return; }
+        nuevo = { servicio: servicio, pais: st.pais, tipo: "datos", url: "", datos: datos };
+      } else {
+        var url = (st.tipo === "qr" ? document.querySelector("#mtm-url-qr").value : document.querySelector("#mtm-url").value).trim();
+        if (!url) { err.textContent = st.tipo === "qr" ? "Subí la imagen del QR o pegá su URL." : "Pegá el link de pago."; return; }
+        nuevo = { servicio: servicio, pais: st.pais, tipo: st.tipo, url: url };
+      }
       if (st.indice < 0) {
         if (st.editor._metodos.length >= 10) { err.textContent = "Máximo 10 métodos por editor."; return; }
         st.editor._metodos.push(nuevo);
@@ -149,16 +166,30 @@
     if (!st) return;
     document.querySelector("#mtm-titulo").textContent = st.indice < 0 ? "Agregar método de pago" : "Editar método de pago";
     var ps = paisDelSitio();
-    document.querySelector("#mtm-paises").innerHTML = Object.keys(TW.PAISES).map(function (cod) {
-      return "<button type='button' class='mt-chip" + (st.pais === cod ? " sel" : "") + "' data-pais='" + cod + "'><span>" + esc(TW.PAISES[cod].nombre) + (cod === ps ? " (tu sitio)" : "") + "</span></button>";
+    document.querySelector("#mtm-pais").innerHTML = Object.keys(TW.PAISES).map(function (cod) {
+      return "<option value='" + cod + "'" + (st.pais === cod ? " selected" : "") + ">" + esc(TW.PAISES[cod].nombre) + (cod === ps ? " (tu sitio)" : "") + "</option>";
     }).join("");
     document.querySelector("#mtm-chips").innerHTML = serviciosDePais(st.pais).map(function (s) {
       return "<button type='button' class='mt-chip" + (st.servicio === s ? " sel" : "") + "' data-serv='" + esc(s) + "'>" + logoMetodoHtml(s) + "<span>" + esc(s) + "</span></button>";
     }).join("");
     document.querySelector("#mtm-otro-wrap").hidden = st.servicio !== "Otro";
-    document.querySelectorAll("#mtm-tipo button").forEach(function (b) { b.classList.toggle("sel", b.getAttribute("data-tipo") === st.tipo); });
-    document.querySelector("#mtm-link-wrap").hidden = st.tipo === "qr";
+    // Las formas de cobro dependen del servicio: un CBU pide datos,
+    // Mercado Pago admite link, QR o datos, Webpay solo link, etc.
+    var info = TW.servicioInfo(st.pais, st.servicio);
+    if (info.t.indexOf(st.tipo) < 0) st.tipo = info.t[0];
+    var etiquetas = { link: "Link de pago", qr: "Código QR", datos: "Datos para transferir" };
+    document.querySelector("#mtm-tipo").innerHTML = info.t.map(function (t) {
+      return "<button type='button' data-tipo='" + t + "'" + (st.tipo === t ? " class='sel'" : "") + ">" + etiquetas[t] + "</button>";
+    }).join("");
+    document.querySelector("#mtm-link-wrap").hidden = st.tipo !== "link";
     document.querySelector("#mtm-qr-wrap").hidden = st.tipo !== "qr";
+    var wrapDatos = document.querySelector("#mtm-datos-wrap");
+    wrapDatos.hidden = st.tipo !== "datos";
+    if (st.tipo === "datos") {
+      wrapDatos.innerHTML = info.c.map(function (et) {
+        return "<label>" + esc(et) + " <input type='text' data-campo='" + esc(et) + "' value='" + esc(st.valores[et] || "") + "'></label>";
+      }).join("") + "<p class='c-ayuda'>Estos datos se muestran tal cual en tu página para que el cliente te transfiera.</p>";
+    }
     var prev = document.querySelector("#mtm-qr-prev");
     var urlQr = document.querySelector("#mtm-url-qr").value;
     prev.src = urlQr || "";
@@ -172,12 +203,17 @@
     var servs = serviciosDePais(pais);
     var serv = base ? base.servicio : servs[0];
     var esConocido = servs.indexOf(serv) >= 0;
+    var valores = {};
+    if (base && base.tipo === "datos" && Array.isArray(base.datos)) {
+      base.datos.forEach(function (d) { valores[d.etiqueta] = d.valor; });
+    }
     mtModalEstado = {
       editor: editor,
       indice: indice,
       pais: pais,
       servicio: esConocido ? serv : "Otro",
-      tipo: base ? base.tipo : "link"
+      tipo: base ? base.tipo : "link",
+      valores: valores
     };
     document.querySelector("#mtm-otro").value = esConocido ? "" : serv;
     document.querySelector("#mtm-url").value = base && base.tipo === "link" ? base.url : "";

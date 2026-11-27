@@ -209,28 +209,145 @@
     // curso o documento puede tener los suyos (columna metodos_pago) y
     // elegir con pagos_modo: "sitio" (default), "propios" o "ambos".
     PAISES: {
-      AR: { nombre: "Argentina", servicios: ["Mercado Pago", "Ualá", "Brubank", "Naranja X", "Cuenta DNI", "BNA+", "Personal Pay", "Modo", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Transferencia / CBU"] },
-      CL: { nombre: "Chile", servicios: ["Cuenta RUT / BancoEstado", "Mach", "Tenpo", "Mercado Pago", "Webpay / Transbank", "Banco de Chile", "Santander", "Khipu", "Transferencia bancaria"] },
-      CO: { nombre: "Colombia", servicios: ["Nequi", "Daviplata", "Bancolombia", "PSE", "Mercado Pago", "Banco de Bogotá", "BBVA", "Transferencia bancaria"] },
-      MX: { nombre: "México", servicios: ["SPEI / Transferencia", "Mercado Pago", "OXXO", "BBVA México", "Santander México", "Banco Azteca", "Clip", "Transferencia bancaria"] },
-      PE: { nombre: "Perú", servicios: ["Yape", "Plin", "BCP", "Interbank", "BBVA Perú", "Mercado Pago", "Transferencia bancaria"] },
-      UY: { nombre: "Uruguay", servicios: ["Mercado Pago", "Prex", "OCA", "Banco República (BROU)", "Santander", "Transferencia bancaria"] },
-      ES: { nombre: "España", servicios: ["Bizum", "Transferencia SEPA", "BBVA", "Santander", "CaixaBank", "Revolut"] },
-      VE: { nombre: "Venezuela", servicios: ["Pago Móvil", "Banco de Venezuela", "Banesco", "Mercantil", "Zelle", "Transferencia bancaria"] },
-      BO: { nombre: "Bolivia", servicios: ["Banco Unión", "BCP Bolivia", "Tigo Money", "QR Simple", "Transferencia bancaria"] },
-      PY: { nombre: "Paraguay", servicios: ["Banco Itaú", "Visión Banco", "Tigo Money", "Transferencia bancaria"] },
-      EC: { nombre: "Ecuador", servicios: ["Banco Pichincha", "Banco Guayaquil", "Produbanco", "Transferencia bancaria"] },
-      CR: { nombre: "Costa Rica", servicios: ["SINPE Móvil", "Banco Nacional", "Banco de Costa Rica", "Transferencia bancaria"] },
-      INT: { nombre: "Internacional", servicios: ["PayPal", "Binance", "Wise", "Payoneer", "Skrill"] }
+      AR: { nombre: "Argentina", servicios: [
+        { n: "Mercado Pago", t: ["link", "qr", "datos"], c: ["CVU", "Alias", "Titular"] },
+        { n: "Ualá", t: ["qr", "datos"], c: ["CVU", "Alias", "Titular"] },
+        { n: "Brubank", t: ["qr", "datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Naranja X", t: ["datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Cuenta DNI", t: ["qr", "datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "BNA+", t: ["qr", "datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Personal Pay", t: ["qr", "datos"], c: ["CVU", "Alias", "Titular"] },
+        { n: "Modo", t: ["qr", "datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Banco Galicia", t: ["datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Banco Macro", t: ["datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Santander", t: ["datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "BBVA", t: ["datos"], c: ["CBU", "Alias", "Titular"] },
+        { n: "Transferencia / CBU", t: ["datos"], c: ["CBU o CVU", "Alias", "Titular"] }
+      ] },
+      CL: { nombre: "Chile", servicios: [
+        { n: "Cuenta RUT / BancoEstado", t: ["datos"], c: ["RUT", "N° de cuenta", "Titular"] },
+        { n: "Mach", t: ["datos"], c: ["N° de cuenta", "RUT", "Titular"] },
+        { n: "Tenpo", t: ["datos"], c: ["N° de cuenta", "RUT", "Titular"] },
+        { n: "Mercado Pago", t: ["link", "qr"] },
+        { n: "Webpay / Transbank", t: ["link"] },
+        { n: "Banco de Chile", t: ["datos"], c: ["N° de cuenta", "RUT", "Titular"] },
+        { n: "Santander", t: ["datos"], c: ["N° de cuenta", "RUT", "Titular"] },
+        { n: "Khipu", t: ["link"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "RUT", "Titular"] }
+      ] },
+      CO: { nombre: "Colombia", servicios: [
+        { n: "Nequi", t: ["qr", "datos"], c: ["Número Nequi (celular)", "Titular"] },
+        { n: "Daviplata", t: ["datos"], c: ["Número Daviplata (celular)", "Titular"] },
+        { n: "Bancolombia", t: ["qr", "datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "PSE", t: ["link"] },
+        { n: "Mercado Pago", t: ["link", "qr"] },
+        { n: "Banco de Bogotá", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "BBVA", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      MX: { nombre: "México", servicios: [
+        { n: "SPEI / Transferencia", t: ["datos"], c: ["CLABE (18 dígitos)", "Banco", "Titular"] },
+        { n: "Mercado Pago", t: ["link", "qr"] },
+        { n: "OXXO", t: ["link"] },
+        { n: "BBVA México", t: ["datos"], c: ["CLABE", "Titular"] },
+        { n: "Santander México", t: ["datos"], c: ["CLABE", "Titular"] },
+        { n: "Banco Azteca", t: ["datos"], c: ["CLABE", "Titular"] },
+        { n: "Clip", t: ["link"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["CLABE", "Banco", "Titular"] }
+      ] },
+      PE: { nombre: "Perú", servicios: [
+        { n: "Yape", t: ["qr", "datos"], c: ["Número Yape (celular)", "Titular"] },
+        { n: "Plin", t: ["qr", "datos"], c: ["Número Plin (celular)", "Titular"] },
+        { n: "BCP", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Interbank", t: ["datos"], c: ["N° de cuenta / CCI", "Titular"] },
+        { n: "BBVA Perú", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Mercado Pago", t: ["link", "qr"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta / CCI", "Titular"] }
+      ] },
+      UY: { nombre: "Uruguay", servicios: [
+        { n: "Mercado Pago", t: ["link", "qr"] },
+        { n: "Prex", t: ["datos"], c: ["N° de cuenta Prex", "Titular"] },
+        { n: "OCA", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Banco República (BROU)", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Santander", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      ES: { nombre: "España", servicios: [
+        { n: "Bizum", t: ["datos"], c: ["Teléfono Bizum", "Titular"] },
+        { n: "Transferencia SEPA", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "BBVA", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "Santander", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "CaixaBank", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "Revolut", t: ["link", "datos"], c: ["Revtag o teléfono", "Titular"] }
+      ] },
+      VE: { nombre: "Venezuela", servicios: [
+        { n: "Pago Móvil", t: ["datos"], c: ["Teléfono", "Banco", "Cédula", "Titular"] },
+        { n: "Banco de Venezuela", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Banesco", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Mercantil", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Zelle", t: ["datos"], c: ["Correo o teléfono Zelle", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      BO: { nombre: "Bolivia", servicios: [
+        { n: "Banco Unión", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "BCP Bolivia", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Tigo Money", t: ["datos"], c: ["Número Tigo Money", "Titular"] },
+        { n: "QR Simple", t: ["qr"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      PY: { nombre: "Paraguay", servicios: [
+        { n: "Banco Itaú", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Visión Banco", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Tigo Money", t: ["datos"], c: ["Número Tigo Money", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      EC: { nombre: "Ecuador", servicios: [
+        { n: "Banco Pichincha", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Banco Guayaquil", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Produbanco", t: ["datos"], c: ["N° de cuenta", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "N° de cuenta", "Titular"] }
+      ] },
+      CR: { nombre: "Costa Rica", servicios: [
+        { n: "SINPE Móvil", t: ["datos"], c: ["Número SINPE (teléfono)", "Titular"] },
+        { n: "Banco Nacional", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "Banco de Costa Rica", t: ["datos"], c: ["IBAN", "Titular"] },
+        { n: "Transferencia bancaria", t: ["datos"], c: ["Banco", "IBAN", "Titular"] }
+      ] },
+      INT: { nombre: "Internacional", servicios: [
+        { n: "PayPal", t: ["link", "datos"], c: ["Correo de PayPal"] },
+        { n: "Binance", t: ["link", "qr", "datos"], c: ["Email o UID de Binance"] },
+        { n: "Wise", t: ["link", "datos"], c: ["Correo de Wise"] },
+        { n: "Payoneer", t: ["datos"], c: ["Correo de Payoneer"] },
+        { n: "Skrill", t: ["datos"], c: ["Correo de Skrill"] }
+      ] }
+    },
+    // Ficha de un servicio: que formas de cobro admite (t) y, si cobra
+    // por datos, que campos pedir (c). Servicios fuera del catalogo
+    // («Otro» o nombres libres) admiten las tres formas.
+    servicioInfo: function (cod, nombre) {
+      var p = TW.PAISES[cod];
+      if (p) {
+        for (var i = 0; i < p.servicios.length; i++) {
+          if (p.servicios[i].n === nombre) return p.servicios[i];
+        }
+      }
+      return { n: nombre, t: ["link", "qr", "datos"], c: ["Detalle de pago", "Titular"] };
     },
     nombrePais: function (cod) {
       if (cod === "INT") return "Internacional";
       return TW.PAISES[cod] ? TW.PAISES[cod].nombre : (cod || "");
     },
     normalizarMetodo: function (m, paisSitio) {
-      if (!m || !m.url) return null;
+      if (!m) return null;
       var pais = m.pais || (m.ambito === "internacional" ? "INT" : (paisSitio || "AR"));
-      return { servicio: m.servicio || "Otro", pais: pais, tipo: m.tipo === "qr" ? "qr" : "link", url: m.url };
+      var tipo = m.tipo === "qr" ? "qr" : (m.tipo === "datos" ? "datos" : "link");
+      if (tipo === "datos") {
+        var datos = Array.isArray(m.datos) ? m.datos.filter(function (d) { return d && d.valor; }).map(function (d) { return { etiqueta: d.etiqueta || "Dato", valor: String(d.valor) }; }) : [];
+        if (!datos.length) return null;
+        return { servicio: m.servicio || "Otro", pais: pais, tipo: "datos", url: "", datos: datos };
+      }
+      if (!m.url) return null;
+      return { servicio: m.servicio || "Otro", pais: pais, tipo: tipo, url: m.url };
     },
     metodosDeSitio: function (cfg) {
       cfg = cfg || {};
@@ -262,14 +379,21 @@
     // HTML de un grupo de metodos: botones para los links y figuras con
     // el nombre del servicio para los QR.
     htmlMetodosGrupo: function (metodos) {
-      var links = metodos.filter(function (m) { return m.tipo !== "qr"; });
+      var links = metodos.filter(function (m) { return m.tipo !== "qr" && m.tipo !== "datos"; });
       var qrs = metodos.filter(function (m) { return m.tipo === "qr"; });
+      var conDatos = metodos.filter(function (m) { return m.tipo === "datos"; });
       return (links.length ? '<div class="s-pagos-btns">' + links.map(function (m) {
         return '<a class="btn" href="' + TW.esc(m.url) + '" target="_blank" rel="noopener">' + TW.esc(m.servicio || "Pagar") + "</a>";
       }).join("") + "</div>" : "") +
       (qrs.length ? '<div class="s-qrs">' + qrs.map(function (m) {
         return '<figure class="s-qr-item"><figcaption>' + TW.esc(m.servicio || "QR") + '</figcaption>' +
           '<img class="s-qr" src="' + TW.esc(m.url) + '" alt="Código QR de ' + TW.esc(m.servicio || "pago") + '"></figure>';
+      }).join("") + "</div>" : "") +
+      (conDatos.length ? '<div class="s-datos-lista">' + conDatos.map(function (m) {
+        return '<div class="s-datos"><p class="s-datos-t">' + TW.esc(m.servicio || "Transferencia") + "</p>" +
+          (m.datos || []).map(function (d) {
+            return '<p class="s-datos-fila"><span>' + TW.esc(d.etiqueta) + ":</span> <strong>" + TW.esc(d.valor) + "</strong></p>";
+          }).join("") + "</div>";
       }).join("") + "</div>" : "");
     },
     // HTML completo: agrupa por pais si hay mas de uno (primero el del
