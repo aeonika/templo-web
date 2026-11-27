@@ -105,6 +105,7 @@
       var la = $("#link-admin");
       if (la) la.hidden = !(rp.data && rp.data.es_admin);
       if (rp.data && rp.data.es_admin) $("#p-usuario").textContent = (user.email || "") + " · Master";
+      refrescarBadgePagos();
       pintarTab(tabActual);
     }
   }
@@ -233,6 +234,7 @@
       "<button class='btn btn-fantasma' data-ir='cursos'>Nuevo curso</button>" +
       "<button class='btn btn-fantasma' data-ir='feed'>Publicar una novedad</button>" +
       "</div></div>" +
+      "<div id='d-pagos-aviso'></div>" +
       "<div class='p-bloque d-anim' style='--i:8'><h3>Actividad reciente</h3><div id='d-actividad'><p class='p-vacio'>Cargando…</p></div></div>" +
       "</div>";
     cont.querySelectorAll("[data-ir]").forEach(function (b) {
@@ -264,6 +266,16 @@
     (rm.data || []).forEach(function (m) {
       eventos.push({ cuando: m.creado, tipo: "Miembro", texto: ((m.perfiles && m.perfiles.nombre) || "Alguien") + " se sumó a tu sitio" });
     });
+    var rcp = await TW.sb.from("comprobantes").select("creado, estado, perfiles:alumno_id(nombre)").eq("sitio_id", sitio.id).order("creado", { ascending: false }).limit(3);
+    (rcp.data || []).forEach(function (c) {
+      eventos.push({ cuando: c.creado, tipo: "Comprobante", texto: ((c.perfiles && c.perfiles.nombre) || "Un alumno") + " envió un comprobante (" + c.estado + ")" });
+    });
+    var rpend = await TW.sb.from("comprobantes").select("id", { count: "exact", head: true }).eq("sitio_id", sitio.id).eq("estado", "pendiente");
+    var aviso = document.getElementById("d-pagos-aviso");
+    if (aviso && (rpend.count || 0) > 0) {
+      aviso.innerHTML = "<button type='button' class='p-aviso-pagos d-anim' style='--i:7' id='d-ir-pagos'>Tenés " + rpend.count + " comprobante" + (rpend.count === 1 ? "" : "s") + " de pago esperando revisión. Tocá para verlos.</button>";
+      document.getElementById("d-ir-pagos").addEventListener("click", function () { irA("pagos"); });
+    }
     eventos.sort(function (a, b) { return new Date(b.cuando) - new Date(a.cuando); });
     var zona = document.getElementById("d-actividad");
     if (zona) {
@@ -294,6 +306,80 @@
     if (tab === "cursos") return vistaCursos(cont);
     if (tab === "feed") return vistaFeed(cont);
     if (tab === "alumnos") return vistaAlumnos(cont);
+    if (tab === "pagos") return vistaComprobantes(cont);
+  }
+
+  // Contador de comprobantes pendientes en el botón del menú.
+  async function refrescarBadgePagos() {
+    var badge = document.getElementById("p-badge-pagos");
+    if (!badge) return;
+    if (!sitio) { badge.hidden = true; return; }
+    var r = await TW.sb.from("comprobantes").select("id", { count: "exact", head: true })
+      .eq("sitio_id", sitio.id).eq("estado", "pendiente");
+    var n = r.count || 0;
+    badge.hidden = !n;
+    badge.textContent = n;
+  }
+
+  // ============================================================ comprobantes
+  async function vistaComprobantes(cont) {
+    cont.innerHTML = "<div class='p-encab'><div><h2>Comprobantes de pago</h2>" +
+      "<p class='p-bajada'>Los comprobantes que te envían tus alumnos desde el aula y desde los documentos. Al aprobar uno de un curso o un documento, el acceso se activa solo.</p></div></div>" +
+      "<div id='cp-lista'><p class='p-vacio'>Cargando…</p></div>";
+    var lista = document.getElementById("cp-lista");
+    var r = await TW.sb.from("comprobantes")
+      .select("*, perfiles:alumno_id ( nombre ), cursos:curso_id ( titulo ), documentos:documento_id ( titulo )")
+      .eq("sitio_id", sitio.id).order("creado", { ascending: false }).limit(100);
+    if (r.error) { lista.innerHTML = "<p class='p-error'>No se pudieron cargar: " + esc(r.error.message) + "</p>"; return; }
+    var filas = r.data || [];
+    if (!filas.length) {
+      lista.innerHTML = "<p class='p-vacio'>Todavía no te enviaron comprobantes. Cuando un alumno pague y suba el suyo desde el aula, aparece acá.</p>";
+      return;
+    }
+    var orden = { pendiente: 0, aprobado: 1, rechazado: 2 };
+    filas.sort(function (a, b) { return (orden[a.estado] - orden[b.estado]) || (a.creado < b.creado ? 1 : -1); });
+    lista.innerHTML = "<div class='p-bloque'><div class='p-lista'>" + filas.map(function (c) {
+      var que = c.cursos ? "Curso: " + c.cursos.titulo : (c.documentos ? "Documento: " + c.documentos.titulo : "Pago");
+      var pill = c.estado === "pendiente" ? "<span class='p-pill p-pill-pend'>Pendiente</span>"
+        : c.estado === "aprobado" ? "<span class='p-pill p-pill-ok'>Aprobado</span>" : "<span class='p-pill p-pill-mal'>Rechazado</span>";
+      return "<div class='p-fila-lista'><div class='crece'><strong>" + esc(c.perfiles ? c.perfiles.nombre : "Alumno") + "</strong> " + pill +
+        "<div class='detalle'>" + esc(que + " — " + new Date(c.creado).toLocaleDateString("es")) + (c.nota ? " — «" + esc(c.nota) + "»" : "") + "</div></div>" +
+        "<a class='btn btn-fantasma' href='" + esc(c.archivo_url) + "' target='_blank' rel='noopener'>Ver</a>" +
+        (c.estado === "pendiente" ? "<button class='btn btn-primario' data-cp-aprobar='" + c.id + "'>Aprobar</button><button class='btn btn-fantasma' data-cp-rechazar='" + c.id + "'>Rechazar</button>" : "") +
+        "<button class='btn btn-fantasma' data-cp-quitar='" + c.id + "'>Quitar</button></div>";
+    }).join("") + "</div></div>";
+    lista.querySelectorAll("[data-cp-aprobar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        b.disabled = true; b.textContent = "Aprobando…";
+        var c = filas.find(function (x) { return x.id === b.dataset.cpAprobar; });
+        if (c.curso_id) {
+          var rs = await TW.sb.from("suscripciones").select("id").eq("alumno_id", c.alumno_id).eq("curso_id", c.curso_id).maybeSingle();
+          if (rs.data) {
+            await TW.sb.from("suscripciones").update({ estado: "activa" }).eq("id", rs.data.id);
+            await TW.sb.from("miembros").upsert({ sitio_id: sitio.id, usuario_id: c.alumno_id, origen: "suscripcion" }, { onConflict: "sitio_id,usuario_id", ignoreDuplicates: true });
+          } else {
+            await TW.sb.from("suscripciones").insert({ sitio_id: sitio.id, alumno_id: c.alumno_id, curso_id: c.curso_id, estado: "activa" });
+          }
+        }
+        if (c.documento_id) {
+          await TW.sb.from("accesos_documentos").insert({ sitio_id: sitio.id, alumno_id: c.alumno_id, documento_id: c.documento_id, estado: "activa" });
+        }
+        await TW.sb.from("comprobantes").update({ estado: "aprobado" }).eq("id", c.id);
+        vistaComprobantes(cont); refrescarBadgePagos();
+      });
+    });
+    lista.querySelectorAll("[data-cp-rechazar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        await TW.sb.from("comprobantes").update({ estado: "rechazado" }).eq("id", b.dataset.cpRechazar);
+        vistaComprobantes(cont); refrescarBadgePagos();
+      });
+    });
+    lista.querySelectorAll("[data-cp-quitar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        await TW.sb.from("comprobantes").delete().eq("id", b.dataset.cpQuitar);
+        vistaComprobantes(cont); refrescarBadgePagos();
+      });
+    });
   }
 
   // ============================================================ subida a Cloudinary
@@ -898,6 +984,20 @@
         "</select></label><label class='c-rasgo-texto'>Texto <input type='text' class='c-rasgo-titulo' value='" + esc(r ? (r.titulo || "") : "") + "' placeholder='Servicios de hechicería'></label>" +
         "<button type='button' class='btn btn-fantasma c-rasgo-quitar'>Quitar</button></div>";
     }
+    var SERVICIOS_QR = ["Mercado Pago", "Cuenta DNI", "BNA+", "Ualá", "Brubank", "Naranja X", "Personal Pay", "Banco Galicia", "Banco Macro", "Santander", "BBVA", "Binance", "PayPal", "Wise", "Otro"];
+    function filaQr(q) {
+      var sel = (q && q.servicio) || "Mercado Pago";
+      return "<div class='c-qr-fila'><label>Servicio <select class='c-qr-servicio'>" +
+        SERVICIOS_QR.map(function (s) { return "<option value='" + s + "'" + (sel === s ? " selected" : "") + ">" + s + "</option>"; }).join("") +
+        "</select></label>" +
+        "<div class='c-fondo-fila'><img class='c-mini c-qr-mini' alt='' src='" + esc(q ? (q.url || "") : "") + "'" + (q && q.url ? "" : " hidden") + ">" +
+        "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' class='c-qr-file' accept='image/*' hidden></label></div>" +
+        "<input type='text' class='c-qr-url' value='" + esc(q ? (q.url || "") : "") + "' placeholder='https://… (o subí la imagen del QR)'>" +
+        "<span class='c-ayuda c-qr-estado'></span>" +
+        "<button type='button' class='btn btn-fantasma c-qr-quitar'>Quitar QR</button></div>";
+    }
+    var qrsSitio = Array.isArray(configSitio.pagos_qr) ? configSitio.pagos_qr.filter(function (q) { return q && q.url; }) : [];
+    if (!qrsSitio.length && configSitio.pago_qr) qrsSitio = [{ servicio: "", url: configSitio.pago_qr }];
     cont.innerHTML =
       "<div class='p-bloque c-resumen'>" +
         "<div class='c-url'><span class='c-url-texto'>" + esc(urlAbsoluta) + "</span>" +
@@ -991,12 +1091,9 @@
       "<p class='p-ayuda'>Los medios que ven tus alumnos para pagarte un curso o un documento, además del link de pago propio de cada curso. Los cargás una sola vez y se usan en todo tu sitio.</p>" +
       "<div class='p-dos'><label>Link de Mercado Pago <input type='text' name='pago_mp' value='" + esc(configSitio.pago_mp || "") + "' placeholder='https://link.mercadopago.com.ar/…'></label>" +
       "<label>Link de PayPal <input type='text' name='pago_paypal' value='" + esc(configSitio.pago_paypal || "") + "' placeholder='https://paypal.me/…'></label></div>" +
-      "<div class='c-imgbloque'><span class='c-imgb-et'>Código QR para cobrar</span>" +
-      "<div class='c-fondo-fila'><img class='c-mini' id='c-qr-img' alt='' src='" + esc(configSitio.pago_qr || "") + "'" + (configSitio.pago_qr ? "" : " hidden") + ">" +
-      "<label class='btn btn-fantasma c-subir'>Subir QR<input type='file' id='c-qr-file' accept='image/*' hidden></label>" +
-      "<button type='button' class='c-url-toggle' data-url-toggle='c-qr'>o pegar una URL</button></div>" +
-      "<input type='text' name='pago_qr' id='c-qr' class='c-url-input' value='" + esc(configSitio.pago_qr || "") + "' placeholder='https://…' hidden>" +
-      "<span class='c-ayuda' id='c-qr-estado'>El QR de tu Mercado Pago, tu banco o Binance: el alumno lo escanea para pagarte. Se muestra junto a los botones de pago de tus cursos y documentos.</span></div></div>" +
+      "<p class='p-ayuda'>Códigos QR para cobrar: podés cargar varios, uno por servicio (tu Mercado Pago, tu banco, Binance…). El alumno los ve junto a los botones de pago y escanea el que le conviene.</p>" +
+      "<div id='c-qrs'>" + (qrsSitio.length ? qrsSitio.map(filaQr).join("") : filaQr(null)) + "</div>" +
+      "<button type='button' class='btn btn-fantasma' id='c-qr-agregar'>+ Agregar otro QR</button></div>" +
       "<div class='p-bloque'><h3>Módulos visibles</h3>" +
       modulosDefs.map(function (m) {
         return "<label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>" + m[1] + "</span><span class='mod-desc'>" + m[2] + "</span></span>" +
@@ -1082,7 +1179,7 @@
     });
     var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
-    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"], ["#c-perfil", "#c-perfil-img"], ["#c-qr", "#c-qr-img"]].forEach(function (par) {
+    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"], ["#c-perfil", "#c-perfil-img"]].forEach(function (par) {
       var inp = $(par[0]), img = $(par[1]);
       if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; img.hidden = !inp.value; });
     });
@@ -1119,17 +1216,37 @@
         if (pfEst) pfEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
       }).catch(function (e2) { if (pfEst) pfEst.textContent = "No se pudo subir: " + e2.message; });
     });
-    var qrFile = $("#c-qr-file"), qrUrl = $("#c-qr"), qrEst = $("#c-qr-estado"), qrImg = $("#c-qr-img");
-    if (qrFile) qrFile.addEventListener("change", function () {
-      var arch = qrFile.files[0];
-      if (!arch) return;
-      if (qrEst) qrEst.textContent = "Subiendo el QR…";
-      subirCloudinary(arch, false, { max: 800 }).then(function (datos) {
-        qrUrl.value = datos.secure_url;
-        if (qrImg) { qrImg.src = datos.secure_url; qrImg.hidden = false; }
-        if (qrEst) qrEst.textContent = "QR subido. Tocá «Guardar cambios» para aplicarlo.";
-      }).catch(function (e2) { if (qrEst) qrEst.textContent = "No se pudo subir: " + e2.message; });
+    var contQrs = $("#c-qrs"), btnQr = $("#c-qr-agregar");
+    if (btnQr && contQrs) btnQr.addEventListener("click", function () {
+      if (contQrs.querySelectorAll(".c-qr-fila").length >= 6) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = filaQr(null);
+      contQrs.appendChild(tmp.firstChild);
     });
+    if (contQrs) {
+      contQrs.addEventListener("click", function (ev) {
+        if (ev.target.classList.contains("c-qr-quitar")) ev.target.closest(".c-qr-fila").remove();
+      });
+      contQrs.addEventListener("change", function (ev) {
+        var inp = ev.target.closest(".c-qr-file");
+        if (!inp || !inp.files || !inp.files[0]) return;
+        var fila = inp.closest(".c-qr-fila");
+        var est = fila.querySelector(".c-qr-estado");
+        if (est) est.textContent = "Subiendo el QR…";
+        subirCloudinary(inp.files[0], false, { max: 800 }).then(function (datos) {
+          fila.querySelector(".c-qr-url").value = datos.secure_url;
+          var mini = fila.querySelector(".c-qr-mini");
+          if (mini) { mini.src = datos.secure_url; mini.hidden = false; }
+          if (est) est.textContent = "QR subido. Tocá «Guardar cambios» para aplicarlo.";
+        }).catch(function (e2) { if (est) est.textContent = "No se pudo subir: " + e2.message; });
+      });
+      contQrs.addEventListener("input", function (ev) {
+        var inp = ev.target.closest(".c-qr-url");
+        if (!inp) return;
+        var mini = inp.closest(".c-qr-fila").querySelector(".c-qr-mini");
+        if (mini) { mini.src = inp.value; mini.hidden = !inp.value; }
+      });
+    }
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
       var arch = fFile.files[0];
@@ -1177,7 +1294,10 @@
           stock_bajo: Number(f.get("stock_bajo")) || 0,
           pago_mp: String(f.get("pago_mp") || "").trim() || null,
           pago_paypal: String(f.get("pago_paypal") || "").trim() || null,
-          pago_qr: f.get("pago_qr") || null
+          pago_qr: null,
+          pagos_qr: Array.from(document.querySelectorAll(".c-qr-fila")).map(function (fila) {
+            return { servicio: fila.querySelector(".c-qr-servicio").value, url: fila.querySelector(".c-qr-url").value.trim() };
+          }).filter(function (q) { return q.url; })
         }),
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();

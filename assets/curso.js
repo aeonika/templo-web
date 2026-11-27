@@ -51,24 +51,36 @@
   var lecciones = rl.data || [];
 
   // Medios de cobro del sitio (Panel > Mi sitio > Medios de cobro):
-  // link de Mercado Pago, link de PayPal y QR cargado por el maestro.
+  // links de Mercado Pago y PayPal, y los QR cargados (uno por servicio).
   var cfgPagos = sitio.config || {};
+  var qrsPagos = (Array.isArray(cfgPagos.pagos_qr) ? cfgPagos.pagos_qr.filter(function (q) { return q && q.url; }) : []);
+  if (!qrsPagos.length && cfgPagos.pago_qr) qrsPagos = [{ servicio: "", url: cfgPagos.pago_qr }];
   var mediosHtml = "";
-  if (cfgPagos.pago_mp || cfgPagos.pago_paypal || cfgPagos.pago_qr) {
+  if (cfgPagos.pago_mp || cfgPagos.pago_paypal || qrsPagos.length) {
     mediosHtml = '<div class="s-pagos"><p class="s-pagos-t">Medios de pago:</p><div class="s-pagos-btns">' +
       (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
       (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
       "</div>" +
-      (cfgPagos.pago_qr ? '<img class="s-qr" src="' + TW.esc(cfgPagos.pago_qr) + '" alt="Código QR para pagar"><p class="s-pagos-nota">Escaneá el QR para pagar y después solicitá el acceso.</p>' : "") +
+      (qrsPagos.length ? '<div class="s-qrs">' + qrsPagos.map(function (q) {
+        return '<figure class="s-qr-item">' + (q.servicio ? "<figcaption>" + TW.esc(q.servicio) + "</figcaption>" : "") +
+          '<img class="s-qr" src="' + TW.esc(q.url) + '" alt="Código QR de ' + TW.esc(q.servicio || "pago") + '"></figure>';
+      }).join("") + '</div><p class="s-pagos-nota">Escaneá el QR de tu servicio para pagar y después solicitá el acceso.</p>' : "") +
       "</div>";
   }
+  // Formulario para enviar el comprobante de pago (lo revisa el maestro
+  // en su panel, seccion Comprobantes; al aprobarlo se activa el acceso).
+  var comprobanteHtml = '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
+    '<div class="s-comp-fila"><input type="file" id="comp-file" accept="image/*,.pdf">' +
+    '<input type="text" id="comp-nota" placeholder="Nota (opcional): servicio, monto…">' +
+    '<button class="btn btn-acento" id="comp-enviar" type="button">Enviar comprobante</button></div>' +
+    '<p class="s-comp-estado" id="comp-estado"></p></div>';
   var estadoHtml;
   if (esDueno) {
     estadoHtml = "<p>Estás viendo tu propio curso, con acceso completo.</p>";
   } else if (accesoTotal) {
     estadoHtml = "<p>Tenés acceso completo a este curso.</p>";
   } else if (suscripcion && suscripcion.estado === "pendiente") {
-    estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>" + mediosHtml;
+    estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>" + mediosHtml + comprobanteHtml;
   } else if (!usuario) {
     estadoHtml = "<p>Para suscribirte, primero ingresá o creá tu cuenta.</p>" +
       '<a class="btn btn-acento" href="/panel.html?s=' + encodeURIComponent(slug) + '">Ingresar</a>' +
@@ -76,7 +88,7 @@
   } else {
     estadoHtml = "<p>Todavía no estás suscripto a este curso.</p>" +
       (curso.link_pago ? '<a class="btn btn-acento" href="' + TW.esc(curso.link_pago) + '" target="_blank" rel="noopener">Pagar la suscripción</a>' : "") +
-      '<button class="btn" id="btn-solicitar">Solicitar acceso</button>' + mediosHtml;
+      '<button class="btn" id="btn-solicitar">Solicitar acceso</button>' + mediosHtml + comprobanteHtml;
   }
 
   main.innerHTML =
@@ -107,6 +119,31 @@
         alumno_id: usuario.id, curso_id: curso.id, sitio_id: sitio.id, estado: "pendiente"
       });
       btnSol.textContent = r.error ? "Ya pediste acceso" : "Solicitud enviada";
+    });
+  }
+
+  var btnComp = document.getElementById("comp-enviar");
+  if (btnComp) {
+    btnComp.addEventListener("click", async function () {
+      var est = document.getElementById("comp-estado");
+      var arch = document.getElementById("comp-file").files[0];
+      if (!arch) { est.textContent = "Elegí el archivo del comprobante (foto o PDF)."; return; }
+      btnComp.disabled = true;
+      est.textContent = "Subiendo el comprobante…";
+      try {
+        var datos = await TW.subirComprobante(arch);
+        var r = await TW.sb.from("comprobantes").insert({
+          sitio_id: sitio.id, alumno_id: usuario.id, curso_id: curso.id,
+          archivo_url: datos.secure_url,
+          nota: document.getElementById("comp-nota").value.trim()
+        });
+        if (r.error) throw new Error(r.error.message);
+        est.textContent = "Comprobante enviado. El maestro lo revisa y te activa el acceso.";
+        btnComp.textContent = "Enviado";
+      } catch (e) {
+        est.textContent = "No se pudo enviar: " + e.message;
+        btnComp.disabled = false;
+      }
     });
   }
 

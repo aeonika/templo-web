@@ -102,6 +102,14 @@ textarea.grande { min-height: 200px; }
 .p-fila-lista .detalle { color: var(--color-muted); font-size: 13px; }
 .p-fila-lista select { width: auto; flex: none; max-width: 200px; }
 .p-fila-lista .btn { flex: none; }
+.p-badge { background: var(--color-accent-2); color: var(--premium-ink); border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; padding: 1px var(--space-xs); margin-left: auto; }
+.p-pill { border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; padding: var(--space-3xs) 10px; vertical-align: 2px; }
+.p-pill-pend { background: color-mix(in srgb, var(--color-accent-2) 25%, transparent); color: var(--color-ink); }
+.p-pill-ok { background: color-mix(in srgb, var(--color-success) 22%, transparent); color: var(--color-ink); }
+.p-pill-mal { background: color-mix(in srgb, var(--color-dusk) 22%, transparent); color: var(--color-ink); }
+.p-aviso-pagos { display: block; width: 100%; text-align: left; background: color-mix(in srgb, var(--color-accent-2) 18%, var(--color-paper-2)); border: 1px solid var(--color-accent-2); color: var(--color-ink); border-radius: var(--radius-card); padding: var(--space-md); font: inherit; font-weight: 600; cursor: pointer; margin-bottom: var(--space-md); }
+.c-qr-fila { border-top: 1px solid var(--color-rule); padding: var(--space-md) 0; display: grid; gap: var(--space-xs); }
+.c-qr-fila:first-child { border-top: none; padding-top: 0; }
 .p-dos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
 .p-tres { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-sm); }
 .p-acciones { display: flex; gap: var(--space-xs); flex-wrap: wrap; }

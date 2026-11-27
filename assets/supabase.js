@@ -171,6 +171,34 @@
         return new File([blob], nombre, { type: blob.type });
       } catch (e) { return archivo; }
     },
+    // Sube un comprobante de pago a Cloudinary (ver api/firmar-comprobante.js).
+    // Vale para cualquier usuario con sesion, tenga o no sitio propio.
+    // Devuelve los datos de Cloudinary ({ secure_url, ... }).
+    subirComprobante: async function (archivo) {
+      if (!sb) throw new Error("Sin conexion");
+      var sesion = await sb.auth.getSession();
+      var token = sesion.data && sesion.data.session ? sesion.data.session.access_token : null;
+      if (!token) throw new Error("Sin sesion");
+      var tipoRes = archivo.type.indexOf("image/") === 0 ? "image" : "raw";
+      if (tipoRes === "image" && TW.comprimirImagen) archivo = await TW.comprimirImagen(archivo, 1600);
+      var r = await fetch("/api/firmar-comprobante", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ resource_type: tipoRes })
+      });
+      if (!r.ok) throw new Error("El servidor no firmó la subida");
+      var firma = await r.json();
+      var fd = new FormData();
+      fd.append("file", archivo);
+      fd.append("api_key", firma.api_key);
+      fd.append("timestamp", firma.timestamp);
+      fd.append("signature", firma.signature);
+      fd.append("folder", firma.folder);
+      var up = await fetch("https://api.cloudinary.com/v1_1/" + firma.cloud + "/" + tipoRes + "/upload", { method: "POST", body: fd });
+      var datos = await up.json();
+      if (!up.ok) throw new Error(datos.error ? datos.error.message : "La subida falló");
+      return datos;
+    },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.
     urlFirmada: async function (datos) {

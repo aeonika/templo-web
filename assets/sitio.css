@@ -444,6 +444,15 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 .s-pagos-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 .s-pagos-nota { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
 .s-qr { display: block; width: 180px; height: 180px; object-fit: contain; background: #fff; border-radius: 12px; padding: 8px; margin-top: 12px; }
+.s-qrs { display: flex; gap: 18px; flex-wrap: wrap; }
+.s-qr-item { margin: 0; text-align: center; }
+.s-qr-item figcaption { font-weight: 600; font-size: 14px; margin-top: 12px; }
+.s-qr-item .s-qr { margin-top: 6px; }
+.s-comp { margin-top: 18px; border-top: 1px solid var(--borde); padding-top: 16px; }
+.s-comp-fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.s-comp-fila input[type="text"] { flex: 1; min-width: 180px; }
+.s-comp-fila input[type="text"], .s-comp-fila select { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; font: inherit; }
+.s-comp-estado { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
 
 /* Chip de membresía del sitio (hero) */
 .s-miembro-chip { display: inline-flex; align-items: center; border: 1.5px solid var(--acento); color: var(--acento); border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 14px; }

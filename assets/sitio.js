@@ -295,14 +295,24 @@
       (racc.data || []).forEach(function (x) { misAccesos[x.documento_id] = true; });
     }
     var cfgPagos = sitio.config || {};
-    var hayPagos = docs.some(function (d) { return Number(d.precio) > 0; });
+    var docsPagos = docs.filter(function (d) { return Number(d.precio) > 0; });
+    var qrsPagos = (Array.isArray(cfgPagos.pagos_qr) ? cfgPagos.pagos_qr.filter(function (q) { return q && q.url; }) : []);
+    if (!qrsPagos.length && cfgPagos.pago_qr) qrsPagos = [{ servicio: "", url: cfgPagos.pago_qr }];
     var mediosDocs = "";
-    if (hayPagos && (cfgPagos.pago_mp || cfgPagos.pago_paypal || cfgPagos.pago_qr)) {
+    if (docsPagos.length && (cfgPagos.pago_mp || cfgPagos.pago_paypal || qrsPagos.length)) {
       mediosDocs = '<div class="s-pagos"><p class="s-pagos-t">Para comprar un documento, pagá por estos medios y avisale al maestro para que te dé el acceso:</p><div class="s-pagos-btns">' +
         (cfgPagos.pago_mp ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_mp) + '" target="_blank" rel="noopener">Mercado Pago</a>' : "") +
         (cfgPagos.pago_paypal ? '<a class="btn" href="' + TW.esc(cfgPagos.pago_paypal) + '" target="_blank" rel="noopener">PayPal</a>' : "") +
         "</div>" +
-        (cfgPagos.pago_qr ? '<img class="s-qr" src="' + TW.esc(cfgPagos.pago_qr) + '" alt="Código QR para pagar">' : "") +
+        (qrsPagos.length ? '<div class="s-qrs">' + qrsPagos.map(function (q) {
+          return '<figure class="s-qr-item">' + (q.servicio ? "<figcaption>" + TW.esc(q.servicio) + "</figcaption>" : "") +
+            '<img class="s-qr" src="' + TW.esc(q.url) + '" alt="Código QR de ' + TW.esc(q.servicio || "pago") + '"></figure>';
+        }).join("") + "</div>" : "") +
+        (usuario ? '<div class="s-comp"><p class="s-pagos-t">¿Ya pagaste? Enviá tu comprobante:</p>' +
+          '<div class="s-comp-fila"><select id="comp-doc">' + docsPagos.map(function (d) { return '<option value="' + d.id + '">' + TW.esc(d.titulo) + "</option>"; }).join("") + "</select>" +
+          '<input type="file" id="comp-file-d" accept="image/*,.pdf">' +
+          '<button class="btn" id="comp-enviar-d" type="button">Enviar comprobante</button></div>' +
+          '<p class="s-comp-estado" id="comp-estado-d"></p></div>' : "") +
         "</div>";
     }
     html += seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
@@ -423,6 +433,33 @@
       });
     }, { rootMargin: "-38% 0px -55% 0px" });
     Object.keys(porId).forEach(function (id) { var sec = document.getElementById(id); if (sec) spy.observe(sec); });
+  }
+
+  // Envio de comprobante por un documento pago
+  var btnCompD = document.getElementById("comp-enviar-d");
+  if (btnCompD) {
+    btnCompD.addEventListener("click", async function () {
+      var est = document.getElementById("comp-estado-d");
+      var arch = document.getElementById("comp-file-d").files[0];
+      if (!arch) { est.textContent = "Elegí el archivo del comprobante (foto o PDF)."; return; }
+      btnCompD.disabled = true;
+      est.textContent = "Subiendo el comprobante…";
+      try {
+        var datos = await TW.subirComprobante(arch);
+        var usuarioD = await TW.usuario();
+        var r = await TW.sb.from("comprobantes").insert({
+          sitio_id: sitio.id, alumno_id: usuarioD.id,
+          documento_id: document.getElementById("comp-doc").value,
+          archivo_url: datos.secure_url, nota: ""
+        });
+        if (r.error) throw new Error(r.error.message);
+        est.textContent = "Comprobante enviado. El maestro lo revisa y te da el acceso.";
+        btnCompD.textContent = "Enviado";
+      } catch (e) {
+        est.textContent = "No se pudo enviar: " + e.message;
+        btnCompD.disabled = false;
+      }
+    });
   }
 
   // Acciones de documentos

@@ -1,0 +1,40 @@
+// TemploWeb · firma de subidas de comprobantes de pago (Vercel Function).
+//
+// Un alumno (cualquier usuario con sesion, tenga o no sitio propio)
+// sube su comprobante directo del navegador a Cloudinary; la firma se
+// genera aca con sesion valida y el API secret nunca sale del servidor.
+// La carpeta lleva el id del usuario: templo-web-comprobantes/<uid>.
+const { createClient } = require("@supabase/supabase-js");
+const cloudinary = require("cloudinary").v2;
+
+module.exports = async function (req, res) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Metodo no permitido" });
+  const token = (req.headers.authorization || "").replace("Bearer ", "");
+  if (!token) return res.status(401).json({ error: "Sin sesion" });
+
+  const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
+  const { data: ud, error: eUser } = await admin.auth.getUser(token);
+  if (eUser || !ud.user) return res.status(401).json({ error: "Sesion invalida" });
+
+  const cuerpo = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+  const resourceType = ["image", "raw"].indexOf(cuerpo.resource_type) >= 0 ? cuerpo.resource_type : "raw";
+  const timestamp = Math.floor(Date.now() / 1000);
+  const folder = "templo-web-comprobantes/" + ud.user.id;
+
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+  });
+  const aFirmar = { timestamp: timestamp, folder: folder };
+  const signature = cloudinary.utils.api_sign_request(aFirmar, process.env.CLOUDINARY_API_SECRET);
+
+  return res.status(200).json({
+    cloud: process.env.CLOUDINARY_CLOUD,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    timestamp: timestamp,
+    signature: signature,
+    folder: folder
+  });
+};

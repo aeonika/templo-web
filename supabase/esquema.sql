@@ -505,3 +505,26 @@ create policy admin_total on public.categorias for all to authenticated
 insert into public.categorias (sitio_id, nombre)
   select distinct sitio_id, categoria from public.productos where categoria <> ''
   on conflict do nothing;
+
+-- Comprobantes de pago que envian los alumnos (tabla 15, 2026-11-27).
+-- El alumno sube el archivo a Cloudinary (api/firmar-comprobante.js) y
+-- registra la fila; el maestro lo revisa en Panel > Comprobantes y al
+-- aprobarlo se activa la suscripcion o el acceso al documento.
+create table if not exists public.comprobantes (
+  id uuid primary key default gen_random_uuid(),
+  sitio_id uuid not null references public.sitios (id) on delete cascade,
+  alumno_id uuid not null references public.perfiles (id) on delete cascade,
+  curso_id uuid references public.cursos (id) on delete set null,
+  documento_id uuid references public.documentos (id) on delete set null,
+  archivo_url text not null,
+  nota text not null default '',
+  estado text not null default 'pendiente' check (estado in ('pendiente','aprobado','rechazado')),
+  creado timestamptz not null default now()
+);
+alter table public.comprobantes enable row level security;
+create policy comprobantes_alumno on public.comprobantes for select to authenticated using (alumno_id = auth.uid());
+create policy comprobantes_enviar on public.comprobantes for insert to authenticated with check (alumno_id = auth.uid());
+create policy comprobantes_dueno on public.comprobantes for select to authenticated using (public.es_dueno(sitio_id));
+create policy comprobantes_dueno_edita on public.comprobantes for update to authenticated using (public.es_dueno(sitio_id)) with check (public.es_dueno(sitio_id));
+create policy comprobantes_dueno_borra on public.comprobantes for delete to authenticated using (public.es_dueno(sitio_id));
+create policy comprobantes_admin on public.comprobantes for all to authenticated using (public.es_admin_actual()) with check (public.es_admin_actual());
