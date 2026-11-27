@@ -65,7 +65,7 @@
       var zona = document.getElementById("s-sesion");
       if (!zona || !sb) return;
       var ses = await TW.sesion();
-      if (!ses) { zona.innerHTML = '<a href="panel.html">Ingresar</a>'; return; }
+      if (!ses) { zona.innerHTML = '<a href="/panel.html">Ingresar</a>'; return; }
       var u = ses.usuario;
       var esDueno = !!(sitio && sitio.dueno_id && sitio.dueno_id === u.id);
       var rol, rolTxt;
@@ -79,9 +79,9 @@
       var nombre = ses.perfil.nombre || u.email || "";
       var html = '<span class="s-sesion-datos"><span class="s-sesion-nombre">' + TW.esc(nombre) + "</span>" +
         '<span class="s-rol s-rol--' + rol + '">' + rolTxt + "</span></span>";
-      if (esDueno) html += '<a class="s-nav-admin" href="panel.html">Administrar sitio</a>';
-      else if (ses.esMaster) html += '<a href="admin.html">Administración</a>';
-      else html += '<a href="panel.html">Mi panel</a>';
+      if (esDueno) html += '<a class="s-nav-admin" href="/panel.html">Administrar sitio</a>';
+      else if (ses.esMaster) html += '<a href="/admin.html">Administración</a>';
+      else html += '<a href="/panel.html">Mi panel</a>';
       html += '<button class="s-salir" id="s-salir-nav" type="button">Salir</button>';
       zona.innerHTML = html;
       var b = document.getElementById("s-salir-nav");

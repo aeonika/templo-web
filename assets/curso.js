@@ -27,10 +27,10 @@
   if (window.TW && TW.splashSitio) TW.splashSitio(sitio);
   document.getElementById("s-nav").innerHTML =
     '<div class="s-nav-in"><a class="s-marca" href="/sitio/' + encodeURIComponent(slug) + '">' +
-    TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
+    TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="/panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
-    '<div class="contenedor"><p class="credito">Sitio creado con <a href="index.html">TemploWeb</a></p></div>';
+    '<div class="contenedor"><p class="credito">Sitio creado con <a href="/index.html">TemploWeb</a></p></div>';
 
   var rc = await TW.sb.from("cursos").select("*").eq("id", cursoId).eq("sitio_id", sitio.id).eq("publicado", true).maybeSingle();
   if (!rc.data) { error("Este curso no existe."); return; }
@@ -59,7 +59,7 @@
     estadoHtml = "<p>Tu solicitud de acceso está pendiente de aprobación del maestro.</p>";
   } else if (!usuario) {
     estadoHtml = "<p>Para suscribirte, primero ingresá o creá tu cuenta.</p>" +
-      '<a class="btn btn-acento" href="panel.html">Ingresar</a>' +
+      '<a class="btn btn-acento" href="/panel.html">Ingresar</a>' +
       (curso.link_pago ? '<a class="btn" href="' + TW.esc(curso.link_pago) + '" target="_blank" rel="noopener">Pagar la suscripción</a>' : "");
   } else {
     estadoHtml = "<p>Todavía no estás suscripto a este curso.</p>" +

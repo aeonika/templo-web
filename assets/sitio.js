@@ -69,7 +69,7 @@
     '<nav class="s-links" id="s-links">' +
     enlaces.map(function (e) { return '<a href="' + e[1] + '">' + e[0] + "</a>"; }).join("") +
     (sitio.whatsapp ? '<a class="s-nav-cta" href="https://wa.me/' + String(sitio.whatsapp).replace(/[^0-9]/g, "") + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>WhatsApp</a>' : "") +
-    '<span class="s-sesion" id="s-sesion"><a href="panel.html">Ingresar</a></span></nav></div>';
+    '<span class="s-sesion" id="s-sesion"><a href="/panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   var burger = document.getElementById("s-burger");
   if (burger) burger.addEventListener("click", function () {
@@ -88,7 +88,7 @@
   footer.innerHTML = '<div class="contenedor"><p><strong>' + TW.esc(sitio.nombre) + "</strong></p>" +
     (sitio.footer_texto ? "<p>" + TW.esc(sitio.footer_texto) + "</p>" : "") +
     (redesHtml ? "<p>" + redesHtml + "</p>" : "") +
-    '<p class="credito">Sitio creado con <a href="index.html">TemploWeb</a></p></div>';
+    '<p class="credito">Sitio creado con <a href="/index.html">TemploWeb</a></p></div>';
   if (wa) {
     var flot = document.createElement("a");
     flot.className = "s-wa-flotante";
@@ -326,7 +326,7 @@
     (async function () {
       var u = await TW.usuario();
       if (!u) {
-        zonaMiembro.innerHTML = '<a class="btn" href="panel.html">Unirse al sitio</a>';
+        zonaMiembro.innerHTML = '<a class="btn" href="/panel.html">Unirse al sitio</a>';
         return;
       }
       if (sitio.dueno_id && u.id === sitio.dueno_id) return;
