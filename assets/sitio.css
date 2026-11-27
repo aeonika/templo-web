@@ -468,3 +468,56 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 /* Foto de perfil: se muestra en un circulo sobre el nombre del sitio. */
 .s-avatar { display: block; width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--acento); box-shadow: 0 12px 28px -12px color-mix(in srgb, var(--negro) 75%, transparent); margin-bottom: var(--space-md); }
 .s-hero--portada .s-avatar { width: 110px; height: 110px; }
+
+/* ============================================================
+   Premium: cada tipo de caja con su propia presentacion.
+   Misma identidad (acento, fuentes, placa de los botones), pero
+   ningun tipo se confunde con otro: vitrina, aula, editorial,
+   archivo, banda de oferta y nota.
+   ============================================================ */
+
+/* --- Ornamentos de encabezado, uno por seccion --- */
+html[data-maqueta="premium"] #productos .s-seccion h2::before, html[data-maqueta="premium"] #productos h2::before, html[data-maqueta="premium"] #destacados h2::before { -webkit-mask: none; mask: none; background: none; height: 6px; width: min(230px, 60%); border-top: 1px solid var(--acento); border-bottom: 1px solid var(--acento); }
+html[data-maqueta="premium"] #cursos h2::before { -webkit-mask: none; mask: none; background: var(--acento); width: 11px; height: 11px; transform: rotate(45deg); }
+html[data-maqueta="premium"] #articulos h2::before { -webkit-mask: none; mask: none; background: linear-gradient(90deg, transparent, var(--acento), transparent); height: 1px; width: min(300px, 70%); }
+html[data-maqueta="premium"] #documentos h2::before { -webkit-mask: none; mask: none; background: none; background-image: radial-gradient(circle, var(--acento) 1.8px, transparent 2.3px); background-size: 16px 4px; background-repeat: repeat-x; background-position: center; width: 76px; height: 4px; }
+html[data-maqueta="premium"] #novedades h2::before { -webkit-mask: none; mask: none; background: none; width: 44px; height: 11px; border: 1px solid var(--acento); border-radius: 99px; }
+
+/* --- Productos y destacados: vitrina con filete y precio en placa --- */
+html[data-maqueta="premium"] #productos .s-tarjeta, html[data-maqueta="premium"] #destacados .s-tarjeta { border-top: 3px solid var(--acento); }
+html[data-maqueta="premium"] #productos .s-tipo, html[data-maqueta="premium"] #destacados .s-tipo { font-family: var(--fuente-titulos); color: var(--acento); font-size: 12.5px; }
+html[data-maqueta="premium"] #productos .s-precio, html[data-maqueta="premium"] #destacados .s-precio { flex: none; align-self: center; background: color-mix(in srgb, var(--acento) 13%, transparent); border: 1px solid color-mix(in srgb, var(--acento) 35%, transparent); border-radius: 99px; padding: 3px 16px; }
+html[data-maqueta="premium"] #productos .btn:not(.btn-acento), html[data-maqueta="premium"] #destacados .btn:not(.btn-acento) { border: 1px solid color-mix(in srgb, var(--acento) 55%, var(--borde)); color: var(--acento); background: transparent; }
+
+/* --- Cursos: aula con lomo de acento, foto de video y boton de contorno --- */
+html[data-maqueta="premium"] #cursos .s-tarjeta { text-align: left; border-left: 4px solid var(--acento); }
+html[data-maqueta="premium"] #cursos .s-tarjeta img { aspect-ratio: 16 / 9; }
+html[data-maqueta="premium"] #cursos .s-tarjeta h3::before { margin-inline: 0; }
+html[data-maqueta="premium"] #cursos .s-acciones { justify-content: flex-start; }
+html[data-maqueta="premium"] #cursos .s-precio { flex: none; font-family: var(--fuente-titulos); color: var(--acento); font-size: 19px; }
+html[data-maqueta="premium"] #cursos .btn-acento { background: color-mix(in srgb, var(--acento) 10%, transparent); color: var(--acento); border: 1px solid var(--acento); box-shadow: none; }
+html[data-maqueta="premium"] #cursos .btn-acento:hover { background: color-mix(in srgb, var(--acento) 20%, transparent); color: var(--acento); filter: none; }
+
+/* --- Articulos: editorial; conservan su marco de esquinas, con fecha
+   en pastilla y titulo grande (sin precio ni botones: se leen distinto
+   de la vitrina de productos) --- */
+html[data-maqueta="premium"] .s-articulo .fecha { display: inline-block; border: 1px solid color-mix(in srgb, var(--acento) 45%, transparent); border-radius: 99px; padding: 1px 11px; font-size: 12.5px; margin: 0 0 10px; }
+html[data-maqueta="premium"] .s-articulo h3 { font-size: 23px; }
+
+/* --- Documentos: ficha de archivo, borde punteado y rombo --- */
+html[data-maqueta="premium"] .s-doc { background: var(--fondo-2); border: 1px dashed color-mix(in srgb, var(--acento) 45%, var(--borde)); border-radius: 6px; backdrop-filter: none; }
+html[data-maqueta="premium"] .s-doc h3::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--acento); transform: rotate(45deg); margin-right: 11px; vertical-align: 2px; }
+html[data-maqueta="premium"] .s-doc .lado .s-precio { font-family: var(--fuente-titulos); color: var(--acento); font-size: 18px; }
+
+/* --- Promociones: banda de oferta con doble filete --- */
+html[data-maqueta="premium"] .s-promo { background: linear-gradient(100deg, color-mix(in srgb, var(--acento) 17%, transparent), color-mix(in srgb, var(--acento) 6%, transparent)); border: 1px solid var(--acento); outline: 1px solid color-mix(in srgb, var(--acento) 38%, transparent); outline-offset: 3px; }
+html[data-maqueta="premium"] .s-promo h3 { font-family: var(--fuente-titulos); }
+html[data-maqueta="premium"] .s-promo img { border: 1px solid color-mix(in srgb, var(--acento) 50%, transparent); padding: 3px; background: color-mix(in srgb, var(--fondo) 55%, transparent); box-sizing: border-box; }
+
+/* --- Novedades: nota suave con lomo fino --- */
+html[data-maqueta="premium"] .s-feed-item { border-left: 3px solid color-mix(in srgb, var(--acento) 55%, transparent); border-radius: calc(var(--radio) + 4px); }
+html[data-maqueta="premium"] .s-feed-item .fecha { font-style: italic; }
+html[data-maqueta="premium"] .s-feed-item > p:not(.fecha) { font-size: 16.5px; color: var(--texto); }
+
+/* --- Aula: las lecciones heredan el lomo de los cursos --- */
+html[data-maqueta="premium"] .aula-leccion { border-left: 3px solid color-mix(in srgb, var(--acento) 50%, transparent); }
