@@ -21,15 +21,15 @@
     user = await TW.usuario();
     $("#a-cargando").hidden = true;
     await TW.aplicarMarca();
-    if (window.TW && TW.finSplash) TW.finSplash();
-    if (!user) { $("#a-denegado").hidden = false; return; }
+    if (!user) { $("#a-denegado").hidden = false; if (window.TW && TW.finSplash) TW.finSplash(); return; }
     $("#a-usuario").textContent = user.email;
     $("#btn-salir").hidden = false;
     $("#p-burger").hidden = false;
     var r = await TW.sb.from("perfiles").select("es_admin").eq("id", user.id).maybeSingle();
-    if (!r.data || !r.data.es_admin) { $("#a-denegado").hidden = false; return; }
+    if (!r.data || !r.data.es_admin) { $("#a-denegado").hidden = false; if (window.TW && TW.finSplash) TW.finSplash(); return; }
     $("#a-panel").hidden = false;
     pintarTab(tabActual);
+    if (window.TW && TW.finSplash) TW.finSplash();
   }
 
   // Botones «o pegar una URL»: por defecto manda el boton de subir.

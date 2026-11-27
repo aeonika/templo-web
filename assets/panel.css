@@ -60,6 +60,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .p-nav-usuario { color: var(--color-muted); font-size: 14px; }
 .p-ver-sitio { margin-left: auto; }
 .p-burger { display: grid; margin-left: 0; width: 40px; height: 40px; padding: 0; background: transparent; border: 1px solid var(--color-rule); border-radius: var(--radius-inner); cursor: pointer; gap: var(--space-2xs); align-content: center; justify-items: center; }
+/* Sin sitio todavia, «Ver mi sitio» esta oculto y es la hamburguesa la
+   que empuja a la derecha: su posicion nunca depende de otro elemento. */
+.p-ver-sitio[hidden] + .p-burger { margin-left: auto; }
 .p-burger span { display: block; width: 18px; height: 2px; border-radius: 2px; background: var(--color-ink); transition: transform .18s ease, opacity .18s ease; }
 .p-burger.abierta span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
 .p-burger.abierta span:nth-child(2) { opacity: 0; }

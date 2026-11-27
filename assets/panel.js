@@ -342,7 +342,6 @@
     user = await TW.usuario();
     $("#p-cargando").hidden = true;
     await TW.aplicarMarca();
-    if (window.TW && TW.finSplash) TW.finSplash();
     $("#btn-salir").hidden = !user;
     $("#p-burger").hidden = !user;
     $("#p-usuario").textContent = user ? user.email : "";
@@ -368,8 +367,11 @@
       if (la) la.hidden = !(rp.data && rp.data.es_admin);
       if (rp.data && rp.data.es_admin) $("#p-usuario").textContent = (user.email || "") + " · Master";
       refrescarBadgePagos();
-      pintarTab(tabActual);
+      try { await pintarTab(tabActual); } catch (e) {}
     }
+    // El splash se levanta recien con la primera pantalla ya armada:
+    // antes de este punto, detras solo habria piezas a mitad de camino.
+    if (window.TW && TW.finSplash) TW.finSplash();
   }
 
   $("#form-login").addEventListener("submit", async function (ev) {

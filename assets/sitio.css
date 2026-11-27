@@ -1,6 +1,8 @@
 /* Hallmark · plantilla del sitio del maestro · redesign full · brand: Biblioteca (tema crepúsculo) + 3 temas alternativos · v2.0.0 */
 /* TemploWeb · plantilla del sitio del maestro.
    Cuatro temas por tokens; el acento del sitio puede pisar --acento. */
+/* El atributo hidden manda siempre: ninguna clase puede pisarlo. */
+[hidden] { display: none !important; }
 :root {
   --space-md: 16px;
   --fuente-titulos: "Cinzel", Georgia, serif;
