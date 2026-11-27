@@ -10,14 +10,22 @@ create table if not exists public.perfiles (
   id uuid primary key references auth.users (id) on delete cascade,
   nombre text not null default '',
   es_admin boolean not null default false,
-  creado timestamptz not null default now()
+  creado timestamptz not null default now(),
+  codigo text unique
 );
 
 create or replace function public.crear_perfil()
 returns trigger language plpgsql security definer set search_path = public as $$
+declare cod text; intentos int := 0;
 begin
-  insert into public.perfiles (id, nombre)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'nombre', ''))
+  loop
+    select string_agg(substr('ABCDEFGHJKMNPQRSTUVWXYZ23456789', 1 + floor(random()*31)::int, 1), '') into cod from generate_series(1,6);
+    exit when not exists (select 1 from public.perfiles where codigo = cod);
+    intentos := intentos + 1;
+    if intentos > 20 then cod := null; exit; end if;
+  end loop;
+  insert into public.perfiles (id, nombre, codigo)
+  values (new.id, coalesce(new.raw_user_meta_data ->> 'nombre', ''), cod)
   on conflict (id) do nothing;
   return new;
 end $$;

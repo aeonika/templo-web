@@ -1206,7 +1206,7 @@
       "<div class='p-bloque'><h3>Miembros del sitio</h3><p class='p-ayuda'>Las personas registradas en TU sitio solamente: se suman solas cuando se suscriben a un curso o compran un documento, o cuando tocan «Unirse al sitio» en tu página. No quedan conectadas con otros sitios. Quitar a alguien de esta lista no cancela sus suscripciones ni sus accesos.</p><div id='mi-lista'></div></div>" +
       "<div class='p-bloque'><h3>Suscripciones</h3><div id='al-lista'></div></div>" +
       "<div class='p-bloque'><h3>Acceso a documentos pagos</h3><div id='doc-lista'></div>" +
-      "<form id='f-doc'><div class='p-dos'><label>ID del alumno (su usuario) <input type='text' name='alumno_id' required></label>" +
+      "<form id='f-doc'><div class='p-dos'><label>Código del alumno <input type='text' name='alumno_id' required placeholder='Ej.: 745SAB' autocomplete='off'></label>" +
       "<label>Documento <select name='documento_id' id='doc-select'></select></label></div>" +
       "<button class='btn btn-primario' type='submit'>Dar acceso</button><p class='p-error' id='e-doc'></p></form></div>";
     var rDocs = await TW.sb.from("documentos").select("id, titulo").eq("sitio_id", sitio.id).gt("precio", 0);
@@ -1261,8 +1261,18 @@
     $("#f-doc").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);
+      var dato = String(f.get("alumno_id") || "").trim();
+      var alumnoId = null;
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(dato)) {
+        alumnoId = dato;
+      } else {
+        var limpio = dato.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        var rb = await TW.sb.from("perfiles").select("id").eq("codigo", limpio).maybeSingle();
+        if (rb.data) alumnoId = rb.data.id;
+      }
+      if (!alumnoId) { $("#e-doc").textContent = "No se encontró ningún alumno con ese código. El alumno lo ve en su panel, en «Mi aprendizaje»."; return; }
       var r = await TW.sb.from("accesos_documentos").insert({
-        alumno_id: f.get("alumno_id"), documento_id: f.get("documento_id"), sitio_id: sitio.id, estado: "activa"
+        alumno_id: alumnoId, documento_id: f.get("documento_id"), sitio_id: sitio.id, estado: "activa"
       });
       if (r.error) { $("#e-doc").textContent = "No se pudo: " + r.error.message; return; }
       ev.target.reset();
@@ -1273,7 +1283,11 @@
 
   // ============================================================ mi aprendizaje
   async function vistaAprendizaje(cont) {
-    cont.innerHTML = "<h2>Mi aprendizaje</h2><p class='bajada'>Tus cursos y documentos como alumno, en todos los sitios de la plataforma. Tu ID de usuario es <strong>" + user.id + "</strong>: pasáselo al maestro si necesita darte un acceso a mano.</p><div id='ap-lista'></div>";
+    var rpCod = await TW.sb.from("perfiles").select("codigo").eq("id", user.id).maybeSingle();
+    var miCodigo = (rpCod.data && rpCod.data.codigo) || "";
+    cont.innerHTML = "<h2>Mi aprendizaje</h2><p class='bajada'>Tus cursos y documentos como alumno, en todos los sitios de la plataforma." +
+      (miCodigo ? " Tu código de alumno es <strong>" + esc(miCodigo) + "</strong>: pasáselo al maestro si necesita darte un acceso a mano." : "") +
+      "</p><div id='ap-lista'></div>";
     var r = await TW.sb.from("suscripciones").select("*, cursos(titulo), sitios(slug, nombre)")
       .eq("alumno_id", user.id).order("creada", { ascending: false });
     var rd = await TW.sb.from("accesos_documentos").select("*, documentos(titulo), sitios(slug, nombre)")
