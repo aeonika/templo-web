@@ -201,10 +201,12 @@
       (sitio.email ? '<a class="btn" href="mailto:' + TW.esc(sitio.email) + '">Email</a>' : "") +
       '<span id="s-miembro"></span>' +
       "</div>";
+    var avatarHtml = sitio.avatar_url ? '<img class="s-avatar" src="' + TW.esc(sitio.avatar_url) + '" alt="">' : "";
     if (sitio.foto_url) {
       html += '<section class="s-hero s-hero--portada" id="quienes">' +
         '<img class="s-portada-img" src="' + TW.esc(sitio.foto_url) + '" alt="">' +
         '<div class="contenedor s-hero-in"><div class="s-hero-texto">' +
+        avatarHtml +
         "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
         "<p>" + TW.esc(sitio.descripcion) + "</p>" +
         botonesContacto +
@@ -212,6 +214,7 @@
         (sitio.quienes_somos ? '<div class="contenedor s-quienes"><div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div></div>" : "");
     } else {
       html += '<section class="s-hero" id="quienes"><div class="contenedor s-hero-in"><div>' +
+        avatarHtml +
         "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
         "<p>" + TW.esc(sitio.descripcion) + "</p>" +
         (sitio.quienes_somos ? '<div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div>" : "") +

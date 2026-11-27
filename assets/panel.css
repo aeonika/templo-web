@@ -225,3 +225,5 @@ textarea.grande { min-height: 200px; }
 .c-url-toggle { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; color: var(--color-accent); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .c-url-input { width: 100%; margin-top: var(--space-xs); }
 .c-img input[type="text"].c-url-input { flex: 1 1 100%; }
+
+.c-perfil-mini { border-radius: 50%; }

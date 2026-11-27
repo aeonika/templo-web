@@ -464,3 +464,7 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
 #splash .splash-giro { width: 34px; height: 34px; border-radius: 50%; border: 3px solid color-mix(in srgb, var(--texto) 18%, transparent); border-top-color: var(--texto); animation: splash-girar 0.85s linear infinite; }
 @keyframes splash-girar { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #splash .splash-giro { animation-duration: 2.4s; } }
+
+/* Foto de perfil: se muestra en un circulo sobre el nombre del sitio. */
+.s-avatar { display: block; width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid var(--acento); box-shadow: 0 12px 28px -12px color-mix(in srgb, var(--negro) 75%, transparent); margin-bottom: var(--space-md); }
+.s-hero--portada .s-avatar { width: 110px; height: 110px; }

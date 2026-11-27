@@ -543,12 +543,18 @@
       "<button type='button' class='c-url-toggle' data-url-toggle='c-logo'>o pegar una URL</button></div>" +
       "<input type='text' name='logo_url' id='c-logo' class='c-url-input' value='" + esc(sitio.logo_url || "") + "' placeholder='https://…' hidden>" +
       "<span class='c-ayuda' id='c-logo-estado'>Tu logo va en la barra de tu sitio y como icono de la pestaña. Se ajusta solo al alto de la barra: puede ser ancho, cuadrado o con fondo transparente, y no se recorta.</span></div>" +
-      "<div class='c-imgbloque'><span class='c-imgb-et'>Tu foto</span>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Portada</span>" +
       "<div class='c-fondo-fila'><img class='c-mini' id='c-foto-img' alt='' src='" + esc(sitio.foto_url || "") + "'" + (sitio.foto_url ? "" : " hidden") + ">" +
-      "<label class='btn btn-fantasma c-subir'>Subir tu foto<input type='file' id='c-foto-file' accept='image/*' hidden></label>" +
+      "<label class='btn btn-fantasma c-subir'>Subir portada<input type='file' id='c-foto-file' accept='image/*' hidden></label>" +
       "<button type='button' class='c-url-toggle' data-url-toggle='c-foto'>o pegar una URL</button></div>" +
       "<input type='text' name='foto_url' id='c-foto' class='c-url-input' value='" + esc(sitio.foto_url || "") + "' placeholder='https://…' hidden>" +
-      "<span class='c-ayuda' id='c-foto-estado'>Tu foto es la portada de tu sitio. Tamaño sugerido: 1200 × 1500 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div></div>" +
+      "<span class='c-ayuda' id='c-foto-estado'>Es la imagen principal de tu sitio: ocupa todo el encabezado. Tamaño sugerido: 1600 × 900 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Foto de perfil</span>" +
+      "<div class='c-fondo-fila'><img class='c-mini c-perfil-mini' id='c-perfil-img' alt='' src='" + esc(sitio.avatar_url || "") + "'" + (sitio.avatar_url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir foto<input type='file' id='c-perfil-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle='c-perfil'>o pegar una URL</button></div>" +
+      "<input type='text' name='avatar_url' id='c-perfil' class='c-url-input' value='" + esc(sitio.avatar_url || "") + "' placeholder='https://…' hidden>" +
+      "<span class='c-ayuda' id='c-perfil-estado'>Una foto tuya o de tu marca: se muestra en un círculo junto al nombre de tu sitio. Tamaño sugerido: 800 × 800 px.</span></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
       "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
@@ -646,7 +652,7 @@
     });
     var acT = $("#c-acento-texto"), acC = $("#c-acento-color");
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
-    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {
+    [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"], ["#c-perfil", "#c-perfil-img"]].forEach(function (par) {
       var inp = $(par[0]), img = $(par[1]);
       if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; img.hidden = !inp.value; });
     });
@@ -671,6 +677,17 @@
         if (foImg) { foImg.src = datos.secure_url; foImg.hidden = false; }
         if (foEst) foEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
       }).catch(function (e2) { if (foEst) foEst.textContent = "No se pudo subir: " + e2.message; });
+    });
+    var pfFile = $("#c-perfil-file"), pfUrl = $("#c-perfil"), pfEst = $("#c-perfil-estado"), pfImg = $("#c-perfil-img");
+    if (pfFile) pfFile.addEventListener("change", function () {
+      var arch = pfFile.files[0];
+      if (!arch) return;
+      if (pfEst) pfEst.textContent = "Comprimiendo y subiendo…";
+      subirCloudinary(arch, false, { max: 800 }).then(function (datos) {
+        pfUrl.value = datos.secure_url;
+        if (pfImg) { pfImg.src = datos.secure_url; pfImg.hidden = false; }
+        if (pfEst) pfEst.textContent = "Foto subida y comprimida. Tocá «Guardar sitio» para aplicarla.";
+      }).catch(function (e2) { if (pfEst) pfEst.textContent = "No se pudo subir: " + e2.message; });
     });
     var fFile = $("#c-fondo-file"), fUrl = $("#c-fondo-url"), fMini = $("#c-fondo-mini"), fEst = $("#c-fondo-estado");
     if (fFile) fFile.addEventListener("change", function () {
@@ -707,7 +724,7 @@
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
         quienes_somos: f.get("quienes_somos") || "", logo_url: f.get("logo_url") || null,
-        foto_url: f.get("foto_url") || null, whatsapp: f.get("whatsapp") || null,
+        foto_url: f.get("foto_url") || null, avatar_url: f.get("avatar_url") || null, whatsapp: f.get("whatsapp") || null,
         email: f.get("email") || null, tema: f.get("tema"), maqueta: f.get("maqueta") || "clasica",
         acento: f.get("acento") || null, footer_texto: f.get("footer_texto") || "",
         fondo_url: f.get("fondo_url") || null,

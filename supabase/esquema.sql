@@ -471,3 +471,6 @@ insert into public.miembros (sitio_id, usuario_id, origen, creado)
 insert into public.miembros (sitio_id, usuario_id, origen, creado)
   select sitio_id, alumno_id, 'compra', min(creada) from public.accesos_documentos
   group by sitio_id, alumno_id on conflict do nothing;
+
+-- 2026-11-26: foto de perfil del sitio (se muestra en un circulo en el hero)
+alter table sitios add column if not exists avatar_url text;
