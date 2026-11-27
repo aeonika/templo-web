@@ -10,6 +10,18 @@
   function $(s) { return document.querySelector(s); }
   function esc(s) { return TW.esc(s); }
 
+  // Botones «o pegar una URL»: los campos de imagen muestran por defecto
+  // solo el boton de subir; el campo para pegar una direccion queda
+  // oculto hasta que el usuario lo pide con ese boton.
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-url-toggle]");
+    if (!b) return;
+    var id = b.getAttribute("data-url-toggle");
+    var inp = id ? document.getElementById(id) : null;
+    if (!inp) { var z = b.closest(".c-img, .c-imgbloque"); if (z) inp = z.querySelector("input[type='text']"); }
+    if (inp) { inp.hidden = !inp.hidden; if (!inp.hidden) inp.focus(); }
+  });
+
   // Ojito para mostrar u ocultar la contraseña (login y registro).
   document.querySelectorAll(".p-ojo").forEach(function (b) {
     b.addEventListener("click", function () {
@@ -153,7 +165,7 @@
         { k: "oferta_hasta", et: "La oferta termina (opcional: la vuelve oferta flash)", tipo: "fecha" },
         { k: "stock", et: "Stock total (vacío = sin control de stock)", tipo: "number" },
         { k: "variantes", et: "Talles con su stock (si cargás talles, el stock total sale de ellos)", tipo: "talles" },
-        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1200, ayuda: "Tamaño sugerido: 1200 × 1200 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "link_pago", et: "Link de pago (Mercado Pago, Stripe…)", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "destacado", et: "Destacado en la vidriera", tipo: "check" },
@@ -178,7 +190,7 @@
         { k: "slug", et: "Dirección (slug)", tipo: "text" },
         { k: "extracto", et: "Extracto", tipo: "textarea" },
         { k: "cuerpo", et: "Cuerpo", tipo: "textarea-grande" },
-        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
       ],
       resumen: function (x) { return x.publicado ? "Publicado" : "Borrador"; }
@@ -189,7 +201,7 @@
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
-        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
+        { k: "imagen_url", et: "Imagen", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "link", et: "Enlace", tipo: "text" },
         { k: "orden", et: "Orden", tipo: "number" },
         { k: "activa", et: "Activa", tipo: "check", def: true }
@@ -217,7 +229,7 @@
       campos: [
         { k: "titulo", et: "Título", tipo: "text" },
         { k: "descripcion", et: "Descripción", tipo: "textarea" },
-        { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso), o pegá una URL." },
+        { k: "imagen_url", et: "Imagen de portada", tipo: "imagen", max: 1600, ayuda: "Tamaño sugerido: 1600 × 900 px. Subila y se comprime sola (buena calidad, poco peso)." },
         { k: "precio", et: "Precio (vacío = gratis)", tipo: "number" },
         { k: "link_pago", et: "Link de pago de la suscripción", tipo: "text" },
         { k: "publicado", et: "Publicado", tipo: "check", def: true }
@@ -260,9 +272,10 @@
     }
     if (c.tipo === "imagen") {
       return '<div class="c-campo">' + c.et +
-        '<span class="c-img"><input type="text" name="' + c.k + '" value="' + esc(v) + '" placeholder="https://… o subí la imagen">' +
-        '<img class="c-mini c-img-prev" src="' + esc(v) + '" alt=""' + (v ? "" : " hidden") + ">" +
-        '<label class="btn btn-fantasma c-subir">Subir imagen<input type="file" class="c-img-file" data-max="' + (c.max || 1600) + '" accept="image/*" hidden></label></span>' +
+        '<span class="c-img"><img class="c-mini c-img-prev" src="' + esc(v) + '" alt=""' + (v ? "" : " hidden") + ">" +
+        '<label class="btn btn-fantasma c-subir">Subir imagen<input type="file" class="c-img-file" data-max="' + (c.max || 1600) + '" accept="image/*" hidden></label>' +
+        '<button type="button" class="c-url-toggle" data-url-toggle="">o pegar una URL</button>' +
+        '<input type="text" class="c-url-input" name="' + c.k + '" value="' + esc(v) + '" placeholder="https://…" hidden></span>' +
         (c.ayuda ? '<span class="c-ayuda">' + c.ayuda + "</span>" : "") +
         '<span class="c-ayuda c-img-estado"></span></div>';
     }
@@ -518,15 +531,23 @@
       }).join("") +
       "<div class='p-dos'><label>Color de acento (opcional) <span class='c-acento'><input type='text' name='acento' id='c-acento-texto' value='" + esc(sitio.acento || "") + "' placeholder='#00e5ff'><input type='color' id='c-acento-color' value='" + esc(sitio.acento || "#00e5ff") + "'></span></label>" +
       "<label>Texto del pie de página <input type='text' name='footer_texto' value='" + esc(sitio.footer_texto) + "'></label></div>" +
-      "<div class='c-fondo'><label>Imagen de fondo (opcional) <input type='text' name='fondo_url' id='c-fondo-url' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…'></label>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Imagen de fondo (opcional)</span>" +
       "<div class='c-fondo-fila'><img class='c-mini c-fondo-mini' id='c-fondo-mini' alt='Fondo actual' src='" + esc(sitio.fondo_url || "") + "'" + (sitio.fondo_url ? "" : " hidden") + ">" +
       "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='c-fondo-file' accept='image/*' hidden></label>" +
-      "<span class='c-ayuda' id='c-fondo-estado'>Se muestra detrás de todo tu sitio, con un velo para que el texto se lea. Subí una imagen o pegá una URL.</span></div></div>" +
-      "<div class='p-dos'><label>URL del logo <input type='text' name='logo_url' id='c-logo' value='" + esc(sitio.logo_url || "") + "'>" + (sitio.logo_url ? "<img class='c-mini' id='c-logo-img' src='" + esc(sitio.logo_url) + "' alt=''>" : "") + "</label>" +
-      "<label>URL de tu foto <input type='text' name='foto_url' id='c-foto' value='" + esc(sitio.foto_url || "") + "'>" + (sitio.foto_url ? "<img class='c-mini' id='c-foto-img' src='" + esc(sitio.foto_url) + "' alt=''>" : "") + "</label></div>" +
-      "<div class='c-fondo-fila'><label class='btn btn-fantasma c-subir'>Subir logo<input type='file' id='c-logo-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle='c-fondo-url'>o pegar una URL</button></div>" +
+      "<input type='text' name='fondo_url' id='c-fondo-url' class='c-url-input' value='" + esc(sitio.fondo_url || "") + "' placeholder='https://…' hidden>" +
+      "<span class='c-ayuda' id='c-fondo-estado'>Se muestra detrás de todo tu sitio, con un velo para que el texto se lea.</span></div>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Logo</span>" +
+      "<div class='c-fondo-fila'><img class='c-mini' id='c-logo-img' alt='' src='" + esc(sitio.logo_url || "") + "'" + (sitio.logo_url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir logo<input type='file' id='c-logo-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle='c-logo'>o pegar una URL</button></div>" +
+      "<input type='text' name='logo_url' id='c-logo' class='c-url-input' value='" + esc(sitio.logo_url || "") + "' placeholder='https://…' hidden>" +
       "<span class='c-ayuda' id='c-logo-estado'>Tu logo va en la barra de tu sitio y como icono de la pestaña. Se ajusta solo al alto de la barra: puede ser ancho, cuadrado o con fondo transparente, y no se recorta.</span></div>" +
-      "<div class='c-fondo-fila'><label class='btn btn-fantasma c-subir'>Subir tu foto<input type='file' id='c-foto-file' accept='image/*' hidden></label>" +
+      "<div class='c-imgbloque'><span class='c-imgb-et'>Tu foto</span>" +
+      "<div class='c-fondo-fila'><img class='c-mini' id='c-foto-img' alt='' src='" + esc(sitio.foto_url || "") + "'" + (sitio.foto_url ? "" : " hidden") + ">" +
+      "<label class='btn btn-fantasma c-subir'>Subir tu foto<input type='file' id='c-foto-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle='c-foto'>o pegar una URL</button></div>" +
+      "<input type='text' name='foto_url' id='c-foto' class='c-url-input' value='" + esc(sitio.foto_url || "") + "' placeholder='https://…' hidden>" +
       "<span class='c-ayuda' id='c-foto-estado'>Tu foto es la portada de tu sitio. Tamaño sugerido: 1200 × 1500 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
@@ -627,7 +648,7 @@
     if (acT && acC) acC.addEventListener("input", function () { acT.value = acC.value; });
     [["#c-logo", "#c-logo-img"], ["#c-foto", "#c-foto-img"]].forEach(function (par) {
       var inp = $(par[0]), img = $(par[1]);
-      if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; });
+      if (inp && img) inp.addEventListener("input", function () { img.src = inp.value; img.hidden = !inp.value; });
     });
     var lFile = $("#c-logo-file"), lUrl = $("#c-logo"), lEst = $("#c-logo-estado"), lImg = $("#c-logo-img");
     if (lFile) lFile.addEventListener("change", function () {
@@ -732,8 +753,9 @@
       "<div class='p-bloque'><form id='f-feed'>" +
       "<label>Texto <textarea name='texto' required></textarea></label>" +
       "<div class='c-campo'>Imagen (opcional)" +
-      "<span class='c-img'><input type='text' name='imagen_url' placeholder='https://… o subí la imagen'>" +
-      "<label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='feed-img-file' accept='image/*' hidden></label></span>" +
+      "<span class='c-img'><label class='btn btn-fantasma c-subir'>Subir imagen<input type='file' id='feed-img-file' accept='image/*' hidden></label>" +
+      "<button type='button' class='c-url-toggle' data-url-toggle=''>o pegar una URL</button>" +
+      "<input type='text' name='imagen_url' class='c-url-input' placeholder='https://…' hidden></span>" +
       "<span class='c-ayuda' id='feed-img-estado'>Tamaño sugerido: 1600 × 900 px. Al subirla se comprime sola, con buena calidad y poco peso.</span></div>" +
       "<div class='p-dos'><label>Alcance <select name='alcance'><option value='publico'>Público</option><option value='curso'>Solo alumnos de un curso</option></select></label>" +
       "<label>Curso (si es de curso) <select name='curso_id'><option value=''>—</option>" +

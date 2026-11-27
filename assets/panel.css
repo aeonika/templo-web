@@ -217,3 +217,11 @@ textarea.grande { min-height: 200px; }
 @keyframes splash-pulso { 0%, 100% { transform: scale(1); opacity: 0.92; } 50% { transform: scale(1.055); opacity: 1; } }
 @keyframes splash-pase { 0% { transform: translateX(-110%); } 100% { transform: translateX(360%); } }
 @media (prefers-reduced-motion: reduce) { #splash .splash-marca, #splash .splash-barra span { animation: none; } }
+
+/* Campos de imagen: por defecto solo se ve la vista previa y el boton de
+ * subir; el campo para pegar una URL aparece con «o pegar una URL». */
+.c-imgbloque { margin-top: var(--space-md); }
+.c-imgb-et { display: block; font-size: 14px; font-weight: 600; color: var(--color-ink-2); margin-bottom: var(--space-2xs); }
+.c-url-toggle { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; color: var(--color-accent); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.c-url-input { width: 100%; margin-top: var(--space-xs); }
+.c-img input[type="text"].c-url-input { flex: 1 1 100%; }

@@ -32,6 +32,14 @@
     pintarTab(tabActual);
   }
 
+  // Botones «o pegar una URL»: por defecto manda el boton de subir.
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-url-toggle]");
+    if (!b) return;
+    var inp = document.getElementById(b.getAttribute("data-url-toggle"));
+    if (inp) { inp.hidden = !inp.hidden; if (!inp.hidden) inp.focus(); }
+  });
+
   $("#btn-salir").addEventListener("click", async function () {
     await TW.sb.auth.signOut();
     location.href = "panel.html";
@@ -99,8 +107,9 @@
       (logo ? "<img class='a-marca-img' src='" + esc(logo) + "' alt='Logo actual'>" : "") +
       "<div class='a-portada-form'>" +
       "<input type='text' id='a-marca-nombre' class='a-url' placeholder='Nombre de la plataforma' value='" + esc(nombre) + "'>" +
-      "<input type='url' id='a-marca-logo' class='a-url' placeholder='Dirección del logo (https://…) o subilo →' value='" + esc(logo) + "'>" +
+      "<input type='url' id='a-marca-logo' class='a-url' placeholder='https://…' value='" + esc(logo) + "' hidden>" +
       "<label class='btn btn-fantasma'>Subir logo<input type='file' id='a-marca-file' accept='image/*' hidden></label>" +
+      "<button class='c-url-toggle' data-url-toggle='a-marca-logo' type='button'>o pegar una URL</button>" +
       "<button class='btn btn-primario' id='a-marca-guardar' type='button'>Guardar marca</button>" +
       ((nombre || logo) ? "<button class='btn btn-fantasma' id='a-marca-quitar' type='button'>Usar la original</button>" : "") +
       "</div></div>";
@@ -170,8 +179,9 @@
       "<p class='bajada'>La imagen grande que se ve al entrar a TemploWeb. Pegá la dirección de una imagen o subí una nueva.</p>" +
       (actual ? "<img class='a-portada-img' src='" + esc(actual) + "' alt='Portada actual'>" : "") +
       "<div class='a-portada-form'>" +
-      "<input type='url' id='a-portada-url' class='a-url' placeholder='https://…' value='" + esc(actual) + "'>" +
+      "<input type='url' id='a-portada-url' class='a-url' placeholder='https://…' value='" + esc(actual) + "' hidden>" +
       "<label class='btn btn-fantasma'>Subir imagen<input type='file' id='a-portada-file' accept='image/*' hidden></label>" +
+      "<button class='c-url-toggle' data-url-toggle='a-portada-url' type='button'>o pegar una URL</button>" +
       "<button class='btn btn-primario' id='a-portada-guardar' type='button'>Guardar portada</button>" +
       (actual ? "<button class='btn btn-fantasma' id='a-portada-quitar' type='button'>Usar la original</button>" : "") +
       "</div></div>";
