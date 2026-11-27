@@ -486,8 +486,15 @@
     },
     // Texto plano sin marcas de formato: para las tarjetas del indice,
     // donde la descripcion se muestra como resumen de una linea.
+    // Acepta HTML (editor visual) o Markdown (contenido viejo).
     textoPlano: function (texto) {
-      return String(texto || "")
+      var t = String(texto || "");
+      if (/<\/?[a-z][^>]*>/i.test(t)) {
+        var d = document.createElement("div");
+        d.innerHTML = t;
+        t = d.textContent || "";
+      }
+      return t
         .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
         .replace(/\*\*([^*]+)\*\*/g, "$1")
         .replace(/\*([^*]+)\*/g, "$1")
@@ -495,6 +502,40 @@
         .replace(/^\s*-\s+/gm, "")
         .replace(/\s+/g, " ")
         .trim();
+    },
+    // Texto con formato para las pantallas publicas: si el contenido
+    // es HTML (del editor visual del panel) se sanitiza con una lista
+    // blanca de etiquetas; si es texto viejo en Markdown, se convierte
+    // con TW.md().
+    textoRico: function (texto) {
+      if (!texto) return "";
+      if (!/<\/?[a-z][^>]*>/i.test(texto)) return TW.md(texto);
+      var PERMITIDAS = { P: 1, BR: 1, STRONG: 1, B: 1, EM: 1, I: 1, U: 1, UL: 1, OL: 1, LI: 1, H2: 1, H3: 1, A: 1, DIV: 1, SPAN: 1, BLOCKQUOTE: 1 };
+      var PELIGROSAS = { SCRIPT: 1, STYLE: 1, IFRAME: 1, OBJECT: 1, EMBED: 1, FORM: 1, INPUT: 1, BUTTON: 1, IMG: 1, VIDEO: 1, AUDIO: 1, LINK: 1, META: 1 };
+      var raiz = document.createElement("div");
+      raiz.innerHTML = String(texto);
+      function limpiar(nodo) {
+        Array.prototype.slice.call(nodo.childNodes).forEach(function (h) {
+          if (h.nodeType === 3) return;
+          if (h.nodeType !== 1) { h.remove(); return; }
+          if (PELIGROSAS[h.tagName]) { h.remove(); return; }
+          if (!PERMITIDAS[h.tagName]) {
+            limpiar(h);
+            while (h.firstChild) nodo.insertBefore(h.firstChild, h);
+            h.remove();
+            return;
+          }
+          var href = h.tagName === "A" ? (h.getAttribute("href") || "") : "";
+          Array.prototype.slice.call(h.attributes || []).forEach(function (at) { h.removeAttribute(at.name); });
+          if (h.tagName === "A") {
+            if (/^https?:\/\//i.test(href)) { h.setAttribute("href", href); h.setAttribute("target", "_blank"); h.setAttribute("rel", "noopener"); }
+            else { h.removeAttribute("href"); }
+          }
+          limpiar(h);
+        });
+      }
+      limpiar(raiz);
+      return raiz.innerHTML;
     },
     // Pide al servidor una URL firmada de Cloudinary (ver api/firmar.js).
     // Devuelve la URL temporal o null si el usuario no tiene acceso.

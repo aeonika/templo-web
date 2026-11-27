@@ -934,14 +934,17 @@
     }
     if (c.tipo === "textarea" || c.tipo === "textarea-grande") {
       if (c.md) {
-        return '<div class="c-campo">' + c.et + '<div class="md-bar">' +
-          '<button type="button" data-md="b"><strong>N</strong></button>' +
-          '<button type="button" data-md="i"><em>I</em></button>' +
-          '<button type="button" data-md="h">Título</button>' +
-          '<button type="button" data-md="lista">Lista</button>' +
-          '<button type="button" data-md="link">Enlace</button></div>' +
-          '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea>" +
-          '<span class="c-ayuda">Con formato: **negrita**, *cursiva*, ## título, - ítem de lista, [texto](https://…)</span></div>';
+        var htmlIni = /<\/?[a-z][^>]*>/i.test(String(v)) ? String(v) : TW.md(String(v));
+        return '<div class="c-campo">' + c.et + '<div class="rico-wrap"><div class="md-bar">' +
+          '<button type="button" data-rico="bold"><strong>N</strong></button>' +
+          '<button type="button" data-rico="italic"><em>I</em></button>' +
+          '<button type="button" data-rico="underline"><u>S</u></button>' +
+          '<button type="button" data-rico="h3">Título</button>' +
+          '<button type="button" data-rico="lista">Lista</button>' +
+          '<button type="button" data-rico="link">Enlace</button>' +
+          '<button type="button" data-rico="limpiar">Quitar formato</button></div>' +
+          '<div class="rico' + (c.tipo === "textarea-grande" ? " grande" : "") + '" contenteditable="true" data-rico-campo="' + c.k + '">' + htmlIni + "</div></div>" +
+          '<span class="c-ayuda">Escribí y seleccioná el texto para darle formato con los botones: se ve tal como va a quedar.</span></div>';
       }
       return "<label>" + c.et + '<textarea name="' + c.k + '"' + (c.tipo === "textarea-grande" ? ' class="grande"' : "") + ">" + esc(v) + "</textarea></label>";
     }
@@ -1025,6 +1028,10 @@
         var eg = form.querySelector("[data-galeria] .g-filas");
         obj[c.k] = eg ? leerFilasGaleria(eg) : [];
       }
+      else if (c.md) {
+        var ed = form.querySelector('[data-rico-campo="' + c.k + '"]');
+        obj[c.k] = ed ? ed.innerHTML.trim() : "";
+      }
       else obj[c.k] = (f.get(c.k) || "").toString().trim();
     });
     return obj;
@@ -1063,6 +1070,29 @@
     return (izq ? "<span class='p-insignias izq'>" + izq + "</span>" : "") + (der ? "<span class='p-insignias der'>" + der + "</span>" : "");
   }
 
+  // Convierte un textarea comun en editor visual, sincronizando el
+  // HTML de vuelta al textarea (para formularios que leen FormData).
+  function mejorarConRico(ta) {
+    if (!ta || ta.dataset.ricoOk) return;
+    ta.dataset.ricoOk = "1";
+    var v = ta.value || "";
+    var htmlIni = /<\/?[a-z][^>]*>/i.test(v) ? v : TW.md(v);
+    var wrap = document.createElement("div");
+    wrap.className = "rico-wrap";
+    wrap.innerHTML = '<div class="md-bar">' +
+      '<button type="button" data-rico="bold"><strong>N</strong></button>' +
+      '<button type="button" data-rico="italic"><em>I</em></button>' +
+      '<button type="button" data-rico="underline"><u>S</u></button>' +
+      '<button type="button" data-rico="h3">Título</button>' +
+      '<button type="button" data-rico="lista">Lista</button>' +
+      '<button type="button" data-rico="link">Enlace</button>' +
+      '<button type="button" data-rico="limpiar">Quitar formato</button></div>' +
+      '<div class="rico grande" contenteditable="true">' + htmlIni + "</div>";
+    ta.parentNode.insertBefore(wrap, ta);
+    ta.hidden = true;
+    var ed = wrap.querySelector(".rico");
+    ed.addEventListener("input", function () { ta.value = ed.innerHTML; });
+  }
   function crud(cont, cfg, fijo) {
     var editando = null;
     var formVisible = false;
@@ -1118,28 +1148,34 @@
       });
       conectarGaleria(filas, editor.querySelector("[data-g-add]"), Number(editor.dataset.gMax || 8));
     }
-    // Barra de formato (Markdown simple) de los textarea con md: true.
+    // Editor visual de los campos con formato (md: true): el usuario
+    // selecciona el texto y toca un boton; el formato se ve aplicado
+    // en el momento, sin marcas ni codigos. El contenido se guarda
+    // como HTML y las pantallas publicas lo sanitizan (TW.textoRico).
+    if (!document.__ricoListo) {
+    document.__ricoListo = true;
     document.addEventListener("click", function (ev) {
-      var btn = ev.target.closest("[data-md]");
+      var btn = ev.target.closest("[data-rico]");
       if (!btn) return;
-      var campo = btn.closest(".c-campo");
-      var ta = campo && campo.querySelector("textarea");
-      if (!ta) return;
+      var wrap = btn.closest(".rico-wrap");
+      var ed = wrap && wrap.querySelector(".rico");
+      if (!ed) return;
       ev.preventDefault();
-      var modo = btn.getAttribute("data-md");
-      var s0 = ta.selectionStart || 0, e0 = ta.selectionEnd || 0;
-      var sel = ta.value.substring(s0, e0);
-      var nuevo = "";
-      if (modo === "b") nuevo = "**" + (sel || "negrita") + "**";
-      else if (modo === "i") nuevo = "*" + (sel || "cursiva") + "*";
-      else if (modo === "h") nuevo = "\n## " + (sel || "Título") + "\n";
-      else if (modo === "lista") nuevo = "\n- " + (sel || "ítem") + "\n- ";
-      else if (modo === "link") nuevo = "[" + (sel || "texto") + "](https://)";
-      ta.value = ta.value.substring(0, s0) + nuevo + ta.value.substring(e0);
-      ta.focus();
-      var pos = s0 + nuevo.length;
-      try { ta.setSelectionRange(pos, pos); } catch (e) {}
+      ed.focus();
+      var cmd = btn.getAttribute("data-rico");
+      if (cmd === "bold") document.execCommand("bold");
+      else if (cmd === "italic") document.execCommand("italic");
+      else if (cmd === "underline") document.execCommand("underline");
+      else if (cmd === "h3") document.execCommand("formatBlock", false, "h3");
+      else if (cmd === "lista") document.execCommand("insertUnorderedList");
+      else if (cmd === "link") {
+        var url = prompt("Dirección del enlace (https://…)");
+        if (url) document.execCommand("createLink", false, url);
+      }
+      else if (cmd === "limpiar") document.execCommand("removeFormat");
+      ed.dispatchEvent(new Event("input", { bubbles: true }));
     });
+    }
     function prepararTalles(caja, iniciales) {
       var editor = caja.querySelector("[data-talles]");
       if (!editor) return;
@@ -1505,7 +1541,7 @@
       "<div class='p-bloque'><h3>Identidad</h3>" +
       "<label>Nombre <input type='text' name='nombre' value='" + esc(sitio.nombre) + "'></label>" +
       "<label>Descripción corta <textarea name='descripcion'>" + esc(sitio.descripcion) + "</textarea></label>" +
-      "<label>Quién soy / quiénes somos (Markdown simple) <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label></div>" +
+      "<label>Quién soy / quiénes somos <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label></div>" +
       "<div class='p-bloque'><h3>Apariencia</h3>" +
       "<p class='p-ayuda'>Hay dos diseños. Elegí el diseño y después el color dentro de ese diseño.</p>" +
       "<div class='temas'>" + disenosDefs.map(function (dd) {
@@ -1714,6 +1750,7 @@
     if (contRasgos) contRasgos.addEventListener("click", function (ev) {
       if (ev.target.classList.contains("c-rasgo-quitar")) ev.target.closest(".c-rasgo-fila").remove();
     });
+    mejorarConRico(document.querySelector("#f-sitio [name='quienes_somos']"));
     $("#f-sitio").addEventListener("submit", async function (ev) {
       ev.preventDefault();
       var f = new FormData(ev.target);

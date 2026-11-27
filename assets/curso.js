@@ -84,7 +84,7 @@
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#cursos">← Todos los cursos</a></p>' +
     (curso.imagen_url ? '<img class="aula-portada" src="' + TW.esc(curso.imagen_url) + '" alt="">' : "") +
     "<h1>" + TW.esc(curso.titulo) + "</h1>" +
-    (curso.descripcion ? '<div class="aula-desc">' + TW.md(curso.descripcion) + "</div>" : "") +
+    (curso.descripcion ? '<div class="aula-desc">' + TW.textoRico(curso.descripcion) + "</div>" : "") +
     (curso.precio != null ? '<p class="s-precio">' + TW.precio(curso.precio, curso.moneda) + "</p>" : "") +
     '<div class="aula-estado">' + estadoHtml + "</div>" +
     '<div id="aula-player"></div>' +
@@ -168,7 +168,7 @@
     if (!r.data) { player.innerHTML = '<p class="aula-aviso">No se pudo cargar la lección.</p>'; return; }
     var lec = r.data;
     if (lec.tipo === "texto") {
-      player.innerHTML = '<div class="aula-texto"><h3>' + TW.esc(lec.titulo) + "</h3>" + TW.md(lec.cuerpo) + "</div>";
+      player.innerHTML = '<div class="aula-texto"><h3>' + TW.esc(lec.titulo) + "</h3>" + TW.textoRico(lec.cuerpo) + "</div>";
       return;
     }
     var url = lec.url_publica || null;

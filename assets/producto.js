@@ -109,7 +109,7 @@
     '<p><a href="/sitio/' + encodeURIComponent(slug) + '#productos">← Todos los productos</a></p>' +
     '<div class="s-detalle">' + galeriaHtml +
     '<div class="s-detalle-info"><p class="s-tipo">' + tipo + "</p><h1>" + TW.esc(p.nombre) + "</h1>" +
-    (p.descripcion ? '<div class="s-detalle-desc">' + TW.md(p.descripcion) + "</div>" : "") +
+    (p.descripcion ? '<div class="s-detalle-desc">' + TW.textoRico(p.descripcion) + "</div>" : "") +
     precioHtml + stockHtml + tallesHtml +
     '<div class="s-detalle-acciones">' + accionHtml + "</div>" +
     pagosHtml + comprobanteHtml +

@@ -76,7 +76,7 @@
 
   var infoDoc =
     '<p class="s-tipo">Documento</p><h1>' + TW.esc(doc.titulo) + "</h1>" +
-    (doc.descripcion ? '<div class="s-detalle-desc">' + TW.md(doc.descripcion) + "</div>" : "") +
+    (doc.descripcion ? '<div class="s-detalle-desc">' + TW.textoRico(doc.descripcion) + "</div>" : "") +
     '<p class="s-precio s-precio-grande">' + (gratis ? "Gratis" : TW.precio(doc.precio, doc.moneda)) + "</p>" +
     (acceso && !gratis ? '<p><span class="s-badge">Ya es tuyo</span></p>' : "") +
     '<div class="s-detalle-acciones">' + accionesHtml + "</div>" +

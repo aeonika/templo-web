@@ -112,7 +112,7 @@
       "<h1>" + TW.esc(a.titulo) + "</h1>" +
       '<p class="fecha">' + new Date(a.creado).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" }) + "</p>" +
       (a.imagen_url ? '<img class="s-foto" src="' + TW.esc(a.imagen_url) + '" alt="">' : "") +
-      TW.md(a.cuerpo) + "</div></section>";
+      TW.textoRico(a.cuerpo) + "</div></section>";
     return;
   }
 
@@ -213,13 +213,13 @@
         "<p>" + TW.esc(sitio.descripcion) + "</p>" +
         botonesContacto +
         "</div></div></section>" +
-        (sitio.quienes_somos ? '<div class="contenedor s-quienes"><div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div></div>" : "");
+        (sitio.quienes_somos ? '<div class="contenedor s-quienes"><div class="s-cuerpo-articulo">' + TW.textoRico(sitio.quienes_somos) + "</div></div>" : "");
     } else {
       html += '<section class="s-hero" id="quienes"><div class="contenedor s-hero-in"><div>' +
         avatarHtml +
         "<h1>" + TW.esc(sitio.nombre) + "</h1>" +
         "<p>" + TW.esc(sitio.descripcion) + "</p>" +
-        (sitio.quienes_somos ? '<div class="s-cuerpo-articulo">' + TW.md(sitio.quienes_somos) + "</div>" : "") +
+        (sitio.quienes_somos ? '<div class="s-cuerpo-articulo">' + TW.textoRico(sitio.quienes_somos) + "</div>" : "") +
         botonesContacto +
         "</div></div></section>";
     }
