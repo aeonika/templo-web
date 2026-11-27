@@ -385,5 +385,5 @@ body.con-drawer { overflow: hidden; }
 .p-auth-sitio { display: flex; gap: var(--space-md); align-items: center; }
 .p-auth-sitio[hidden] { display: none; }
 .p-auth-sitio img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; flex: none; }
-.p-auth-sitio h2 { margin: 0 0 4px; }
+.p-auth-sitio h2 { margin: 0 0 var(--space-2xs); }
 .p-auth-sitio .p-nota { margin: 0; }
