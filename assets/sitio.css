@@ -1369,7 +1369,7 @@ html[data-maqueta="abismo"] .s-nav { background: linear-gradient(180deg, color-m
 html[data-maqueta="abismo"] .s-burger { display: inline-flex !important; border-radius: 0; border-color: color-mix(in srgb, var(--acento) 55%, transparent); position: relative; z-index: 80; }
 html[data-maqueta="abismo"] .s-nav .s-links { display: none !important; }
 html[data-maqueta="abismo"] .s-nav.abierta .s-marca { position: relative; z-index: 80; }
-html[data-maqueta="abismo"] .s-nav.abierta .s-links { display: flex !important; position: fixed !important; inset: 0; z-index: 70; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 90px 24px 40px; background: color-mix(in srgb, var(--fondo) 97%, transparent); backdrop-filter: blur(10px); overflow-y: auto; }
+html[data-maqueta="abismo"] .s-nav.abierta .s-links { display: flex !important; position: fixed !important; inset: 0; left: 0 !important; right: 0 !important; width: auto !important; max-width: none !important; transform: none !important; z-index: 70; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 90px 24px 40px; background: color-mix(in srgb, var(--fondo) 97%, transparent); backdrop-filter: blur(10px); overflow-y: auto; }
 html[data-maqueta="abismo"] .s-nav.abierta .s-links a { font-family: var(--fuente-titulos); font-size: clamp(25px, 4.4vw, 38px); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--texto); padding: 7px 16px; border-radius: 0; white-space: normal; text-align: center; }
 html[data-maqueta="abismo"] .s-nav.abierta .s-links a:hover { color: var(--acento); background: none; }
 html[data-maqueta="abismo"] .s-nav.abierta .s-links a.s-nav-cta { font-family: var(--fuente-cuerpo); font-size: 14px; margin: 20px 0 0; padding: 13px 30px; background: var(--acento); color: var(--acento-texto); }
@@ -1383,12 +1383,43 @@ html[data-maqueta="abismo"] .s-hero:not(.s-hero--portada) { min-height: 88svh; d
 html[data-maqueta="abismo"] .s-seccion h2 { font-size: clamp(34px, 5vw, 52px); }
 html[data-maqueta="abismo"] .s-seccion:nth-of-type(even) { background: var(--fondo-2); }
 html[data-maqueta="abismo"] section#documentos > .contenedor > h2 { font-size: 23px; letter-spacing: .08em; }
-html[data-maqueta="abismo"] #productos .s-grid, html[data-maqueta="abismo"] #destacados .s-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-html[data-maqueta="abismo"] #productos .s-tarjeta, html[data-maqueta="abismo"] #destacados .s-tarjeta { flex-direction: row; align-items: stretch; }
-html[data-maqueta="abismo"] #productos .s-tarjeta > img, html[data-maqueta="abismo"] #destacados .s-tarjeta > img { flex: 0 0 40%; width: 40%; max-width: 360px; height: auto; aspect-ratio: auto; object-fit: cover; }
-html[data-maqueta="abismo"] #productos .s-tarjeta-cuerpo, html[data-maqueta="abismo"] #destacados .s-tarjeta-cuerpo { flex: 1; display: flex; flex-direction: column; }
-html[data-maqueta="abismo"] #productos .s-precio, html[data-maqueta="abismo"] #destacados .s-precio { margin-top: auto; }
-@media (max-width: 700px) {
-  html[data-maqueta="abismo"] #productos .s-tarjeta, html[data-maqueta="abismo"] #destacados .s-tarjeta { flex-direction: column; }
-  html[data-maqueta="abismo"] #productos .s-tarjeta > img, html[data-maqueta="abismo"] #destacados .s-tarjeta > img { flex: none; width: 100%; max-width: none; aspect-ratio: 16 / 10; }
+
+/* ============================================================
+   ABISMO · EL GRIMORIO (modo de lectura, JS en sitio.js)
+   El sitio no se desplaza: se hojea. Cada sección es una
+   página a pantalla completa dentro del escenario; a la
+   izquierda corre el riel de capítulos (número + nombre) y
+   abajo los controles para pasar de página. Cada página
+   lleva su número como fantasma delineado en la esquina.
+   ============================================================ */
+html.abismo-libro body { overflow: hidden; }
+.libro-escenario { position: fixed; inset: 0; z-index: 1; background: var(--fondo); }
+.libro-escenario > section, .libro-escenario > footer { position: absolute; inset: 0; overflow-y: auto; display: none; padding: 104px 30px 118px 118px; scrollbar-width: thin; }
+.libro-escenario > section.activa, .libro-escenario > footer.activa { display: block; animation: libro-pasar .45s ease both; }
+.libro-escenario > footer.activa { display: flex; flex-direction: column; justify-content: center; }
+.libro-escenario > section.s-hero { padding: 0; }
+.libro-escenario > section.s-seccion { padding-top: 104px; }
+.libro-escenario > section::before { content: attr(data-num); position: absolute; top: 64px; right: 30px; font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(90px, 14vw, 170px); line-height: 1; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--acento) 32%, transparent); pointer-events: none; }
+.libro-riel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 35; display: flex; flex-direction: column; gap: 1px; padding: 10px 0 10px 20px; }
+.libro-cap { display: flex; align-items: baseline; gap: 9px; background: none; border: none; border-left: 2px solid color-mix(in srgb, var(--texto) 18%, transparent); padding: 6px 10px 6px 12px; cursor: pointer; text-align: left; color: var(--muted); transition: color .18s ease, border-color .18s ease; }
+.libro-cap-num { font-family: var(--fuente-titulos); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+.libro-cap-txt { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .18em; white-space: nowrap; }
+.libro-cap:hover { color: var(--texto); }
+.libro-cap.activo { color: var(--acento); border-left-color: var(--acento); }
+.libro-controles { position: fixed; left: 50%; transform: translateX(-50%); bottom: 26px; z-index: 35; display: flex; align-items: center; gap: 18px; background: color-mix(in srgb, var(--fondo) 88%, transparent); border: 1px solid color-mix(in srgb, var(--acento) 40%, transparent); padding: 8px 10px; backdrop-filter: blur(8px); }
+.libro-nav { background: none; border: 1px solid var(--borde); color: var(--texto); font: 600 12px var(--fuente-cuerpo); text-transform: uppercase; letter-spacing: .14em; padding: 9px 16px; cursor: pointer; border-radius: 0; }
+.libro-nav:hover:not(:disabled) { border-color: var(--acento); color: var(--acento); }
+.libro-nav:disabled { opacity: .35; cursor: default; }
+.libro-contador { font-family: var(--fuente-titulos); font-size: 15px; font-weight: 700; letter-spacing: .1em; color: var(--muted); min-width: 52px; text-align: center; }
+@keyframes libro-pasar { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .libro-escenario > section.activa, .libro-escenario > footer.activa { animation: none; } }
+@media (max-width: 760px) {
+  .libro-escenario > section, .libro-escenario > footer { padding: 92px 18px 150px; }
+  .libro-escenario > section.s-hero { padding: 0; }
+  .libro-riel { top: auto; bottom: 86px; left: 0; right: 0; transform: none; flex-direction: row; overflow-x: auto; padding: 6px 12px; scrollbar-width: none; background: color-mix(in srgb, var(--fondo) 92%, transparent); }
+  .libro-riel::-webkit-scrollbar { display: none; }
+  .libro-cap { border-left: none; border-bottom: 2px solid color-mix(in srgb, var(--texto) 18%, transparent); padding: 6px 8px; }
+  .libro-cap.activo { border-bottom-color: var(--acento); }
+  .libro-controles { bottom: 24px; }
 }
+.libro-escenario > section.s-hero.activa { display: flex; }
