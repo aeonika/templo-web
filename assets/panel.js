@@ -550,7 +550,21 @@
     }
   }
 
+  // Guardar desde la barra superior: visible solo en «Mi sitio» y
+  // envia el mismo formulario que el boton del final de la pagina.
+  var btnGuardarNav = document.getElementById("p-guardar-sitio");
+  if (btnGuardarNav) btnGuardarNav.addEventListener("click", function () {
+    var fSitio = document.querySelector("#f-sitio");
+    if (fSitio) fSitio.requestSubmit();
+  });
+  function avisarGuardadoNav(ok) {
+    if (!btnGuardarNav) return;
+    btnGuardarNav.textContent = ok ? "¡Guardado!" : "Error — revisá el formulario";
+    setTimeout(function () { btnGuardarNav.textContent = "Guardar cambios"; }, 3000);
+  }
+
   function pintarTab(tab) {
+    if (btnGuardarNav) btnGuardarNav.hidden = tab !== "sitio";
     var cont = $("#p-contenido");
     cont.innerHTML = "";
     cont.classList.remove("entra");
@@ -2183,9 +2197,10 @@
         }),
         modulos: nuevosMods, publicado: !!f.get("publicado")
       }).eq("id", sitio.id).select().maybeSingle();
-      if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; return; }
+      if (r.error) { $("#e-sitio").textContent = "No se pudo guardar: " + r.error.message; avisarGuardadoNav(false); $("#e-sitio").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
       sitio = r.data;
       $("#ok-sitio").textContent = "Guardado. La vista previa ya muestra los cambios.";
+      avisarGuardadoNav(true);
       recargarPrevia();
     });
   }
