@@ -950,3 +950,13 @@ html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(6) { transition-de
   html[data-maqueta="corporativa"] .s-nav.abierta .s-links > * { animation: none; }
   html[data-maqueta="corporativa"] .s-feed-item, html[data-maqueta="corporativa"] .s-articulo { transition: none; }
 }
+
+/* La clase .revelar pisa el transform al hacerse visible: se reafirman los
+   gestos propios de Corporativa con más especificidad. */
+html[data-maqueta="corporativa"] .s-feed-item.revelar.visible:nth-child(odd) { transform: rotate(-1.2deg); }
+html[data-maqueta="corporativa"] .s-feed-item.revelar.visible:nth-child(even) { transform: rotate(1.2deg); }
+html[data-maqueta="corporativa"] .s-feed-item.revelar.visible:hover { transform: rotate(0deg) translateY(-4px); }
+html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: rotate(-0.6deg) translateY(-3px); }
+@media (min-width: 721px) {
+  html[data-maqueta="corporativa"] .s-rasgo.revelar.visible:nth-child(even) { transform: translateY(10px); }
+}
