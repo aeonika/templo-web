@@ -31,7 +31,8 @@
   var MAQUETA_PREMIUM = ["dorado", "medianoche", "violeta", "esmeralda", "terracota"];
   var esPremium = sitio.maqueta ? sitio.maqueta === "premium" : MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
   var esAurora = sitio.maqueta === "aurora";
-  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : (sitio.tema || "crepusculo");
+  var esCorporativa = sitio.maqueta === "corporativa";
+  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : esCorporativa ? "corporativa" : (sitio.tema || "crepusculo");
   try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();
@@ -466,7 +467,7 @@
     var reloj = setInterval(tick, 1000);
     tick();
   }
-  if ((esPremium || esAurora || (sitio.tema || "") === "marfil") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if ((esPremium || esAurora || esCorporativa || (sitio.tema || "") === "marfil") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
     var io = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });

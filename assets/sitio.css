@@ -88,6 +88,30 @@
   --t-terracota-borde: #e2d7c3;
   --t-terracota-acento: #8a3324;
   --t-terracota-acento-texto: #fdf6ec;
+  --t-indigo-fondo: #f6f7f9;
+  --t-indigo-fondo-2: #eceef2;
+  --t-indigo-tarjeta: #ffffff;
+  --t-indigo-texto: #1f2530;
+  --t-indigo-muted: #5d6575;
+  --t-indigo-borde: #d9dde5;
+  --t-indigo-acento: #2e6be6;
+  --t-indigo-acento-texto: #ffffff;
+  --t-marino-fondo: #f4f6f9;
+  --t-marino-fondo-2: #e7ecf2;
+  --t-marino-tarjeta: #ffffff;
+  --t-marino-texto: #12233a;
+  --t-marino-muted: #54677e;
+  --t-marino-borde: #d3dce6;
+  --t-marino-acento: #0f4c8c;
+  --t-marino-acento-texto: #ffffff;
+  --t-grafito-fondo: #f6f6f7;
+  --t-grafito-fondo-2: #ececed;
+  --t-grafito-tarjeta: #ffffff;
+  --t-grafito-texto: #17181c;
+  --t-grafito-muted: #5f626b;
+  --t-grafito-borde: #dedee1;
+  --t-grafito-acento: #17181c;
+  --t-grafito-acento-texto: #ffffff;
 }
 html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: var(--t-crepusculo-fondo-2); --tarjeta: var(--t-crepusculo-tarjeta); --texto: var(--t-crepusculo-texto); --muted: var(--t-crepusculo-muted); --borde: var(--t-crepusculo-borde); --acento: var(--t-crepusculo-acento); --acento-texto: var(--t-crepusculo-acento-texto); }
 html[data-tema="pergamino"] { --fondo: var(--t-pergamino-fondo); --fondo-2: var(--t-pergamino-fondo-2); --tarjeta: var(--t-pergamino-tarjeta); --texto: var(--t-pergamino-texto); --muted: var(--t-pergamino-muted); --borde: var(--t-pergamino-borde); --acento: var(--t-pergamino-acento); --acento-texto: var(--t-pergamino-acento-texto); }
@@ -99,6 +123,9 @@ html[data-tema="medianoche"] { --fondo: var(--t-medianoche-fondo); --fondo-2: va
 html[data-tema="violeta"] { --fondo: var(--t-violeta-fondo); --fondo-2: var(--t-violeta-fondo-2); --tarjeta: var(--t-violeta-tarjeta); --texto: var(--t-violeta-texto); --muted: var(--t-violeta-muted); --borde: var(--t-violeta-borde); --acento: var(--t-violeta-acento); --acento-texto: var(--t-violeta-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="esmeralda"] { --fondo: var(--t-esmeralda-fondo); --fondo-2: var(--t-esmeralda-fondo-2); --tarjeta: var(--t-esmeralda-tarjeta); --texto: var(--t-esmeralda-texto); --muted: var(--t-esmeralda-muted); --borde: var(--t-esmeralda-borde); --acento: var(--t-esmeralda-acento); --acento-texto: var(--t-esmeralda-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
 html[data-tema="terracota"] { --fondo: var(--t-terracota-fondo); --fondo-2: var(--t-terracota-fondo-2); --tarjeta: var(--t-terracota-tarjeta); --texto: var(--t-terracota-texto); --muted: var(--t-terracota-muted); --borde: var(--t-terracota-borde); --acento: var(--t-terracota-acento); --acento-texto: var(--t-terracota-acento-texto); --fuente-titulos: "Cinzel", serif; --radio: 12px; }
+html[data-tema="indigo"] { --fondo: var(--t-indigo-fondo); --fondo-2: var(--t-indigo-fondo-2); --tarjeta: var(--t-indigo-tarjeta); --texto: var(--t-indigo-texto); --muted: var(--t-indigo-muted); --borde: var(--t-indigo-borde); --acento: var(--t-indigo-acento); --acento-texto: var(--t-indigo-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
+html[data-tema="marino"] { --fondo: var(--t-marino-fondo); --fondo-2: var(--t-marino-fondo-2); --tarjeta: var(--t-marino-tarjeta); --texto: var(--t-marino-texto); --muted: var(--t-marino-muted); --borde: var(--t-marino-borde); --acento: var(--t-marino-acento); --acento-texto: var(--t-marino-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
+html[data-tema="grafito"] { --fondo: var(--t-grafito-fondo); --fondo-2: var(--t-grafito-fondo-2); --tarjeta: var(--t-grafito-tarjeta); --texto: var(--t-grafito-texto); --muted: var(--t-grafito-muted); --borde: var(--t-grafito-borde); --acento: var(--t-grafito-acento); --acento-texto: var(--t-grafito-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
 
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
@@ -743,4 +770,41 @@ html[data-maqueta="aurora"] .s-feed-item:hover img { transform: scale(1.02); }
   html[data-maqueta="aurora"] .revelar { opacity: 1; transform: none; transition: none; }
   html[data-maqueta="aurora"] .s-tarjeta img, html[data-maqueta="aurora"] .s-articulo-img, html[data-maqueta="aurora"] .s-articulo::before, html[data-maqueta="aurora"] .s-feed-item img, html[data-maqueta="aurora"] .btn-acento, html[data-maqueta="aurora"] .s-links a:not(.s-nav-cta)::after { transition: none; }
   html[data-maqueta="aurora"] .s-tarjeta:hover img, html[data-maqueta="aurora"] .s-articulo:hover .s-articulo-img, html[data-maqueta="aurora"] .s-feed-item:hover img, html[data-maqueta="aurora"] .btn-acento:hover { transform: none; }
+}
+
+/* ================= MAQUETA CORPORATIVA · claro profesional =================
+   Cuarta plantilla, espejo de la landing de la plataforma: papel claro,
+   tinta azul-grisácea, azul corporativo, cajas blancas con borde fino y
+   sombra suave y difusa, estructura ordenada con filetes. Pensada para
+   empresas, servicios y profesionales: lo contrario de Aurora (acá las
+   cajas SÍ existen y se ven). */
+html[data-maqueta="corporativa"] .s-nav { background: color-mix(in srgb, var(--fondo) 92%, transparent); }
+html[data-maqueta="corporativa"] .s-seccion h2 { text-align: left; letter-spacing: -0.01em; border-bottom: 1px solid var(--borde); padding-bottom: 14px; }
+html[data-maqueta="corporativa"] .s-seccion h2::before, html[data-maqueta="corporativa"] .s-seccion h2::after { content: none; }
+html[data-maqueta="corporativa"] .s-seccion .bajada { text-align: left; margin-inline: 0; }
+html[data-maqueta="corporativa"] .s-hero-texto { text-align: left; }
+html[data-maqueta="corporativa"] .s-hero-texto h1::after { content: none; }
+html[data-maqueta="corporativa"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); text-align: left; }
+html[data-maqueta="corporativa"] .s-tarjeta:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-tarjeta h3::before { content: none; display: none; }
+html[data-maqueta="corporativa"] .s-precio { font-weight: 700; font-size: 18px; color: var(--texto); }
+html[data-maqueta="corporativa"] .btn-acento { border-radius: 999px; box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--acento) 50%, transparent); }
+html[data-maqueta="corporativa"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: stretch; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
+html[data-maqueta="corporativa"] .s-articulo:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-articulo-img { width: 210px; aspect-ratio: 4 / 3; margin: 0; flex: none; border-radius: 8px; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo .fecha { font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+html[data-maqueta="corporativa"] .s-articulo h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; z-index: 2; }
+html[data-maqueta="corporativa"] .s-articulo:nth-child(even) { flex-direction: row-reverse; }
+@media (max-width: 720px) {
+  html[data-maqueta="corporativa"] .s-articulo, html[data-maqueta="corporativa"] .s-articulo:nth-child(even) { flex-direction: column; }
+  html[data-maqueta="corporativa"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; }
+}
+html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; }
+html[data-maqueta="corporativa"] .s-feed-item { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-detalle-img { border-radius: 12px; border: 1px solid var(--borde); }
+html[data-maqueta="corporativa"] .revelar { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+html[data-maqueta="corporativa"] .revelar.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html[data-maqueta="corporativa"] .revelar { opacity: 1; transform: none; transition: none; }
 }
