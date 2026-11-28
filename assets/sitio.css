@@ -1119,9 +1119,9 @@ html[data-maqueta="urbana"] .s-burger { border: 2px solid var(--borde); border-r
 /* Hero: foto a todo ancho, título gigante con sombra dura y
    marquesina inclinada al pie, como cinta de afiche. */
 html[data-maqueta="urbana"] .s-hero--portada { min-height: min(88svh, 780px); overflow: visible; }
-html[data-maqueta="urbana"] .s-hero-texto { text-align: left; max-width: 900px; }
+html[data-maqueta="urbana"] .s-hero-texto { text-align: left; max-width: 900px; padding-bottom: 104px; }
 html[data-maqueta="urbana"] .s-hero h1 { font-size: clamp(52px, 11vw, 124px); line-height: .94; text-transform: uppercase; letter-spacing: .005em; text-shadow: 6px 6px 0 var(--acento); }
-html[data-maqueta="urbana"] .s-hero-texto > p { font-size: clamp(17px, 2.2vw, 21px); font-weight: 500; max-width: 560px; }
+html[data-maqueta="urbana"] .s-hero-texto > p { font-size: clamp(17px, 2.2vw, 21px); font-weight: 500; max-width: 560px; background: color-mix(in srgb, var(--fondo) 78%, transparent); padding: 10px 14px; border-left: 5px solid var(--acento); }
 html[data-maqueta="urbana"] .s-avatar { border: 3px solid var(--borde); border-radius: 2px; box-shadow: 5px 5px 0 var(--acento); }
 html[data-maqueta="urbana"] .s-hero--portada::after { content: "NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ "; position: absolute; top: auto; height: auto; left: -2%; right: -2%; bottom: 26px; z-index: 3; background: var(--acento); color: var(--acento-texto); border-top: 3px solid var(--borde); border-bottom: 3px solid var(--borde); font-family: var(--fuente-titulos); font-size: 17px; letter-spacing: .12em; white-space: nowrap; overflow: hidden; padding: 9px 0; transform: rotate(-1.4deg); }
 html[data-maqueta="urbana"] .s-quienes { padding-top: 64px; }
