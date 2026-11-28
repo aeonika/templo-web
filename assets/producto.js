@@ -35,7 +35,8 @@
     TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="/panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
-    '<div class="contenedor"><p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
+    '<div class="contenedor"><p><strong>' + TW.esc(sitio.nombre) + '</strong></p>' + TW.pieContacto(sitio) +
+    '<p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
 
   var rp = await TW.sb.from("productos").select("*").eq("id", prodId).eq("sitio_id", sitio.id).eq("publicado", true).maybeSingle();
   if (!rp.data) { error("Este producto no existe."); return; }

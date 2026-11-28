@@ -48,6 +48,8 @@ create table if not exists public.sitios (
   rasgos jsonb not null default '[]'::jsonb,
   testimonios jsonb not null default '[]'::jsonb,
   testimonios_titulo text,
+  equipo jsonb not null default '[]'::jsonb,
+  equipo_titulo text,
   quienes_somos text not null default '',
   whatsapp text,
   email text,

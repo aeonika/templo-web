@@ -93,13 +93,9 @@
   window.addEventListener("scroll", function () { nav.classList.toggle("con-sombra", window.scrollY > 8); }, { passive: true });
 
   // ---------- footer
-  var redes = sitio.redes || {};
-  var redesHtml = Object.keys(redes).map(function (k) {
-    return '<a href="' + TW.esc(redes[k]) + '" target="_blank" rel="noopener">' + TW.esc(k) + "</a>";
-  }).join(" · ");
   footer.innerHTML = '<div class="contenedor"><p><strong>' + TW.esc(sitio.nombre) + "</strong></p>" +
     (sitio.footer_texto ? "<p>" + TW.esc(sitio.footer_texto) + "</p>" : "") +
-    (redesHtml ? "<p>" + redesHtml + "</p>" : "") +
+    TW.pieContacto(sitio) +
     '<p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
   if (wa) {
     var flot = document.createElement("a");
@@ -273,6 +269,18 @@
       }).join("") + "</div>" : "") + "</div>");
   }
 
+  // Equipo: fotos del equipo o de como se trabaja; el nombre de la
+  // seccion lo elige el dueno (sitios.equipo_titulo).
+  var equipoSitio = Array.isArray(sitio.equipo) ? sitio.equipo.filter(function (e) { return e && e.imagen_url; }) : [];
+  if (mod.equipo && equipoSitio.length) {
+    BLOQUES.equipo = seccion("equipo", TW.esc(sitio.equipo_titulo || "Equipo"), "",
+      '<div class="s-equipo">' + equipoSitio.map(function (e) {
+        return '<figure class="s-equipo-card"><img src="' + TW.esc(TW.imgUrl(e.imagen_url, 700)) + '" alt="" loading="lazy">' +
+          ((e.titulo || e.texto) ? "<figcaption>" + (e.titulo ? "<h3>" + TW.esc(e.titulo) + "</h3>" : "") +
+          (e.texto ? "<p>" + TW.esc(e.texto) + "</p>" : "") + "</figcaption>" : "") + "</figure>";
+      }).join("") + "</div>");
+  }
+
   // Promociones
   if (mod.promociones && (rPromo.data || []).length) {
     BLOQUES.promociones = seccion("promociones", "Promociones", "", '<div class="s-promos">' +
@@ -363,7 +371,7 @@
   // Las secciones se pegan en el orden que el dueno eligio
   // arrastrando los modulos en su panel (config.orden); las que no
   // figuran van despues, en el orden de siempre.
-  var ORDEN_DEF = ["testimonios", "promociones", "destacados", "productos", "cursos", "articulos", "documentos", "novedades"];
+  var ORDEN_DEF = ["testimonios", "promociones", "destacados", "productos", "cursos", "articulos", "documentos", "equipo", "novedades"];
   var ordenSitio = (sitio.config && Array.isArray(sitio.config.orden)) ? sitio.config.orden : [];
   ordenSitio.filter(function (k) { return ORDEN_DEF.indexOf(k) >= 0; })
     .concat(ORDEN_DEF.filter(function (k) { return ordenSitio.indexOf(k) < 0; }))

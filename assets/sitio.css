@@ -1100,6 +1100,24 @@ html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: 
   .s-nav.abierta .s-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 
+/* Equipo: grilla de fotos con nombre/rol o titulo de la foto.
+   El nombre de la seccion lo elige el dueno desde el panel. */
+.s-equipo { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
+.s-equipo-card { margin: 0; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; }
+.s-equipo-card img { width: 100%; aspect-ratio: 4 / 3.4; object-fit: cover; display: block; }
+.s-equipo-card figcaption { padding: 14px 16px 16px; }
+.s-equipo-card h3 { margin: 0 0 4px; font-size: 17px; }
+.s-equipo-card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Pie: contacto y redes sociales del sitio. */
+.s-pie-contacto { margin: 10px 0 0; }
+.s-pie-contacto a { font-weight: 600; }
+.s-redes { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
+.s-footer .s-redes { align-items: center; }
+.s-red { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1.5px solid var(--borde); border-radius: 50%; color: inherit; transition: transform .15s ease, background .15s ease, color .15s ease; }
+.s-red svg { width: 19px; height: 19px; }
+.s-red:hover { background: var(--acento); color: var(--acento-texto); transform: translateY(-2px); }
+
 /* ============================================================
    MAQUETA URBANA · cartelera callejera
    Lenguaje propio: papel claro, tinta negra, un acento ácido.
@@ -1183,4 +1201,7 @@ html[data-maqueta="urbana"] .s-testi { border: 2.5px solid var(--borde); border-
 /* Pie invertido: tinta negra, como el cierre de un afiche. */
 html[data-maqueta="urbana"] .s-footer { background: var(--texto); color: var(--fondo); border-top: 4px solid var(--acento); }
 html[data-maqueta="urbana"] .s-footer a { color: var(--fondo); }
+html[data-maqueta="urbana"] .s-red { border-radius: 2px; border-color: var(--fondo); }
+html[data-maqueta="urbana"] .s-equipo-card { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 6px 6px 0 var(--borde); }
+html[data-maqueta="urbana"] .s-equipo-card h3 { font-family: var(--fuente-titulos); text-transform: uppercase; }
 

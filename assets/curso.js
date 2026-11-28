@@ -37,7 +37,8 @@
     TW.esc(sitio.nombre) + '</a><nav class="s-links"><span class="s-sesion" id="s-sesion"><a href="/panel.html">Ingresar</a></span></nav></div>';
   TW.pintarSesionSitio(sitio);
   document.getElementById("s-footer").innerHTML =
-    '<div class="contenedor"><p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
+    '<div class="contenedor"><p><strong>' + TW.esc(sitio.nombre) + '</strong></p>' + TW.pieContacto(sitio) +
+    '<p class="credito">Sitio creado con <a href="/index.html">' + TW.esc((TW.marcaNombre && TW.marcaNombre()) || "esta plataforma") + '</a></p></div>';
 
   var rc = await TW.sb.from("cursos").select("*").eq("id", cursoId).eq("sitio_id", sitio.id).eq("publicado", true).maybeSingle();
   if (!rc.data) { error("Este curso no existe."); return; }

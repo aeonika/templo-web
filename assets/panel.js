@@ -1539,7 +1539,8 @@
       ["documentos", "Documentos", "Tu repositorio de archivos gratis y pagos"],
       ["promociones", "Promociones", "Avisos, lanzamientos y ofertas"],
       ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"],
-      ["testimonios", "Testimonios", "Carrusel de fotos verticales que avanza solo: capturas, clientes, envíos"]
+      ["testimonios", "Testimonios", "Carrusel de fotos verticales que avanza solo: capturas, clientes, envíos"],
+      ["equipo", "Equipo", "Fotos de tu equipo o de cómo trabajan, con el nombre de sección que vos elijas"]
     ];
     var disenosDefs = [
       ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
@@ -1650,6 +1651,19 @@
         "<label>Pie de foto <input type='text' class='ts-texto' value='" + esc(texto) + "' placeholder='Marina · “¡Llegó en el día!”'" + (t && t.pie === false ? " disabled" : "") + "></label>" +
         "<p class='p-ayuda ts-estado'></p></div>";
     }
+    var redesSitio = sitio.redes || {};
+    var equipoSitioP = Array.isArray(sitio.equipo) ? sitio.equipo : [];
+    function tarjetaEquipo(e) {
+      var url = e ? (e.imagen_url || "") : "";
+      return "<div class='ts-card eq-card'>" +
+        "<div class='ts-vista'>" + (url ? "<img class='ts-img eq-img' src='" + esc(url) + "' alt=''>" : "<span class='ts-vacio'>Sin foto todavía</span>") +
+        "<button type='button' class='pf-quitar eq-quitar' title='Quitar' aria-label='Quitar'>✕</button></div>" +
+        "<input type='hidden' class='eq-url' value='" + esc(url) + "'>" +
+        "<label class='btn btn-fantasma c-subir'>Subir foto<input type='file' class='eq-file' accept='image/*' hidden></label>" +
+        "<label>Título <input type='text' class='eq-titulo' value='" + esc(e ? (e.titulo || "") : "") + "' placeholder='Marina · Fundadora, o «Así trabajamos»'></label>" +
+        "<label>Texto <input type='text' class='eq-texto' value='" + esc(e ? (e.texto || "") : "") + "' placeholder='Qué hace, o qué muestra la foto (opcional)'></label>" +
+        "<p class='p-ayuda eq-estado'></p></div>";
+    }
     var metodosSitio = TW.metodosDeSitio(configSitio);
     cont.innerHTML =
       "<div class='p-bloque c-resumen'>" +
@@ -1730,7 +1744,12 @@
       "<input type='checkbox' class='mod-switch' name='avatar_visible'" + (configSitio.avatar_visible !== false ? " checked" : "") + "></label></div></div>" +
       "<div class='p-bloque'><h3>Contacto</h3>" +
       "<div class='p-dos'><label>WhatsApp (solo números, con código de país) <input type='text' name='whatsapp' value='" + esc(sitio.whatsapp || "") + "'></label>" +
-      "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div></div>" +
+      "<label>Email de contacto <input type='text' name='email' value='" + esc(sitio.email || "") + "'></label></div>" +
+      "<h3>Redes sociales</h3><p class='p-ayuda'>Pegá la dirección completa de cada red (por ejemplo https://instagram.com/tucuenta). Aparecen con su icono en el pie de tu sitio, junto a tus datos de contacto. Dejá vacío lo que no uses.</p>" +
+      "<div class='p-dos'><label>Instagram <input type='text' name='red_instagram' value='" + esc(redesSitio.instagram || "") + "' placeholder='https://instagram.com/…'></label>" +
+      "<label>Facebook <input type='text' name='red_facebook' value='" + esc(redesSitio.facebook || "") + "' placeholder='https://facebook.com/…'></label></div>" +
+      "<div class='p-dos'><label>TikTok <input type='text' name='red_tiktok' value='" + esc(redesSitio.tiktok || "") + "' placeholder='https://tiktok.com/@…'></label>" +
+      "<label>YouTube <input type='text' name='red_youtube' value='" + esc(redesSitio.youtube || "") + "' placeholder='https://youtube.com/@…'></label></div></div>" +
       "<div class='p-bloque'><h3>Tienda</h3>" +
       "<p class='p-ayuda'>El rubro y el sistema de talles ajustan tu catálogo: en cada producto podés cargar talles con su stock, categorías, precio de oferta y ofertas flash con cuenta regresiva.</p>" +
       "<div class='p-dos'><label>Rubro <select name='rubro'>" +
@@ -1777,6 +1796,10 @@
       "<label>Nombre de la sección <input type='text' name='testimonios_titulo' value='" + esc(sitio.testimonios_titulo || "") + "' placeholder='Testimonios'></label>" +
       "<div id='c-testis' class='ts-grid'>" + (testisSitio.length ? testisSitio.map(tarjetaTesti).join("") : tarjetaTesti(null)) + "</div>" +
       "<button type='button' class='btn btn-fantasma' id='c-testi-agregar'>+ Agregar foto</button></div>" +
+      "<div class='p-bloque'><h3>Equipo</h3><p class='p-ayuda'>Fotos de las personas de tu equipo o de cómo se trabaja en tu negocio, cada una con su título y un texto corto. Hasta 8 fotos. Activalo en «Módulos» y elegí el nombre de la sección: puede ser «Equipo», «Nosotros», «Así trabajamos» o lo que quieras.</p>" +
+      "<label>Nombre de la sección <input type='text' name='equipo_titulo' value='" + esc(sitio.equipo_titulo || "") + "' placeholder='Equipo'></label>" +
+      "<div id='c-equipo' class='ts-grid'>" + (equipoSitioP.length ? equipoSitioP.map(tarjetaEquipo).join("") : tarjetaEquipo(null)) + "</div>" +
+      "<button type='button' class='btn btn-fantasma' id='c-equipo-agregar'>+ Agregar foto</button></div>" +
       "<div class='p-bloque'><label class='mod-fila'><span class='mod-info'><span class='mod-nombre'>Sitio publicado</span><span class='mod-desc'>Visible para tus visitantes; si lo apagás, solo vos lo ves al editar</span></span>" +
       "<input type='checkbox' class='mod-switch' name='publicado'" + (sitio.publicado ? " checked" : "") + "></label>" +
       "<button class='btn btn-primario btn-bloque' type='submit'>Guardar cambios</button>" +
@@ -1977,6 +2000,42 @@
         }).catch(function (e2) { estado.textContent = "No se pudo subir: " + e2.message; });
       });
     }
+    var contEquipo = $("#c-equipo"), btnEquipo = $("#c-equipo-agregar");
+    if (btnEquipo && contEquipo) btnEquipo.addEventListener("click", function () {
+      if (contEquipo.querySelectorAll(".eq-card").length >= 8) return;
+      var tmp = document.createElement("div");
+      tmp.innerHTML = tarjetaEquipo(null);
+      contEquipo.appendChild(tmp.firstChild);
+    });
+    if (contEquipo) {
+      contEquipo.addEventListener("click", function (ev) {
+        var quitar = ev.target.closest(".eq-quitar");
+        if (quitar) quitar.closest(".eq-card").remove();
+      });
+      contEquipo.addEventListener("change", function (ev) {
+        if (!ev.target.classList.contains("eq-file")) return;
+        var arch = ev.target.files[0];
+        if (!arch) return;
+        var card = ev.target.closest(".eq-card");
+        var estado = card.querySelector(".eq-estado");
+        estado.textContent = "Subiendo la foto…";
+        subirCloudinary(arch, false, { max: 1200 }).then(function (datos) {
+          card.querySelector(".eq-url").value = datos.secure_url;
+          var vista = card.querySelector(".ts-vista");
+          var img = vista.querySelector(".eq-img");
+          if (!img) {
+            img = document.createElement("img");
+            img.className = "ts-img eq-img";
+            img.alt = "";
+            vista.insertBefore(img, vista.firstChild);
+            var vacio = vista.querySelector(".ts-vacio");
+            if (vacio) vacio.remove();
+          }
+          img.src = datos.secure_url;
+          estado.textContent = "Foto subida. Tocá «Guardar cambios» para aplicarla.";
+        }).catch(function (e2) { estado.textContent = "No se pudo subir: " + e2.message; });
+      });
+    }
     // Orden de modulos arrastrando desde el agarre (solo filas con
     // data-orden; «Quién soy» queda fija como primera seccion).
     var contMods = $("#c-modulos");
@@ -2023,9 +2082,23 @@
         rasgosNuevos.push(item);
       });
       var testisNuevos = [];
-      document.querySelectorAll(".ts-card").forEach(function (card) {
+      document.querySelectorAll("#c-testis .ts-card").forEach(function (card) {
         var url = card.querySelector(".ts-url").value.trim();
         if (url) testisNuevos.push({ imagen_url: url, texto: card.querySelector(".ts-texto").value.trim(), pie: card.querySelector(".ts-pie-check").checked });
+      });
+      var equipoNuevo = [];
+      document.querySelectorAll("#c-equipo .eq-card").forEach(function (card) {
+        var url = card.querySelector(".eq-url").value.trim();
+        if (!url) return;
+        var item = { imagen_url: url, titulo: card.querySelector(".eq-titulo").value.trim() };
+        var tx = card.querySelector(".eq-texto").value.trim();
+        if (tx) item.texto = tx;
+        equipoNuevo.push(item);
+      });
+      var redesNuevas = {};
+      ["instagram", "facebook", "tiktok", "youtube"].forEach(function (k) {
+        var v = (f.get("red_" + k) || "").trim();
+        if (v) redesNuevas[k] = v;
       });
       var r = await TW.sb.from("sitios").update({
         nombre: f.get("nombre"), descripcion: f.get("descripcion") || "",
@@ -2037,6 +2110,9 @@
         rasgos: rasgosNuevos,
         testimonios: testisNuevos,
         testimonios_titulo: (f.get("testimonios_titulo") || "").trim() || null,
+        equipo: equipoNuevo,
+        equipo_titulo: (f.get("equipo_titulo") || "").trim() || null,
+        redes: redesNuevas,
         rubro: f.get("rubro") || "general",
         config: Object.assign({}, sitio.config || {}, {
           orden: Array.prototype.map.call(document.querySelectorAll("#c-modulos [data-orden]"), function (f2) { return f2.dataset.orden; }),

@@ -111,6 +111,29 @@
     marcaNombre: function () {
       try { var c = JSON.parse(localStorage.getItem("tw_marca") || "{}"); return (c.nombre || "").trim(); } catch (e) { return ""; }
     },
+    // Contacto y redes del sitio para el pie de pagina (indice y
+    // paginas de detalle): enlaces de WhatsApp y email mas los iconos
+    // de las redes cargadas en sitios.redes. Devuelve "" si no hay nada.
+    pieContacto: function (sitio) {
+      if (!sitio) return "";
+      var REDES = {
+        instagram: { nombre: "Instagram", svg: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor"/>' },
+        facebook: { nombre: "Facebook", svg: '<path d="M15.5 3.5H14a4 4 0 0 0-4 4V10H7.5v3.5H10v7h3.5v-7h2.6l.6-3.5h-3.2V7.8c0-.7.5-1.3 1.3-1.3h1.7z"/>' },
+        tiktok: { nombre: "TikTok", svg: '<path d="M14.5 3.5v10.8a3.9 3.9 0 1 1-3.15-3.85"/><path d="M14.5 3.5c.35 2.3 1.85 3.9 4.2 4.2"/>' },
+        youtube: { nombre: "YouTube", svg: '<rect x="2.8" y="6" width="18.4" height="12.5" rx="3.5"/><path d="M10.2 9.6l4.8 2.65-4.8 2.65z" fill="currentColor" stroke="none"/>' }
+      };
+      var partes = [];
+      var contacto = [];
+      if (sitio.whatsapp) contacto.push('<a href="https://wa.me/' + String(sitio.whatsapp).replace(/\D/g, "") + '" target="_blank" rel="noopener">WhatsApp</a>');
+      if (sitio.email) contacto.push('<a href="mailto:' + TW.esc(sitio.email) + '">' + TW.esc(sitio.email) + "</a>");
+      if (contacto.length) partes.push('<p class="s-pie-contacto">' + contacto.join(" · ") + "</p>");
+      var redes = sitio.redes || {};
+      var iconos = Object.keys(REDES).filter(function (k) { return redes[k]; }).map(function (k) {
+        return '<a class="s-red" href="' + TW.esc(redes[k]) + '" target="_blank" rel="noopener" aria-label="' + REDES[k].nombre + '" title="' + REDES[k].nombre + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + REDES[k].svg + "</svg></a>";
+      }).join("");
+      if (iconos) partes.push('<div class="s-redes">' + iconos + "</div>");
+      return partes.join("");
+    },
     pintarMarca: function (nombre, logo, anterior) {
       if (nombre) {
         document.querySelectorAll(".marca-nombre").forEach(function (el) { el.textContent = nombre; });
