@@ -1607,7 +1607,8 @@
       ["premium", "Gala", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."],
       ["aurora", "Aurora", "#0d0a14", "#a78bfa", "Sin cajas: las fotos flotan sobre el fondo, el precio va en pastilla sobre la foto y los títulos son modernos. El diseño nuevo."],
       ["corporativa", "Corporativa", "#f6f7f9", "#2e6be6", "Claro y profesional, como la página de una empresa: cajas blancas con borde, azul corporativo y todo ordenado."],
-      ["urbana", "Urbana", "#f4f2ec", "#c8f31d", "Cartelera callejera: bordes gruesos, sombras duras, tipografía gigante en mayúsculas y un acento ácido. Ideal para indumentaria urbana y marcas jóvenes."]
+      ["urbana", "Urbana", "#f4f2ec", "#c8f31d", "Cartelera callejera: bordes gruesos, sombras duras, tipografía gigante en mayúsculas y un acento ácido. Ideal para indumentaria urbana y marcas jóvenes."],
+      ["abismo", "Abismo", "#0b0908", "#b3122e", "Cámara ritual: negro profundo, esquinas afiladas, serif de ceremonia y el emblema sobre el nombre. Pensado para magia negra, sendero izquierdo y trabajos oscuros."]
     ];
     var paletasDefs = {
       clasica: [
@@ -1640,9 +1641,14 @@
         ["acido", "Ácido", "#f4f2ec", "#c8f31d"],
         ["naranja", "Naranja señal", "#f7f2ea", "#ff5a1f"],
         ["uva", "Uva eléctrico", "#f2f0fb", "#7b61ff"]
+      ],
+      abismo: [
+        ["sangre", "Sangre y hueso", "#0b0908", "#b3122e"],
+        ["azufre", "Azufre", "#0a0c09", "#c9a227"],
+        ["qlifot", "Violeta qlifótico", "#0d0a12", "#8b5cf6"]
       ]
     };
-    var maquetaSitio = ["premium", "aurora", "corporativa", "urbana"].indexOf(sitio.maqueta) !== -1 ? sitio.maqueta : "clasica";
+    var maquetaSitio = ["premium", "aurora", "corporativa", "urbana", "abismo"].indexOf(sitio.maqueta) !== -1 ? sitio.maqueta : "clasica";
     var urlSitio = "sitio/" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
     var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"], ["camion", "Envíos"], ["paquete", "Paquete"], ["remera", "Ropa"], ["comida", "Comida"], ["tarjeta", "Tarjeta / pagos"], ["billete", "Efectivo"], ["reloj", "Horario"], ["pin", "Ubicación"], ["escudo", "Garantía"], ["etiqueta", "Ofertas"], ["regalo", "Regalo"], ["calendario", "Reservas / turnos"], ["check", "Check"], ["corazon", "Corazón"], ["casa", "Local"]];
@@ -1766,7 +1772,7 @@
           "<span class='tema-prev' style='--tp-fondo:" + dd[2] + ";--tp-acento:" + dd[3] + "'><span class='tema-barra'></span><span class='tema-linea'></span><span class='tema-linea corta'></span></span>" +
           "<span class='tema-nombre'>Diseño " + dd[1] + "</span><span class='tema-desc'>" + dd[4] + "</span></label>";
       }).join("") + "</div>" +
-      ["clasica", "premium", "aurora", "corporativa", "urbana"].map(function (mq) {
+      ["clasica", "premium", "aurora", "corporativa", "urbana", "abismo"].map(function (mq) {
         return "<div class='paletas' id='paletas-" + mq + "'" + (maquetaSitio === mq ? "" : " hidden") + ">" +
           paletasDefs[mq].map(function (pd) {
             return "<label class='paleta'><input type='radio' name='tema' value='" + pd[0] + "'" + (sitio.tema === pd[0] ? " checked" : "") + ">" +
@@ -1929,7 +1935,7 @@
     cont.querySelectorAll("[name=maqueta]").forEach(function (r) {
       r.addEventListener("change", function () {
         var mq = r.value;
-        ["clasica", "premium", "aurora", "corporativa", "urbana"].forEach(function (x) {
+        ["clasica", "premium", "aurora", "corporativa", "urbana", "abismo"].forEach(function (x) {
           var caja = $("#paletas-" + x);
           if (caja) caja.hidden = x !== mq;
         });

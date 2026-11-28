@@ -136,6 +136,30 @@
   --t-uva-borde: #171221;
   --t-uva-acento: #7b61ff;
   --t-uva-acento-texto: #ffffff;
+  --t-sangre-fondo: #0b0908;
+  --t-sangre-fondo-2: #130d0b;
+  --t-sangre-tarjeta: #171110;
+  --t-sangre-texto: #eadfce;
+  --t-sangre-muted: #a08d76;
+  --t-sangre-borde: #2e211b;
+  --t-sangre-acento: #b3122e;
+  --t-sangre-acento-texto: #ffffff;
+  --t-azufre-fondo: #0a0c09;
+  --t-azufre-fondo-2: #101208;
+  --t-azufre-tarjeta: #14160f;
+  --t-azufre-texto: #e9e4cf;
+  --t-azufre-muted: #9d9a80;
+  --t-azufre-borde: #292b1e;
+  --t-azufre-acento: #c9a227;
+  --t-azufre-acento-texto: #161200;
+  --t-qlifot-fondo: #0d0a12;
+  --t-qlifot-fondo-2: #130e1c;
+  --t-qlifot-tarjeta: #171221;
+  --t-qlifot-texto: #e6def2;
+  --t-qlifot-muted: #9d90b5;
+  --t-qlifot-borde: #2a2140;
+  --t-qlifot-acento: #8b5cf6;
+  --t-qlifot-acento-texto: #ffffff;
 }
 html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: var(--t-crepusculo-fondo-2); --tarjeta: var(--t-crepusculo-tarjeta); --texto: var(--t-crepusculo-texto); --muted: var(--t-crepusculo-muted); --borde: var(--t-crepusculo-borde); --acento: var(--t-crepusculo-acento); --acento-texto: var(--t-crepusculo-acento-texto); }
 html[data-tema="pergamino"] { --fondo: var(--t-pergamino-fondo); --fondo-2: var(--t-pergamino-fondo-2); --tarjeta: var(--t-pergamino-tarjeta); --texto: var(--t-pergamino-texto); --muted: var(--t-pergamino-muted); --borde: var(--t-pergamino-borde); --acento: var(--t-pergamino-acento); --acento-texto: var(--t-pergamino-acento-texto); }
@@ -153,6 +177,9 @@ html[data-tema="grafito"] { --fondo: var(--t-grafito-fondo); --fondo-2: var(--t-
 html[data-tema="acido"] { --fondo: var(--t-acido-fondo); --fondo-2: var(--t-acido-fondo-2); --tarjeta: var(--t-acido-tarjeta); --texto: var(--t-acido-texto); --muted: var(--t-acido-muted); --borde: var(--t-acido-borde); --acento: var(--t-acido-acento); --acento-texto: var(--t-acido-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
 html[data-tema="naranja"] { --fondo: var(--t-naranja-fondo); --fondo-2: var(--t-naranja-fondo-2); --tarjeta: var(--t-naranja-tarjeta); --texto: var(--t-naranja-texto); --muted: var(--t-naranja-muted); --borde: var(--t-naranja-borde); --acento: var(--t-naranja-acento); --acento-texto: var(--t-naranja-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
 html[data-tema="uva"] { --fondo: var(--t-uva-fondo); --fondo-2: var(--t-uva-fondo-2); --tarjeta: var(--t-uva-tarjeta); --texto: var(--t-uva-texto); --muted: var(--t-uva-muted); --borde: var(--t-uva-borde); --acento: var(--t-uva-acento); --acento-texto: var(--t-uva-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
+html[data-tema="sangre"] { --fondo: var(--t-sangre-fondo); --fondo-2: var(--t-sangre-fondo-2); --tarjeta: var(--t-sangre-tarjeta); --texto: var(--t-sangre-texto); --muted: var(--t-sangre-muted); --borde: var(--t-sangre-borde); --acento: var(--t-sangre-acento); --acento-texto: var(--t-sangre-acento-texto); --fuente-titulos: "Cormorant Garamond", Georgia, serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 0px; }
+html[data-tema="azufre"] { --fondo: var(--t-azufre-fondo); --fondo-2: var(--t-azufre-fondo-2); --tarjeta: var(--t-azufre-tarjeta); --texto: var(--t-azufre-texto); --muted: var(--t-azufre-muted); --borde: var(--t-azufre-borde); --acento: var(--t-azufre-acento); --acento-texto: var(--t-azufre-acento-texto); --fuente-titulos: "Cormorant Garamond", Georgia, serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 0px; }
+html[data-tema="qlifot"] { --fondo: var(--t-qlifot-fondo); --fondo-2: var(--t-qlifot-fondo-2); --tarjeta: var(--t-qlifot-tarjeta); --texto: var(--t-qlifot-texto); --muted: var(--t-qlifot-muted); --borde: var(--t-qlifot-borde); --acento: var(--t-qlifot-acento); --acento-texto: var(--t-qlifot-acento-texto); --fuente-titulos: "Cormorant Garamond", Georgia, serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 0px; }
 
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
@@ -1283,3 +1310,47 @@ html[data-maqueta="urbana"] .s-form-btn { border: 2.5px solid var(--borde); bord
 html[data-maqueta="urbana"] .s-equipo-card img { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 8px 8px 0 var(--borde); }
 html[data-maqueta="urbana"] .s-equipo-card h3 { font-family: var(--fuente-titulos); text-transform: uppercase; }
 
+
+/* ============================================================
+   MAQUETA ABISMO · cámara ritual
+   Negro profundo en sus tres paletas, esquinas afiladas, serif
+   de ceremonia (Cormorant Garamond), emblema pentagrama sobre
+   el nombre del hero y sobre cada título, fotos veladas en
+   gris que se revelan al pasar el cursor. Para magia negra,
+   sendero izquierdo y trabajos oscuros.
+   ============================================================ */
+html[data-maqueta="abismo"] .s-nav { background: color-mix(in srgb, var(--fondo) 90%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--acento) 45%, transparent); }
+html[data-maqueta="abismo"] .s-marca { font-family: var(--fuente-titulos); text-transform: uppercase; letter-spacing: .22em; font-size: 19px; font-weight: 600; }
+html[data-maqueta="abismo"] .s-links a { text-transform: uppercase; font-size: 12.5px; letter-spacing: .14em; }
+html[data-maqueta="abismo"] .btn { border-radius: 0; text-transform: uppercase; letter-spacing: .13em; font-size: 13px; font-weight: 600; }
+html[data-maqueta="abismo"] .s-hero { text-align: center; padding: 96px 0 84px; background: radial-gradient(680px 340px at 50% -8%, color-mix(in srgb, var(--acento) 16%, transparent), transparent 65%), var(--fondo-2); }
+html[data-maqueta="abismo"] .s-hero-texto { text-align: center; margin-inline: auto; }
+html[data-maqueta="abismo"] .s-hero-texto::before { content: ""; display: block; width: 92px; height: 92px; margin: 0 auto 26px; background: var(--acento); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23000' stroke-width='3.5'/%3E%3Cpath d='M50 13 L71.9 80.2 L14.8 38.8 L85.2 38.8 L28.1 80.2 Z' fill='none' stroke='%23000' stroke-width='3.5' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23000' stroke-width='3.5'/%3E%3Cpath d='M50 13 L71.9 80.2 L14.8 38.8 L85.2 38.8 L28.1 80.2 Z' fill='none' stroke='%23000' stroke-width='3.5' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+html[data-maqueta="abismo"] .s-hero h1 { font-size: clamp(46px, 7.4vw, 84px); line-height: 1.02; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+html[data-maqueta="abismo"] .s-hero-texto > p { font-family: var(--fuente-titulos); font-style: italic; font-size: clamp(19px, 2.4vw, 24px); color: var(--muted); max-width: 620px; margin-inline: auto; }
+html[data-maqueta="abismo"] .s-avatar { border-radius: 0; border: 1px solid var(--acento); }
+html[data-maqueta="abismo"] .s-hero--portada .s-portada-img { filter: grayscale(.35) contrast(1.06) brightness(.82); }
+html[data-maqueta="abismo"] .s-seccion h2 { text-align: center; text-transform: uppercase; letter-spacing: .16em; font-weight: 600; font-size: clamp(27px, 3.6vw, 38px); }
+html[data-maqueta="abismo"] .s-seccion h2::before { content: ""; display: block; width: 30px; height: 30px; margin: 0 auto 14px; background: var(--acento); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23000' stroke-width='5'/%3E%3Cpath d='M50 13 L71.9 80.2 L14.8 38.8 L85.2 38.8 L28.1 80.2 Z' fill='none' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='none' stroke='%23000' stroke-width='5'/%3E%3Cpath d='M50 13 L71.9 80.2 L14.8 38.8 L85.2 38.8 L28.1 80.2 Z' fill='none' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+html[data-maqueta="abismo"] .s-seccion h2::after { width: 120px; height: 1px; margin: 16px auto 0; }
+html[data-maqueta="abismo"] section#documentos > .contenedor > h2::before { margin: 0 0 14px; }
+html[data-maqueta="abismo"] section#documentos > .contenedor > h2::after { margin: 16px 0 0; }
+html[data-maqueta="abismo"] .s-seccion .bajada { text-align: center; font-family: var(--fuente-titulos); font-style: italic; font-size: 18px; }
+html[data-maqueta="abismo"] .s-rasgo { background: transparent; border: 1px solid var(--borde); border-radius: 0; box-shadow: none; }
+html[data-maqueta="abismo"] .s-rasgo-ico { background: transparent; color: var(--acento); border: 1px solid color-mix(in srgb, var(--acento) 55%, transparent); border-radius: 0; }
+html[data-maqueta="abismo"] .s-rasgo-titulo { font-family: var(--fuente-titulos); text-transform: uppercase; letter-spacing: .12em; }
+html[data-maqueta="abismo"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 0; box-shadow: none; transition: border-color .2s ease; }
+html[data-maqueta="abismo"] .s-tarjeta:hover { border-color: var(--acento); transform: none; box-shadow: none; }
+html[data-maqueta="abismo"] .s-tarjeta > img { border-radius: 0; filter: grayscale(.5) contrast(1.05); transition: filter .3s ease; }
+html[data-maqueta="abismo"] .s-tarjeta:hover > img { filter: grayscale(0); }
+html[data-maqueta="abismo"] .s-tarjeta-cuerpo h3 { font-family: var(--fuente-titulos); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+html[data-maqueta="abismo"] .s-precio { font-family: var(--fuente-titulos); font-style: italic; font-size: 23px; color: var(--acento); }
+html[data-maqueta="abismo"] .s-filtro { border-radius: 0; text-transform: uppercase; letter-spacing: .1em; font-size: 12.5px; }
+html[data-maqueta="abismo"] .s-equipo-card img { border-radius: 0; border: 1px solid var(--borde); box-shadow: none; filter: grayscale(.35); }
+html[data-maqueta="abismo"] .s-equipo-card h3 { font-family: var(--fuente-titulos); text-transform: uppercase; letter-spacing: .1em; }
+html[data-maqueta="abismo"] .s-dato-ico { border-radius: 0; }
+html[data-maqueta="abismo"] .s-contacto-mapa iframe { filter: grayscale(.6) contrast(1.05); border-radius: 0; }
+html[data-maqueta="abismo"] .s-pie-link { border-radius: 0; }
+html[data-maqueta="abismo"] .s-form input[type="text"], html[data-maqueta="abismo"] .s-form input[type="email"], html[data-maqueta="abismo"] .s-form textarea { border-radius: 0; }
+html[data-maqueta="abismo"] .s-form-btn { border-radius: 0; text-transform: uppercase; letter-spacing: .12em; }
+html[data-maqueta="abismo"] .s-footer { border-top: 1px solid color-mix(in srgb, var(--acento) 40%, transparent); }

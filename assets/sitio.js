@@ -33,7 +33,8 @@
   var esAurora = sitio.maqueta === "aurora";
   var esCorporativa = sitio.maqueta === "corporativa";
   var esUrbana = sitio.maqueta === "urbana";
-  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : esCorporativa ? "corporativa" : esUrbana ? "urbana" : (sitio.tema || "crepusculo");
+  var esAbismo = sitio.maqueta === "abismo";
+  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : esCorporativa ? "corporativa" : esUrbana ? "urbana" : esAbismo ? "abismo" : (sitio.tema || "crepusculo");
   try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();
