@@ -1123,7 +1123,7 @@ html[data-maqueta="urbana"] .s-hero-texto { text-align: left; max-width: 900px; 
 html[data-maqueta="urbana"] .s-hero h1 { font-size: clamp(52px, 11vw, 124px); line-height: .94; text-transform: uppercase; letter-spacing: .005em; text-shadow: 6px 6px 0 var(--acento); }
 html[data-maqueta="urbana"] .s-hero-texto > p { font-size: clamp(17px, 2.2vw, 21px); font-weight: 500; max-width: 560px; }
 html[data-maqueta="urbana"] .s-avatar { border: 3px solid var(--borde); border-radius: 2px; box-shadow: 5px 5px 0 var(--acento); }
-html[data-maqueta="urbana"] .s-hero--portada::after { content: "NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ "; position: absolute; left: -2%; right: -2%; bottom: 26px; z-index: 3; background: var(--acento); color: var(--acento-texto); border-top: 3px solid var(--borde); border-bottom: 3px solid var(--borde); font-family: var(--fuente-titulos); font-size: 17px; letter-spacing: .12em; white-space: nowrap; overflow: hidden; padding: 9px 0; transform: rotate(-1.4deg); }
+html[data-maqueta="urbana"] .s-hero--portada::after { content: "NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ "; position: absolute; top: auto; height: auto; left: -2%; right: -2%; bottom: 26px; z-index: 3; background: var(--acento); color: var(--acento-texto); border-top: 3px solid var(--borde); border-bottom: 3px solid var(--borde); font-family: var(--fuente-titulos); font-size: 17px; letter-spacing: .12em; white-space: nowrap; overflow: hidden; padding: 9px 0; transform: rotate(-1.4deg); }
 html[data-maqueta="urbana"] .s-quienes { padding-top: 64px; }
 
 /* Títulos de sección: a la izquierda, gigantes, con bloque ácido. */
@@ -1150,7 +1150,7 @@ html[data-maqueta="urbana"] .s-tarjeta > img { border-bottom: 2.5px solid var(--
 html[data-maqueta="urbana"] .s-tarjeta-cuerpo { position: relative; }
 html[data-maqueta="urbana"] .s-tipo { display: inline-block; background: var(--texto); color: var(--fondo); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: 3px 8px; }
 html[data-maqueta="urbana"] .s-tarjeta h3 { font-family: var(--fuente-titulos); text-transform: uppercase; font-size: 21px; letter-spacing: .02em; line-height: 1.12; }
-html[data-maqueta="urbana"] .s-precio { display: inline-block; background: var(--acento); color: var(--acento-texto); border: 2px solid var(--borde); font-family: var(--fuente-titulos); font-size: 20px; padding: 3px 12px; transform: rotate(-2deg); }
+html[data-maqueta="urbana"] .s-precio { display: inline-block; align-self: flex-start; background: var(--acento); color: var(--acento-texto); border: 2px solid var(--borde); font-family: var(--fuente-titulos); font-size: 20px; padding: 3px 12px; transform: rotate(-2deg); }
 html[data-maqueta="urbana"] .s-badge-oferta { background: var(--texto); color: var(--fondo); border-radius: 0; }
 html[data-maqueta="urbana"] .btn { border: 2px solid var(--borde); border-radius: 2px; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; font-size: 13.5px; }
 html[data-maqueta="urbana"] .btn-acento { box-shadow: 4px 4px 0 var(--borde); }
