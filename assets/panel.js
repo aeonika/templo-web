@@ -1540,7 +1540,8 @@
       ["promociones", "Promociones", "Avisos, lanzamientos y ofertas"],
       ["feed", "Feed de novedades", "Actualizaciones públicas y privadas por curso"],
       ["testimonios", "Testimonios", "Carrusel de fotos verticales que avanza solo: capturas, clientes, envíos"],
-      ["equipo", "Equipo", "Fotos de tu equipo o de cómo trabajan, con el nombre de sección que vos elijas"]
+      ["equipo", "Equipo", "Fotos de tu equipo o de cómo trabajan, con el nombre de sección que vos elijas"],
+      ["contacto", "Contacto", "Tu dirección, teléfono, horario, mapa de Google y redes en una sección propia, con animación"]
     ];
     var disenosDefs = [
       ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
@@ -1749,7 +1750,12 @@
       "<div class='p-dos'><label>Instagram <input type='text' name='red_instagram' value='" + esc(redesSitio.instagram || "") + "' placeholder='https://instagram.com/…'></label>" +
       "<label>Facebook <input type='text' name='red_facebook' value='" + esc(redesSitio.facebook || "") + "' placeholder='https://facebook.com/…'></label></div>" +
       "<div class='p-dos'><label>TikTok <input type='text' name='red_tiktok' value='" + esc(redesSitio.tiktok || "") + "' placeholder='https://tiktok.com/@…'></label>" +
-      "<label>YouTube <input type='text' name='red_youtube' value='" + esc(redesSitio.youtube || "") + "' placeholder='https://youtube.com/@…'></label></div></div>" +
+      "<label>YouTube <input type='text' name='red_youtube' value='" + esc(redesSitio.youtube || "") + "' placeholder='https://youtube.com/@…'></label></div>" +
+      "<h3>Sección Contacto</h3><p class='p-ayuda'>Estos datos alimentan la sección «Contacto» de tu sitio (prendela en Módulos visibles): dirección, teléfono, horario y el mapa de Google, junto a tu WhatsApp, tu email y tus redes. Para el mapa, pegá el enlace de inserción de Google Maps (en Maps: Compartir → Insertar un mapa) o dejalo vacío y se genera solo desde tu dirección.</p>" +
+      "<div class='p-dos'><label>Dirección del local <input type='text' name='direccion' value='" + esc(sitio.direccion || "") + "' placeholder='Av. Siempreviva 742, Ciudad'></label>" +
+      "<label>Teléfono <input type='text' name='telefono' value='" + esc(sitio.telefono || "") + "' placeholder='011 4444-4444'></label></div>" +
+      "<div class='p-dos'><label>Horario de atención <input type='text' name='horario' value='" + esc(sitio.horario || "") + "' placeholder='Lun a Vie · 9 a 18 h'></label>" +
+      "<label>Mapa de Google (enlace de inserción) <input type='text' name='mapa_url' value='" + esc(sitio.mapa_url || "") + "' placeholder='https://www.google.com/maps/embed?…'></label></div></div>" +
       "<div class='p-bloque'><h3>Tienda</h3>" +
       "<p class='p-ayuda'>El rubro y el sistema de talles ajustan tu catálogo: en cada producto podés cargar talles con su stock, categorías, precio de oferta y ofertas flash con cuenta regresiva.</p>" +
       "<div class='p-dos'><label>Rubro <select name='rubro'>" +
@@ -2112,6 +2118,10 @@
         testimonios_titulo: (f.get("testimonios_titulo") || "").trim() || null,
         equipo: equipoNuevo,
         equipo_titulo: (f.get("equipo_titulo") || "").trim() || null,
+        direccion: (f.get("direccion") || "").trim() || null,
+        telefono: (f.get("telefono") || "").trim() || null,
+        horario: (f.get("horario") || "").trim() || null,
+        mapa_url: (f.get("mapa_url") || "").trim() || null,
         redes: redesNuevas,
         rubro: f.get("rubro") || "general",
         config: Object.assign({}, sitio.config || {}, {

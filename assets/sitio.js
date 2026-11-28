@@ -73,6 +73,7 @@
   if (mod.feed) enlaces.push(["Novedades", "#novedades"]);
   var testisNav = (Array.isArray(sitio.testimonios) ? sitio.testimonios : []).filter(function (t) { return t && t.imagen_url; });
   if (mod.testimonios && testisNav.length) enlaces.push(["Testimonios", "#testimonios"]);
+  if (mod.contacto) enlaces.push(["Contacto", "#contacto"]);
   nav.innerHTML = '<div class="s-nav-in"><a class="s-marca" href="' + base + '">' +
     (sitio.logo_url ? '<img src="' + TW.esc(TW.imgUrl(sitio.logo_url, 200)) + '" alt="">' : "") +
     "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
@@ -281,6 +282,44 @@
       }).join("") + "</div>");
   }
 
+  // Contacto: direccion, telefono, WhatsApp, email, horario, redes y
+  // mapa de Google. El mapa sale de mapa_url (enlace de insercion) o se
+  // genera desde la direccion.
+  var redesSitio = sitio.redes || {};
+  var REDES_ICO = {
+    instagram: ["Instagram", '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor"/>'],
+    facebook: ["Facebook", '<path d="M15.5 3.5H14a4 4 0 0 0-4 4V10H7.5v3.5H10v7h3.5v-7h2.6l.6-3.5h-3.2V7.8c0-.7.5-1.3 1.3-1.3h1.7z"/>'],
+    tiktok: ["TikTok", '<path d="M14.5 3.5v10.8a3.9 3.9 0 1 1-3.15-3.85"/><path d="M14.5 3.5c.35 2.3 1.85 3.9 4.2 4.2"/>'],
+    youtube: ["YouTube", '<rect x="2.8" y="6" width="18.4" height="12.5" rx="3.5"/><path d="M10.2 9.6l4.8 2.65-4.8 2.65z" fill="currentColor" stroke="none"/>']
+  };
+  var hayRedes = Object.keys(REDES_ICO).some(function (k) { return redesSitio[k]; });
+  if (mod.contacto && (sitio.direccion || sitio.telefono || sitio.whatsapp || sitio.email || sitio.horario || sitio.mapa_url || hayRedes)) {
+    function dato(ico, etiqueta, valorHtml) {
+      return '<div class="s-dato s-contacto-anim"><span class="s-dato-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + ico + '</svg></span><div><span class="s-dato-et">' + etiqueta + '</span>' + valorHtml + "</div></div>";
+    }
+    var ICO_PIN = '<path d="M12 21s-6.5-5.4-6.5-10.4A6.5 6.5 0 0 1 12 4a6.5 6.5 0 0 1 6.5 6.6C18.5 15.6 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/>';
+    var ICO_TEL = '<path d="M5 4h4l1.5 4.5L8 10a12 12 0 0 0 6 6l1.5-2.5L20 15v4a1.8 1.8 0 0 1-2 2A15 15 0 0 1 3 6a1.8 1.8 0 0 1 2-2z"/>';
+    var ICO_WA = '<path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path fill="currentColor" stroke="none" transform="translate(6.4 6.4) scale(0.48)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>';
+    var ICO_MAIL = '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>';
+    var ICO_RELOJ = '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>';
+    var filas = "";
+    if (sitio.direccion) filas += dato(ICO_PIN, "Dirección", '<span class="s-dato-val">' + TW.esc(sitio.direccion) + "</span>");
+    if (sitio.telefono) filas += dato(ICO_TEL, "Teléfono", '<a class="s-dato-val" href="tel:' + TW.esc(String(sitio.telefono).replace(/[^0-9+]/g, "")) + '">' + TW.esc(sitio.telefono) + "</a>");
+    if (sitio.whatsapp) filas += dato(ICO_WA, "WhatsApp", '<a class="s-dato-val" href="https://wa.me/' + String(sitio.whatsapp).replace(/\D/g, "") + '" target="_blank" rel="noopener">Escribinos ahora</a>');
+    if (sitio.email) filas += dato(ICO_MAIL, "Email", '<a class="s-dato-val" href="mailto:' + TW.esc(sitio.email) + '">' + TW.esc(sitio.email) + "</a>");
+    if (sitio.horario) filas += dato(ICO_RELOJ, "Horario", '<span class="s-dato-val">' + TW.esc(sitio.horario) + "</span>");
+    var chipsRedes = Object.keys(REDES_ICO).filter(function (k) { return redesSitio[k]; }).map(function (k) {
+      return '<a class="s-pie-link" href="' + TW.esc(redesSitio[k]) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + REDES_ICO[k][1] + "</svg><span>" + REDES_ICO[k][0] + "</span></a>";
+    }).join("");
+    var mapaSrc = "";
+    if (sitio.mapa_url && /^https?:\/\//i.test(sitio.mapa_url)) mapaSrc = sitio.mapa_url;
+    else if (sitio.direccion) mapaSrc = "https://www.google.com/maps?q=" + encodeURIComponent(sitio.direccion) + "&output=embed";
+    BLOQUES.contacto = seccion("contacto", "Contacto", "",
+      '<div class="s-contacto' + (mapaSrc ? "" : " sin-mapa") + '"><div class="s-contacto-info">' + filas +
+      (chipsRedes ? '<div class="s-contacto-redes s-contacto-anim">' + chipsRedes + "</div>" : "") + "</div>" +
+      (mapaSrc ? '<div class="s-contacto-mapa s-contacto-anim"><iframe src="' + TW.esc(mapaSrc) + '" loading="lazy" title="Mapa" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' : "") + "</div>");
+  }
+
   // Promociones
   if (mod.promociones && (rPromo.data || []).length) {
     BLOQUES.promociones = seccion("promociones", "Promociones", "", '<div class="s-promos">' +
@@ -371,7 +410,7 @@
   // Las secciones se pegan en el orden que el dueno eligio
   // arrastrando los modulos en su panel (config.orden); las que no
   // figuran van despues, en el orden de siempre.
-  var ORDEN_DEF = ["testimonios", "promociones", "destacados", "productos", "cursos", "articulos", "documentos", "equipo", "novedades"];
+  var ORDEN_DEF = ["testimonios", "promociones", "destacados", "productos", "cursos", "articulos", "documentos", "equipo", "contacto", "novedades"];
   var ordenSitio = (sitio.config && Array.isArray(sitio.config.orden)) ? sitio.config.orden : [];
   ordenSitio.filter(function (k) { return ORDEN_DEF.indexOf(k) >= 0; })
     .concat(ORDEN_DEF.filter(function (k) { return ordenSitio.indexOf(k) < 0; }))
@@ -489,6 +528,22 @@
     }, { threshold: 0.12 });
     revelables.forEach(function (el, i) { el.classList.add("revelar"); el.style.transitionDelay = (i % 3) * 70 + "ms"; io.observe(el); });
     setTimeout(function () { revelables.forEach(function (el) { el.classList.add("visible"); }); }, 3000);
+  }
+  // Animacion del modulo Contacto: sus piezas entran escalonadas al
+  // aparecer en pantalla, en todos los temas.
+  var animContacto = main.querySelectorAll(".s-contacto-anim");
+  if (animContacto.length) {
+    if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var cajaContacto = main.querySelector(".s-contacto");
+      if (cajaContacto) cajaContacto.classList.add("prep");
+      var ioC = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); ioC.unobserve(e.target); } });
+      }, { threshold: 0.15 });
+      animContacto.forEach(function (el, i) { el.style.transitionDelay = (i * 90) + "ms"; ioC.observe(el); });
+      setTimeout(function () { animContacto.forEach(function (el) { el.classList.add("visible"); }); }, 3500);
+    } else {
+      animContacto.forEach(function (el) { el.classList.add("visible"); });
+    }
   }
   if ("IntersectionObserver" in window) {
     var porId = {};
