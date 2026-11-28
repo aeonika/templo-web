@@ -32,7 +32,8 @@
   var esPremium = sitio.maqueta ? sitio.maqueta === "premium" : MAQUETA_PREMIUM.indexOf(sitio.tema || "crepusculo") !== -1;
   var esAurora = sitio.maqueta === "aurora";
   var esCorporativa = sitio.maqueta === "corporativa";
-  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : esCorporativa ? "corporativa" : (sitio.tema || "crepusculo");
+  var esUrbana = sitio.maqueta === "urbana";
+  document.documentElement.dataset.maqueta = esPremium ? "premium" : esAurora ? "aurora" : esCorporativa ? "corporativa" : esUrbana ? "urbana" : (sitio.tema || "crepusculo");
   try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.fondo_url) {
     var fondoHex = getComputedStyle(document.documentElement).getPropertyValue("--fondo").trim();

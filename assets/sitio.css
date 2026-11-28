@@ -112,6 +112,30 @@
   --t-grafito-borde: #dedee1;
   --t-grafito-acento: #17181c;
   --t-grafito-acento-texto: #ffffff;
+  --t-acido-fondo: #f4f2ec;
+  --t-acido-fondo-2: #e8e5d9;
+  --t-acido-tarjeta: #ffffff;
+  --t-acido-texto: #111110;
+  --t-acido-muted: #5d5d55;
+  --t-acido-borde: #111110;
+  --t-acido-acento: #c8f31d;
+  --t-acido-acento-texto: #111110;
+  --t-naranja-fondo: #f7f2ea;
+  --t-naranja-fondo-2: #eee4d3;
+  --t-naranja-tarjeta: #ffffff;
+  --t-naranja-texto: #16110b;
+  --t-naranja-muted: #6d5f4e;
+  --t-naranja-borde: #16110b;
+  --t-naranja-acento: #ff5a1f;
+  --t-naranja-acento-texto: #ffffff;
+  --t-uva-fondo: #f2f0fb;
+  --t-uva-fondo-2: #e5e1f6;
+  --t-uva-tarjeta: #ffffff;
+  --t-uva-texto: #171221;
+  --t-uva-muted: #615a78;
+  --t-uva-borde: #171221;
+  --t-uva-acento: #7b61ff;
+  --t-uva-acento-texto: #ffffff;
 }
 html[data-tema="crepusculo"] { --fondo: var(--t-crepusculo-fondo); --fondo-2: var(--t-crepusculo-fondo-2); --tarjeta: var(--t-crepusculo-tarjeta); --texto: var(--t-crepusculo-texto); --muted: var(--t-crepusculo-muted); --borde: var(--t-crepusculo-borde); --acento: var(--t-crepusculo-acento); --acento-texto: var(--t-crepusculo-acento-texto); }
 html[data-tema="pergamino"] { --fondo: var(--t-pergamino-fondo); --fondo-2: var(--t-pergamino-fondo-2); --tarjeta: var(--t-pergamino-tarjeta); --texto: var(--t-pergamino-texto); --muted: var(--t-pergamino-muted); --borde: var(--t-pergamino-borde); --acento: var(--t-pergamino-acento); --acento-texto: var(--t-pergamino-acento-texto); }
@@ -126,6 +150,9 @@ html[data-tema="terracota"] { --fondo: var(--t-terracota-fondo); --fondo-2: var(
 html[data-tema="indigo"] { --fondo: var(--t-indigo-fondo); --fondo-2: var(--t-indigo-fondo-2); --tarjeta: var(--t-indigo-tarjeta); --texto: var(--t-indigo-texto); --muted: var(--t-indigo-muted); --borde: var(--t-indigo-borde); --acento: var(--t-indigo-acento); --acento-texto: var(--t-indigo-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
 html[data-tema="marino"] { --fondo: var(--t-marino-fondo); --fondo-2: var(--t-marino-fondo-2); --tarjeta: var(--t-marino-tarjeta); --texto: var(--t-marino-texto); --muted: var(--t-marino-muted); --borde: var(--t-marino-borde); --acento: var(--t-marino-acento); --acento-texto: var(--t-marino-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
 html[data-tema="grafito"] { --fondo: var(--t-grafito-fondo); --fondo-2: var(--t-grafito-fondo-2); --tarjeta: var(--t-grafito-tarjeta); --texto: var(--t-grafito-texto); --muted: var(--t-grafito-muted); --borde: var(--t-grafito-borde); --acento: var(--t-grafito-acento); --acento-texto: var(--t-grafito-acento-texto); --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 12px; }
+html[data-tema="acido"] { --fondo: var(--t-acido-fondo); --fondo-2: var(--t-acido-fondo-2); --tarjeta: var(--t-acido-tarjeta); --texto: var(--t-acido-texto); --muted: var(--t-acido-muted); --borde: var(--t-acido-borde); --acento: var(--t-acido-acento); --acento-texto: var(--t-acido-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
+html[data-tema="naranja"] { --fondo: var(--t-naranja-fondo); --fondo-2: var(--t-naranja-fondo-2); --tarjeta: var(--t-naranja-tarjeta); --texto: var(--t-naranja-texto); --muted: var(--t-naranja-muted); --borde: var(--t-naranja-borde); --acento: var(--t-naranja-acento); --acento-texto: var(--t-naranja-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
+html[data-tema="uva"] { --fondo: var(--t-uva-fondo); --fondo-2: var(--t-uva-fondo-2); --tarjeta: var(--t-uva-tarjeta); --texto: var(--t-uva-texto); --muted: var(--t-uva-muted); --borde: var(--t-uva-borde); --acento: var(--t-uva-acento); --acento-texto: var(--t-uva-acento-texto); --fuente-titulos: "Anton", "Archivo", sans-serif; --fuente-cuerpo: "Archivo", system-ui, sans-serif; --radio: 2px; }
 
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
@@ -1072,3 +1099,88 @@ html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: 
   .s-nav.abierta .s-burger span:nth-child(2) { opacity: 0; }
   .s-nav.abierta .s-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
+
+/* ============================================================
+   MAQUETA URBANA · cartelera callejera
+   Lenguaje propio: papel claro, tinta negra, un acento ácido.
+   Nada de cajas suaves: bordes gruesos, sombras duras sin
+   desenfoque, tipografía condensada en mayúsculas, títulos a la
+   izquierda y una marquesina que cruza el hero como un afiche.
+   ============================================================ */
+html[data-maqueta="urbana"] body { background: var(--fondo); }
+html[data-maqueta="urbana"] .s-nav { background: var(--fondo); backdrop-filter: none; border-bottom: 3px solid var(--borde); }
+html[data-maqueta="urbana"] .s-marca { font-family: var(--fuente-titulos); text-transform: uppercase; letter-spacing: .02em; font-size: 21px; }
+html[data-maqueta="urbana"] .s-marca img { border: 2px solid var(--borde); border-radius: 2px; }
+html[data-maqueta="urbana"] .s-links a { text-transform: uppercase; font-size: 13px; font-weight: 700; letter-spacing: .07em; }
+html[data-maqueta="urbana"] .s-links a::after { height: 3px; }
+html[data-maqueta="urbana"] .s-links a.s-nav-cta { background: var(--texto); color: var(--fondo); border: 2px solid var(--borde); border-radius: 2px; box-shadow: 3px 3px 0 var(--acento); }
+html[data-maqueta="urbana"] .s-burger { border: 2px solid var(--borde); border-radius: 2px; }
+
+/* Hero: foto a todo ancho, título gigante con sombra dura y
+   marquesina inclinada al pie, como cinta de afiche. */
+html[data-maqueta="urbana"] .s-hero--portada { min-height: min(88svh, 780px); overflow: visible; }
+html[data-maqueta="urbana"] .s-hero-texto { text-align: left; max-width: 900px; }
+html[data-maqueta="urbana"] .s-hero h1 { font-size: clamp(52px, 11vw, 124px); line-height: .94; text-transform: uppercase; letter-spacing: .005em; text-shadow: 6px 6px 0 var(--acento); }
+html[data-maqueta="urbana"] .s-hero-texto > p { font-size: clamp(17px, 2.2vw, 21px); font-weight: 500; max-width: 560px; }
+html[data-maqueta="urbana"] .s-avatar { border: 3px solid var(--borde); border-radius: 2px; box-shadow: 5px 5px 0 var(--acento); }
+html[data-maqueta="urbana"] .s-hero--portada::after { content: "NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ NUEVO DROP ✦ ENVÍOS A TODO EL PAÍS ✦ CAMBIOS SIN CARGO ✦ "; position: absolute; left: -2%; right: -2%; bottom: 26px; z-index: 3; background: var(--acento); color: var(--acento-texto); border-top: 3px solid var(--borde); border-bottom: 3px solid var(--borde); font-family: var(--fuente-titulos); font-size: 17px; letter-spacing: .12em; white-space: nowrap; overflow: hidden; padding: 9px 0; transform: rotate(-1.4deg); }
+html[data-maqueta="urbana"] .s-quienes { padding-top: 64px; }
+
+/* Títulos de sección: a la izquierda, gigantes, con bloque ácido. */
+html[data-maqueta="urbana"] .s-seccion h2 { text-align: left; font-size: clamp(34px, 5.4vw, 54px); text-transform: uppercase; line-height: 1; display: flex; align-items: center; gap: 16px; }
+html[data-maqueta="urbana"] .s-seccion h2::before { content: ""; flex: none; width: 18px; height: 42px; background: var(--acento); border: 2.5px solid var(--borde); }
+html[data-maqueta="urbana"] .s-seccion h2::after { content: none; }
+html[data-maqueta="urbana"] .s-seccion .bajada { text-align: left; margin-left: 34px; }
+
+/* Rasgos: bloques de borde grueso con el icono en cuadrado negro. */
+html[data-maqueta="urbana"] .s-rasgos { gap: 14px; }
+html[data-maqueta="urbana"] .s-rasgo { background: var(--tarjeta); border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 5px 5px 0 var(--borde); padding: 16px; }
+html[data-maqueta="urbana"] .s-rasgo-ico { background: var(--texto); color: var(--fondo); border-radius: 2px; }
+html[data-maqueta="urbana"] .s-rasgo-titulo { text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+
+/* Filtros: pastillas cuadradas; la activa es tinta sobre papel. */
+html[data-maqueta="urbana"] .s-filtro { border: 2px solid var(--borde); border-radius: 2px; background: var(--tarjeta); color: var(--texto); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 13px; padding: 8px 14px; }
+html[data-maqueta="urbana"] .s-filtro.activo { background: var(--texto); color: var(--fondo); box-shadow: 3px 3px 0 var(--acento); }
+
+/* Tarjetas: borde grueso y sombra dura; el precio es un sticker
+   ácido apenas girado sobre la foto. */
+html[data-maqueta="urbana"] .s-tarjeta { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 7px 7px 0 var(--borde); overflow: visible; transition: transform .16s ease, box-shadow .16s ease; }
+html[data-maqueta="urbana"] .s-tarjeta:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0 var(--borde); }
+html[data-maqueta="urbana"] .s-tarjeta > img { border-bottom: 2.5px solid var(--borde); border-radius: 0; }
+html[data-maqueta="urbana"] .s-tarjeta-cuerpo { position: relative; }
+html[data-maqueta="urbana"] .s-tipo { display: inline-block; background: var(--texto); color: var(--fondo); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: 3px 8px; }
+html[data-maqueta="urbana"] .s-tarjeta h3 { font-family: var(--fuente-titulos); text-transform: uppercase; font-size: 21px; letter-spacing: .02em; line-height: 1.12; }
+html[data-maqueta="urbana"] .s-precio { display: inline-block; background: var(--acento); color: var(--acento-texto); border: 2px solid var(--borde); font-family: var(--fuente-titulos); font-size: 20px; padding: 3px 12px; transform: rotate(-2deg); }
+html[data-maqueta="urbana"] .s-badge-oferta { background: var(--texto); color: var(--fondo); border-radius: 0; }
+html[data-maqueta="urbana"] .btn { border: 2px solid var(--borde); border-radius: 2px; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; font-size: 13.5px; }
+html[data-maqueta="urbana"] .btn-acento { box-shadow: 4px 4px 0 var(--borde); }
+html[data-maqueta="urbana"] .btn:active { transform: translate(2px, 2px); }
+
+/* Destacados: la primera tarjeta ocupa doble ancho, como afiche. */
+@media (min-width: 861px) {
+  html[data-maqueta="urbana"] #destacados .s-grilla > :first-child { grid-column: span 2; }
+  html[data-maqueta="urbana"] #destacados .s-grilla > :first-child h3 { font-size: 27px; }
+}
+
+/* Artículos y documentos: mismo sistema de afiche. */
+html[data-maqueta="urbana"] .s-articulo, html[data-maqueta="urbana"] .s-doc { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 6px 6px 0 var(--borde); background: var(--tarjeta); }
+html[data-maqueta="urbana"] .s-articulo h3, html[data-maqueta="urbana"] .s-doc h3 { font-family: var(--fuente-titulos); text-transform: uppercase; }
+
+/* Promo: banda ácida apenas inclinada, texto en Anton. */
+html[data-maqueta="urbana"] .s-promo { background: var(--acento); color: var(--acento-texto); border: 3px solid var(--borde); border-radius: 2px; transform: rotate(-.6deg); box-shadow: 8px 8px 0 var(--borde); }
+html[data-maqueta="urbana"] .s-promo h3 { font-family: var(--fuente-titulos); text-transform: uppercase; font-size: 26px; color: var(--acento-texto); }
+html[data-maqueta="urbana"] .s-promo p { color: var(--acento-texto); }
+html[data-maqueta="urbana"] .s-promo .btn-acento { background: var(--texto); color: var(--fondo); border-color: var(--borde); box-shadow: 4px 4px 0 rgb(0 0 0 / 35%); }
+html[data-maqueta="urbana"] .s-promo img { border: 2.5px solid var(--borde); border-radius: 2px; }
+
+/* Novedades: fecha en chip negro, tarjeta afiche. */
+html[data-maqueta="urbana"] .s-feed-item { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 6px 6px 0 var(--borde); background: var(--tarjeta); }
+html[data-maqueta="urbana"] .s-feed-item .fecha { display: inline-block; background: var(--texto); color: var(--fondo); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 11.5px; padding: 3px 9px; }
+
+/* Testimonios: tarjeta afiche con comilla gigante ácida. */
+html[data-maqueta="urbana"] .s-testi { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 6px 6px 0 var(--borde); }
+
+/* Pie invertido: tinta negra, como el cierre de un afiche. */
+html[data-maqueta="urbana"] .s-footer { background: var(--texto); color: var(--fondo); border-top: 4px solid var(--acento); }
+html[data-maqueta="urbana"] .s-footer a { color: var(--fondo); }
+
