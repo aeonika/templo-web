@@ -631,16 +631,6 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
   .s-marca { font-size: 16px; }
   .s-links a.s-nav-cta { padding: 8px 12px; }
 }
-@media (min-width: 861px) and (max-width: 1150px) {
-  .s-nav:has(.s-links > :nth-child(8)) .s-burger { display: inline-flex; justify-self: end; }
-  .s-nav:has(.s-links > :nth-child(8)) .s-links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 2px; padding: 12px 20px 18px; background: color-mix(in srgb, var(--fondo) 96%, transparent); backdrop-filter: blur(16px); border-bottom: 1px solid var(--borde); box-shadow: 0 24px 32px -20px color-mix(in srgb, var(--negro) 60%, transparent); }
-  .s-nav:has(.s-links > :nth-child(8)).abierta .s-links { display: flex; }
-  .s-nav:has(.s-links > :nth-child(8)) .s-links a { padding: 12px; font-size: 15.5px; }
-  .s-nav:has(.s-links > :nth-child(8)) .s-links a.s-nav-cta { margin: 8px 0 0; text-align: center; }
-  .s-nav:has(.s-links > :nth-child(8)).abierta .s-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .s-nav:has(.s-links > :nth-child(8)).abierta .s-burger span:nth-child(2) { opacity: 0; }
-  .s-nav:has(.s-links > :nth-child(8)).abierta .s-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-}
 
 /* Pantalla de carga del sitio: visible desde el primer pintado; toma el
  * fondo y el texto del tema activo (al principio el de fabrica y, apenas
