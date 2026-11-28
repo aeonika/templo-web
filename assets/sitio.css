@@ -922,6 +922,7 @@ html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: 
    barra poblada y para pantallas intermedias como la de Cristian. */
 @keyframes corp-entra { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 @media (max-width: 860px) {
+  html[data-maqueta="corporativa"] .s-nav { backdrop-filter: none; }
   html[data-maqueta="corporativa"] .s-nav .s-links { display: flex; position: fixed; top: 0; left: 0; bottom: 0; width: min(320px, 84vw); flex-direction: column; align-items: stretch; gap: 2px; padding: 84px 22px 24px; background: var(--acento); border: none; box-shadow: 24px 0 48px -24px rgb(10 14 22 / 45%); transform: translateX(-106%); visibility: hidden; transition: transform .38s cubic-bezier(.32, .72, .24, 1), visibility 0s .38s; z-index: 60; overflow-y: auto; }
   html[data-maqueta="corporativa"] .s-nav.abierta .s-links { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.32, .72, .24, 1); }
   html[data-maqueta="corporativa"] .s-nav.abierta::before { content: ""; position: fixed; inset: 0; background: rgb(10 14 22 / 45%); z-index: 55; }
@@ -944,6 +945,7 @@ html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: 
   html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(11) { animation-delay: .4s; }
 }
 @media (min-width: 861px) and (max-width: 1400px) {
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) { backdrop-filter: none; }
   html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-nav-in { display: flex; }
   html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-marca { margin-right: auto; }
   html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links { display: flex; position: fixed; top: 0; left: 0; bottom: 0; width: min(320px, 84vw); flex-direction: column; align-items: stretch; gap: 2px; padding: 84px 22px 24px; background: var(--acento); border: none; box-shadow: 24px 0 48px -24px rgb(10 14 22 / 45%); transform: translateX(-106%); visibility: hidden; transition: transform .38s cubic-bezier(.32, .72, .24, 1), visibility 0s .38s; z-index: 60; overflow-y: auto; }
