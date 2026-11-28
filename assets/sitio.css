@@ -773,33 +773,49 @@ html[data-maqueta="aurora"] .s-feed-item:hover img { transform: scale(1.02); }
 }
 
 /* ================= MAQUETA CORPORATIVA · claro profesional =================
-   Cuarta plantilla, espejo de la landing de la plataforma: papel claro,
-   tinta azul-grisácea, azul corporativo, cajas blancas con borde fino y
-   sombra suave y difusa, estructura ordenada con filetes. Pensada para
-   empresas, servicios y profesionales: lo contrario de Aurora (acá las
-   cajas SÍ existen y se ven). */
+   Cuarta plantilla, espejo ESTRUCTURAL de la landing de la plataforma, no
+   solo su paleta: hero partido (texto a la izquierda, foto enmarcada a la
+   derecha), secciones que alternan banda blanca y banda gris a todo
+   ancho, títulos centrados con barra de acento, productos con la foto
+   en un panel interior y el precio y el botón en una misma fila, y los
+   artículos como grilla de tarjetas verticales de blog. Pensada para
+   empresas, servicios y profesionales. */
 html[data-maqueta="corporativa"] .s-nav { background: color-mix(in srgb, var(--fondo) 92%, transparent); }
-html[data-maqueta="corporativa"] .s-seccion h2 { text-align: left; letter-spacing: -0.01em; border-bottom: 1px solid var(--borde); padding-bottom: 14px; }
-html[data-maqueta="corporativa"] .s-seccion h2::before, html[data-maqueta="corporativa"] .s-seccion h2::after { content: none; }
-html[data-maqueta="corporativa"] .s-seccion .bajada { text-align: left; margin-inline: 0; }
+html[data-maqueta="corporativa"] .s-hero--portada { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); align-items: stretch; padding: 0; }
+html[data-maqueta="corporativa"] .s-hero--portada::after { display: none; }
+html[data-maqueta="corporativa"] .s-portada-img { position: relative; inset: auto; order: 2; height: 100%; min-height: 340px; }
+html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { order: 1; display: flex; align-items: center; width: 100%; max-width: none; margin: 0; padding: 64px 44px 64px max(20px, calc((100vw - 1120px) / 2 + 20px)); }
 html[data-maqueta="corporativa"] .s-hero-texto { text-align: left; }
 html[data-maqueta="corporativa"] .s-hero-texto h1::after { content: none; }
-html[data-maqueta="corporativa"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); text-align: left; }
-html[data-maqueta="corporativa"] .s-tarjeta:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
-html[data-maqueta="corporativa"] .s-tarjeta h3::before { content: none; display: none; }
-html[data-maqueta="corporativa"] .s-precio { font-weight: 700; font-size: 18px; color: var(--texto); }
-html[data-maqueta="corporativa"] .btn-acento { border-radius: 999px; box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--acento) 50%, transparent); }
-html[data-maqueta="corporativa"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: stretch; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
-html[data-maqueta="corporativa"] .s-articulo:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
-html[data-maqueta="corporativa"] .s-articulo-img { width: 210px; aspect-ratio: 4 / 3; margin: 0; flex: none; border-radius: 8px; position: relative; z-index: 1; }
-html[data-maqueta="corporativa"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; position: relative; z-index: 1; }
-html[data-maqueta="corporativa"] .s-articulo .fecha { font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-html[data-maqueta="corporativa"] .s-articulo h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; z-index: 2; }
-html[data-maqueta="corporativa"] .s-articulo:nth-child(even) { flex-direction: row-reverse; }
-@media (max-width: 720px) {
-  html[data-maqueta="corporativa"] .s-articulo, html[data-maqueta="corporativa"] .s-articulo:nth-child(even) { flex-direction: column; }
-  html[data-maqueta="corporativa"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; }
+@media (max-width: 900px) {
+  html[data-maqueta="corporativa"] .s-hero--portada { grid-template-columns: minmax(0, 1fr); }
+  html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { padding: 48px 20px 40px; }
+  html[data-maqueta="corporativa"] .s-portada-img { height: 260px; min-height: 0; }
 }
+html[data-maqueta="corporativa"] .s-seccion:nth-of-type(even) { background: var(--fondo-2); box-shadow: 0 0 0 100vmax var(--fondo-2); clip-path: inset(0 -100vmax); }
+html[data-maqueta="corporativa"] .s-seccion h2 { text-align: center; letter-spacing: -0.01em; }
+html[data-maqueta="corporativa"] .s-seccion h2::before { content: none; }
+html[data-maqueta="corporativa"] .s-seccion h2::after { margin-inline: auto; }
+html[data-maqueta="corporativa"] .s-seccion .bajada { text-align: center; margin-inline: auto; }
+html[data-maqueta="corporativa"] .s-grilla { gap: 22px; }
+html[data-maqueta="corporativa"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 10px 0; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); text-align: left; }
+html[data-maqueta="corporativa"] .s-tarjeta:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-tarjeta img { border-radius: 8px; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo { padding: 16px 8px 18px; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+html[data-maqueta="corporativa"] .s-tarjeta h3 { order: 1; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta h3::before { content: none; display: none; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p { order: 2; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta .s-talles { order: 3; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p.s-precio { order: 4; flex: 0 1 auto; font-weight: 700; font-size: 18px; color: var(--texto); }
+html[data-maqueta="corporativa"] .s-tarjeta .s-acciones { order: 5; margin-left: auto; }
+html[data-maqueta="corporativa"] .btn-acento { border-radius: 999px; box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--acento) 50%, transparent); }
+html[data-maqueta="corporativa"] .s-seccion:has(.s-articulo) .s-lista { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+html[data-maqueta="corporativa"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 0; overflow: clip; display: flex; flex-direction: column; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
+html[data-maqueta="corporativa"] .s-articulo:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; margin: 0; border-radius: 0; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: 18px 20px 20px; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo .fecha { font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+html[data-maqueta="corporativa"] .s-articulo h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; z-index: 2; }
 html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; }
 html[data-maqueta="corporativa"] .s-feed-item { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
 html[data-maqueta="corporativa"] .s-detalle-img { border-radius: 12px; border: 1px solid var(--borde); }
