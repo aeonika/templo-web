@@ -1394,12 +1394,12 @@ html[data-maqueta="abismo"] section#documentos > .contenedor > h2 { font-size: 2
    ============================================================ */
 html.abismo-libro body { overflow: hidden; }
 .libro-escenario { position: fixed; inset: 0; z-index: 1; background: var(--fondo); }
-.libro-escenario > section, .libro-escenario > footer { position: absolute; inset: 0; overflow-y: auto; display: none; padding: 104px 30px 118px 118px; scrollbar-width: thin; }
-.libro-escenario > section.activa, .libro-escenario > footer.activa { display: block; animation: libro-pasar .45s ease both; }
-.libro-escenario > footer.activa { display: flex; flex-direction: column; justify-content: center; }
+.libro-escenario > section, .libro-escenario > footer { position: absolute; inset: 0; overflow-y: auto; display: none !important; padding: 104px 30px 118px 118px; scrollbar-width: thin; }
+.libro-escenario > section.activa, .libro-escenario > footer.activa { display: block !important; animation: libro-pasar .45s ease both; }
+.libro-escenario > footer.activa { display: flex !important; flex-direction: column; justify-content: center; }
 .libro-escenario > section.s-hero { padding: 0; }
 .libro-escenario > section.s-seccion { padding-top: 104px; }
-.libro-escenario > section::before { content: attr(data-num); position: absolute; top: 64px; right: 30px; font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(90px, 14vw, 170px); line-height: 1; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--acento) 32%, transparent); pointer-events: none; }
+.libro-escenario > section::before { content: attr(data-num); position: absolute; top: 64px; right: 30px; font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(90px, 14vw, 170px); line-height: 1; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--acento) 32%, transparent); pointer-events: none; z-index: 2; }
 .libro-riel { position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 35; display: flex; flex-direction: column; gap: 1px; padding: 10px 0 10px 20px; }
 .libro-cap { display: flex; align-items: baseline; gap: 9px; background: none; border: none; border-left: 2px solid color-mix(in srgb, var(--texto) 18%, transparent); padding: 6px 10px 6px 12px; cursor: pointer; text-align: left; color: var(--muted); transition: color .18s ease, border-color .18s ease; }
 .libro-cap-num { font-family: var(--fuente-titulos); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
@@ -1422,4 +1422,4 @@ html.abismo-libro body { overflow: hidden; }
   .libro-cap.activo { border-bottom-color: var(--acento); }
   .libro-controles { bottom: 24px; }
 }
-.libro-escenario > section.s-hero.activa { display: flex; }
+.libro-escenario > section.s-hero.activa { display: flex !important; }
