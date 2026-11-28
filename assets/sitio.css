@@ -631,8 +631,10 @@ html[data-tema="terracota"] body::before { box-shadow: inset 0 0 190px color-mix
   .s-marca { font-size: 16px; }
   .s-links a.s-nav-cta { padding: 8px 12px; }
 }
-@media (min-width: 861px) and (max-width: 1150px) {
-  .s-nav:has(.s-links > :nth-child(10)) .s-burger { display: inline-flex; justify-self: end; }
+@media (min-width: 861px) and (max-width: 1400px) {
+  .s-nav:has(.s-links > :nth-child(10)) .s-nav-in { display: flex; }
+  .s-nav:has(.s-links > :nth-child(10)) .s-marca { margin-right: auto; }
+  .s-nav:has(.s-links > :nth-child(10)) .s-burger { display: inline-flex; }
   .s-nav:has(.s-links > :nth-child(10)) .s-links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 2px; padding: 12px 20px 18px; background: color-mix(in srgb, var(--fondo) 96%, transparent); backdrop-filter: blur(16px); border-bottom: 1px solid var(--borde); box-shadow: 0 24px 32px -20px color-mix(in srgb, var(--negro) 60%, transparent); }
   .s-nav:has(.s-links > :nth-child(10)).abierta .s-links { display: flex; }
   .s-nav:has(.s-links > :nth-child(10)) .s-links a { padding: 12px; font-size: 15.5px; }

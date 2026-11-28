@@ -65,7 +65,7 @@
   if (mod.documentos) enlaces.push(["Documentos", "#documentos"]);
   if (mod.feed) enlaces.push(["Novedades", "#novedades"]);
   var testisNav = (Array.isArray(sitio.testimonios) ? sitio.testimonios : []).filter(function (t) { return t && t.imagen_url; });
-  if (mod.testimonios && testisNav.length) enlaces.push([sitio.testimonios_titulo || "Testimonios", "#testimonios"]);
+  if (mod.testimonios && testisNav.length) enlaces.push(["Testimonios", "#testimonios"]);
   nav.innerHTML = '<div class="s-nav-in"><a class="s-marca" href="' + base + '">' +
     (sitio.logo_url ? '<img src="' + TW.esc(TW.imgUrl(sitio.logo_url, 200)) + '" alt="">' : "") +
     "<span>" + TW.esc(sitio.nombre) + '</span></a>' +
