@@ -850,5 +850,21 @@ html[data-maqueta="corporativa"] .aula-leccion:hover { border-color: color-mix(i
 html[data-maqueta="corporativa"] .aula-leccion .num { background: var(--fondo-2); border-radius: 8px; padding: 4px 9px; color: var(--texto); font-weight: 700; }
 html[data-maqueta="corporativa"] .s-detalle .s-precio { font-size: 26px; font-weight: 700; }
 html[data-maqueta="corporativa"] .pg-modal { border-radius: 18px; }
-html[data-maqueta="corporativa"] .s-pie { background: var(--texto); color: color-mix(in srgb, var(--fondo) 88%, transparent); border-top: none; }
-html[data-maqueta="corporativa"] .s-pie a { color: var(--fondo); }
+html[data-maqueta="corporativa"] .s-footer { background: var(--texto); color: color-mix(in srgb, var(--fondo) 88%, transparent); border-top: none; }
+html[data-maqueta="corporativa"] .s-footer p { color: color-mix(in srgb, var(--fondo) 72%, transparent); }
+html[data-maqueta="corporativa"] .s-footer a { color: var(--fondo); }
+
+/* Barra poblada, segunda vuelta: la compactación por ancho de pantalla no
+   alcanzaba porque el contenedor deja de crecer en 1280px — una barra con
+   muchos módulos (los enlaces, el botón de WhatsApp y la sesión viven
+   todos dentro de .s-links) desbordaba a cualquier ancho y la marca se
+   montaba sobre el primer enlace. Ahora la barra poblada compacta siempre,
+   su contenedor se ensancha a 1440px, y la marca tiene red: si aun así no
+   entra, el nombre se recorta con puntos suspensivos en vez de solaparse. */
+@media (min-width: 861px) {
+  .s-marca { min-width: 0; }
+  .s-marca span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .s-nav:has(.s-links > :nth-child(10)) .s-nav-in { max-width: 1440px; }
+  .s-nav:has(.s-links > :nth-child(10)) .s-links { gap: 2px; }
+  .s-nav:has(.s-links > :nth-child(10)) .s-links a { padding: 8px 9px; font-size: 14px; }
+}
