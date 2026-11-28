@@ -772,87 +772,6 @@ html[data-maqueta="aurora"] .s-feed-item:hover img { transform: scale(1.02); }
   html[data-maqueta="aurora"] .s-tarjeta:hover img, html[data-maqueta="aurora"] .s-articulo:hover .s-articulo-img, html[data-maqueta="aurora"] .s-feed-item:hover img, html[data-maqueta="aurora"] .btn-acento:hover { transform: none; }
 }
 
-/* ================= MAQUETA CORPORATIVA · claro profesional =================
-   Cuarta plantilla, espejo ESTRUCTURAL de la landing de la plataforma, no
-   solo su paleta: hero partido (texto a la izquierda, foto enmarcada a la
-   derecha), secciones que alternan banda blanca y banda gris a todo
-   ancho, títulos centrados con barra de acento, productos con la foto
-   en un panel interior y el precio y el botón en una misma fila, y los
-   artículos como grilla de tarjetas verticales de blog. Pensada para
-   empresas, servicios y profesionales. */
-html[data-maqueta="corporativa"] .s-nav { background: color-mix(in srgb, var(--fondo) 92%, transparent); }
-html[data-maqueta="corporativa"] .s-hero--portada { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); align-items: stretch; padding: 0; }
-html[data-maqueta="corporativa"] .s-hero--portada::after { display: none; }
-html[data-maqueta="corporativa"] .s-portada-img { position: relative; inset: auto; order: 2; height: 100%; min-height: 340px; }
-html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { order: 1; display: flex; align-items: center; width: 100%; max-width: none; margin: 0; padding: 64px 44px 64px max(20px, calc((100vw - 1120px) / 2 + 20px)); }
-html[data-maqueta="corporativa"] .s-hero-texto { text-align: left; }
-html[data-maqueta="corporativa"] .s-hero-texto h1::after { content: none; }
-@media (max-width: 900px) {
-  html[data-maqueta="corporativa"] .s-hero--portada { grid-template-columns: minmax(0, 1fr); }
-  html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { padding: 48px 20px 40px; }
-  html[data-maqueta="corporativa"] .s-portada-img { height: 260px; min-height: 0; }
-}
-html[data-maqueta="corporativa"] .s-seccion:nth-of-type(even) { background: var(--fondo-2); box-shadow: 0 0 0 100vmax var(--fondo-2); clip-path: inset(0 -100vmax); }
-html[data-maqueta="corporativa"] .s-seccion h2 { text-align: center; letter-spacing: -0.01em; }
-html[data-maqueta="corporativa"] .s-seccion h2::before { content: none; }
-html[data-maqueta="corporativa"] .s-seccion h2::after { margin-inline: auto; }
-html[data-maqueta="corporativa"] .s-seccion .bajada { text-align: center; margin-inline: auto; }
-html[data-maqueta="corporativa"] .s-grilla { gap: 22px; }
-html[data-maqueta="corporativa"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 10px 0; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); text-align: left; }
-html[data-maqueta="corporativa"] .s-tarjeta:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
-html[data-maqueta="corporativa"] .s-tarjeta img { border-radius: 8px; }
-html[data-maqueta="corporativa"] .s-tarjeta-cuerpo { padding: 16px 8px 18px; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
-html[data-maqueta="corporativa"] .s-tarjeta h3 { order: 1; flex: 1 1 100%; }
-html[data-maqueta="corporativa"] .s-tarjeta h3::before { content: none; display: none; }
-html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p { order: 2; flex: 1 1 100%; }
-html[data-maqueta="corporativa"] .s-tarjeta .s-talles { order: 3; flex: 1 1 100%; }
-html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p.s-precio { order: 4; flex: 0 1 auto; font-weight: 700; font-size: 18px; color: var(--texto); }
-html[data-maqueta="corporativa"] .s-tarjeta .s-acciones { order: 5; margin-left: auto; }
-html[data-maqueta="corporativa"] .btn-acento { border-radius: 999px; box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--acento) 50%, transparent); }
-html[data-maqueta="corporativa"] .s-seccion:has(.s-articulo) .s-lista { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
-html[data-maqueta="corporativa"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 0; overflow: clip; display: flex; flex-direction: column; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
-html[data-maqueta="corporativa"] .s-articulo:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
-html[data-maqueta="corporativa"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; margin: 0; border-radius: 0; position: relative; z-index: 1; }
-html[data-maqueta="corporativa"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: 18px 20px 20px; position: relative; z-index: 1; }
-html[data-maqueta="corporativa"] .s-articulo .fecha { font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-html[data-maqueta="corporativa"] .s-articulo h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; z-index: 2; }
-html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; }
-html[data-maqueta="corporativa"] .s-feed-item { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
-html[data-maqueta="corporativa"] .s-detalle-img { border-radius: 12px; border: 1px solid var(--borde); }
-html[data-maqueta="corporativa"] .revelar { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
-html[data-maqueta="corporativa"] .revelar.visible { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) {
-  html[data-maqueta="corporativa"] .revelar { opacity: 1; transform: none; transition: none; }
-}
-
-/* ============ CORPORATIVA · el resto de los componentes ============ */
-html[data-maqueta="corporativa"] .btn { border-radius: 999px; }
-html[data-maqueta="corporativa"] .s-badge { border-radius: 999px; letter-spacing: 0.02em; }
-html[data-maqueta="corporativa"] .s-talle { border-radius: 6px; }
-html[data-maqueta="corporativa"] .s-rasgos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; border: none; }
-html[data-maqueta="corporativa"] .s-rasgo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
-html[data-maqueta="corporativa"] .s-rasgo-ico { background: color-mix(in srgb, var(--acento) 12%, transparent); color: var(--acento); border-radius: 10px; padding: 10px; }
-html[data-maqueta="corporativa"] .s-promo { background: var(--tarjeta); border: 1px solid var(--borde); border-left: 4px solid var(--acento); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
-html[data-maqueta="corporativa"] .s-promo img { border-radius: 8px; }
-html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
-html[data-maqueta="corporativa"] .s-doc:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 12px 32px -16px rgb(31 37 48 / 16%); }
-html[data-maqueta="corporativa"] .s-doc-img { border-radius: 8px; border: 1px solid var(--borde); }
-html[data-maqueta="corporativa"] .s-doc .s-precio { font-weight: 700; font-size: 17px; color: var(--texto); }
-html[data-maqueta="corporativa"] .s-feed-item { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 18px; border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
-html[data-maqueta="corporativa"] .s-feed-item .fecha { grid-column: 1; grid-row: 1; font-size: 12.5px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--acento); margin: 2px 0 0; }
-html[data-maqueta="corporativa"] .s-feed-item > p:not(.fecha) { grid-column: 2; grid-row: 1; }
-html[data-maqueta="corporativa"] .s-feed-item img { grid-column: 2; grid-row: 2; border-radius: 10px; }
-html[data-maqueta="corporativa"] .s-testis-track { gap: 22px; }
-html[data-maqueta="corporativa"] .s-testi { border-radius: 14px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
-html[data-maqueta="corporativa"] .s-testi figcaption { color: var(--texto); }
-html[data-maqueta="corporativa"] .aula-leccion { border-radius: 10px; }
-html[data-maqueta="corporativa"] .aula-leccion:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); }
-html[data-maqueta="corporativa"] .aula-leccion .num { background: var(--fondo-2); border-radius: 8px; padding: 4px 9px; color: var(--texto); font-weight: 700; }
-html[data-maqueta="corporativa"] .s-detalle .s-precio { font-size: 26px; font-weight: 700; }
-html[data-maqueta="corporativa"] .pg-modal { border-radius: 18px; }
-html[data-maqueta="corporativa"] .s-footer { background: var(--texto); color: color-mix(in srgb, var(--fondo) 88%, transparent); border-top: none; }
-html[data-maqueta="corporativa"] .s-footer p { color: color-mix(in srgb, var(--fondo) 72%, transparent); }
-html[data-maqueta="corporativa"] .s-footer a { color: var(--fondo); }
 
 /* Barra poblada, segunda vuelta: la compactación por ancho de pantalla no
    alcanzaba porque el contenedor deja de crecer en 1280px — una barra con
@@ -869,4 +788,165 @@ html[data-maqueta="corporativa"] .s-footer a { color: var(--fondo); }
   .s-nav:has(.s-links > :nth-child(10)) .s-links a { padding: 8px 7px; font-size: 13.5px; }
   .s-nav:has(.s-links > :nth-child(10)) .s-marca { font-size: 16px; }
   .s-nav:has(.s-links > :nth-child(10)) .s-marca img { height: 32px; }
+}
+
+/* ================= MAQUETA CORPORATIVA · claro profesional =================
+   Cuarta plantilla, rediseñada a fondo: hero partido (texto a la izquierda,
+   foto a la derecha a toda altura), bandas alternadas blanco/gris a todo
+   ancho, menú lateral deslizante del color del tema, destacados en formato
+   bento, novedades como riel horizontal de tarjetas con inclinación,
+   documentos numerados como índice editorial y promos en banda teñida con
+   foto circular. Nada de esto comparte lenguaje con las demás plantillas. */
+html[data-maqueta="corporativa"] .s-nav { background: color-mix(in srgb, var(--fondo) 92%, transparent); }
+html[data-maqueta="corporativa"] .s-hero--portada { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); align-items: stretch; padding: 0; }
+html[data-maqueta="corporativa"] .s-hero--portada::after { display: none; }
+html[data-maqueta="corporativa"] .s-portada-img { position: relative; inset: auto; order: 2; height: 100%; min-height: 340px; }
+html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { order: 1; display: flex; align-items: center; width: 100%; max-width: none; margin: 0; padding: 64px 44px 64px max(20px, calc((100vw - 1120px) / 2 + 20px)); }
+html[data-maqueta="corporativa"] .s-hero-texto { text-align: left; }
+html[data-maqueta="corporativa"] .s-hero-texto h1::after { content: none; }
+@media (max-width: 900px) {
+  html[data-maqueta="corporativa"] .s-hero--portada { grid-template-columns: minmax(0, 1fr); }
+  html[data-maqueta="corporativa"] .s-hero--portada .s-hero-in { padding: 48px 20px 40px; }
+  html[data-maqueta="corporativa"] .s-portada-img { height: 260px; min-height: 0; }
+}
+html[data-maqueta="corporativa"] .s-seccion:nth-of-type(even) { background: var(--fondo-2); box-shadow: 0 0 0 100vmax var(--fondo-2); clip-path: inset(0 -100vmax); }
+html[data-maqueta="corporativa"] .s-seccion h2 { text-align: center; letter-spacing: -0.01em; }
+html[data-maqueta="corporativa"] .s-seccion h2::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px; background: var(--acento); transform: rotate(45deg); margin-right: 13px; vertical-align: middle; }
+html[data-maqueta="corporativa"] .s-seccion h2::after { margin-inline: auto; }
+html[data-maqueta="corporativa"] .s-seccion .bajada { text-align: center; margin-inline: auto; }
+html[data-maqueta="corporativa"] .btn { border-radius: 999px; }
+html[data-maqueta="corporativa"] .btn-acento { box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--acento) 50%, transparent); }
+html[data-maqueta="corporativa"] .s-badge { border-radius: 999px; letter-spacing: 0.02em; }
+html[data-maqueta="corporativa"] .s-talle { border-radius: 6px; }
+html[data-maqueta="corporativa"] .s-grilla { gap: 22px; }
+html[data-maqueta="corporativa"] .s-tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 10px 0; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); text-align: left; }
+html[data-maqueta="corporativa"] .s-tarjeta:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-tarjeta img { border-radius: 8px; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo { padding: 16px 8px 18px; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+html[data-maqueta="corporativa"] .s-tarjeta h3 { order: 1; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta h3::before { content: none; display: none; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p { order: 2; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta .s-talles { order: 3; flex: 1 1 100%; }
+html[data-maqueta="corporativa"] .s-tarjeta-cuerpo > p.s-precio { order: 4; flex: 0 1 auto; font-weight: 700; font-size: 18px; color: var(--texto); }
+html[data-maqueta="corporativa"] .s-tarjeta .s-acciones { order: 5; margin-left: auto; }
+html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child { grid-column: 1 / -1; flex-direction: row; align-items: stretch; padding: 10px; gap: 6px; }
+html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child img { width: 42%; height: auto; aspect-ratio: auto; }
+html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child .s-tarjeta-cuerpo { flex: 1; align-content: center; padding: 18px 22px; }
+html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child h3 { font-size: 24px; }
+@media (max-width: 720px) {
+  html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child { flex-direction: column; padding: 10px 10px 0; }
+  html[data-maqueta="corporativa"] #destacados .s-tarjeta:first-child img { width: 100%; }
+}
+html[data-maqueta="corporativa"] .s-rasgos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; border: none; }
+html[data-maqueta="corporativa"] .s-rasgo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+@media (min-width: 721px) {
+  html[data-maqueta="corporativa"] .s-rasgo:nth-child(even) { transform: translateY(10px); }
+}
+html[data-maqueta="corporativa"] .s-rasgo-ico { background: color-mix(in srgb, var(--acento) 12%, transparent); color: var(--acento); border-radius: 10px; padding: 10px; transform: rotate(-5deg); }
+html[data-maqueta="corporativa"] .s-promo { background: color-mix(in srgb, var(--acento) 9%, var(--tarjeta)); border: none; border-radius: 16px; box-shadow: none; padding: 20px 24px; }
+html[data-maqueta="corporativa"] .s-promo h3 { font-size: 22px; }
+html[data-maqueta="corporativa"] .s-promo img { width: 84px; height: 84px; border-radius: 50%; border: 3px solid var(--acento); transform: rotate(3deg); transition: transform .3s ease; }
+html[data-maqueta="corporativa"] .s-promo:hover img { transform: rotate(0deg) scale(1.05); }
+html[data-maqueta="corporativa"] #documentos .s-lista { counter-reset: doc; }
+html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
+html[data-maqueta="corporativa"] .s-doc::before { counter-increment: doc; content: counter(doc, decimal-leading-zero); font: 700 26px var(--fuente-titulos); color: color-mix(in srgb, var(--acento) 38%, transparent); flex: none; }
+html[data-maqueta="corporativa"] .s-doc:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 12px 32px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-doc-img { border-radius: 8px; border: 1px solid var(--borde); }
+html[data-maqueta="corporativa"] .s-doc .s-precio { font-weight: 700; font-size: 17px; color: var(--texto); }
+html[data-maqueta="corporativa"] .s-seccion:has(.s-articulo) .s-lista { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+html[data-maqueta="corporativa"] .s-articulo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 0; overflow: clip; display: flex; flex-direction: column; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease, transform .25s ease; }
+html[data-maqueta="corporativa"] .s-articulo:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 16px 40px -16px rgb(31 37 48 / 16%); transform: rotate(-0.6deg) translateY(-3px); }
+html[data-maqueta="corporativa"] .s-articulo:first-child { grid-column: span 2; }
+html[data-maqueta="corporativa"] .s-articulo:first-child .s-articulo-img { aspect-ratio: 21 / 9; }
+@media (max-width: 640px) {
+  html[data-maqueta="corporativa"] .s-articulo:first-child { grid-column: span 1; }
+  html[data-maqueta="corporativa"] .s-articulo:first-child .s-articulo-img { aspect-ratio: 16 / 9; }
+}
+html[data-maqueta="corporativa"] .s-articulo-img { width: 100%; aspect-ratio: 16 / 9; margin: 0; border-radius: 0; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo-cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; padding: 18px 20px 20px; position: relative; z-index: 1; }
+html[data-maqueta="corporativa"] .s-articulo .fecha { font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+html[data-maqueta="corporativa"] .s-articulo h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; z-index: 2; }
+html[data-maqueta="corporativa"] .s-feed { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 4px 20px; scrollbar-width: none; }
+html[data-maqueta="corporativa"] .s-feed::-webkit-scrollbar { display: none; }
+html[data-maqueta="corporativa"] .s-feed-item { flex: 0 0 268px; scroll-snap-align: start; display: flex; flex-direction: column; background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 16px; padding: 14px; box-shadow: 0 10px 26px -14px rgb(31 37 48 / 18%); transition: transform .25s ease; }
+html[data-maqueta="corporativa"] .s-feed-item:nth-child(odd) { transform: rotate(-1.2deg); }
+html[data-maqueta="corporativa"] .s-feed-item:nth-child(even) { transform: rotate(1.2deg); }
+html[data-maqueta="corporativa"] .s-feed-item:hover { transform: rotate(0deg) translateY(-4px); }
+html[data-maqueta="corporativa"] .s-feed-item img { order: -1; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; margin: 0 0 12px; max-height: none; }
+html[data-maqueta="corporativa"] .s-feed-item .fecha { align-self: flex-start; background: color-mix(in srgb, var(--acento) 12%, transparent); color: var(--acento); font-size: 12px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; border-radius: 999px; padding: 4px 11px; margin: 0 0 8px; }
+html[data-maqueta="corporativa"] .s-testis-track { gap: 22px; }
+html[data-maqueta="corporativa"] .s-testi { border-radius: 14px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-testi figcaption { color: var(--texto); }
+html[data-maqueta="corporativa"] .s-testi figcaption::before { content: "\201C"; display: block; font: 700 46px/0.55 var(--fuente-titulos); color: var(--acento); margin: 2px 0 8px; }
+html[data-maqueta="corporativa"] .aula-leccion { border-radius: 10px; }
+html[data-maqueta="corporativa"] .aula-leccion:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); }
+html[data-maqueta="corporativa"] .aula-leccion .num { background: var(--fondo-2); border-radius: 8px; padding: 4px 9px; color: var(--texto); font-weight: 700; }
+html[data-maqueta="corporativa"] .s-detalle-img { border-radius: 12px; border: 1px solid var(--borde); }
+html[data-maqueta="corporativa"] .s-detalle .s-precio { font-size: 26px; font-weight: 700; }
+html[data-maqueta="corporativa"] .pg-modal { border-radius: 18px; }
+html[data-maqueta="corporativa"] .s-footer { background: var(--texto); color: color-mix(in srgb, var(--fondo) 88%, transparent); border-top: none; }
+html[data-maqueta="corporativa"] .s-footer p { color: color-mix(in srgb, var(--fondo) 72%, transparent); }
+html[data-maqueta="corporativa"] .s-footer a { color: var(--fondo); }
+html[data-maqueta="corporativa"] .revelar { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+html[data-maqueta="corporativa"] .revelar.visible { opacity: 1; transform: none; }
+html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(2) { transition-delay: .06s; }
+html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(3) { transition-delay: .12s; }
+html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(4) { transition-delay: .18s; }
+html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(5) { transition-delay: .24s; }
+html[data-maqueta="corporativa"] .s-grilla .revelar:nth-child(6) { transition-delay: .3s; }
+
+/* Menú lateral del color del tema (reemplaza al desplegable genérico):
+   el panel entra desde la izquierda sobre un fondo oscurecido, con los
+   enlaces grandes entrando en cascada. Vale para el celular y para la
+   barra poblada de escritorio. */
+@keyframes corp-entra { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+@media (max-width: 860px) {
+  html[data-maqueta="corporativa"] .s-nav .s-links { display: flex; position: fixed; top: 0; left: 0; bottom: 0; width: min(320px, 84vw); flex-direction: column; align-items: stretch; gap: 2px; padding: 84px 22px 24px; background: var(--acento); border: none; box-shadow: 24px 0 48px -24px rgb(10 14 22 / 45%); transform: translateX(-106%); visibility: hidden; transition: transform .38s cubic-bezier(.32, .72, .24, 1), visibility 0s .38s; z-index: 60; overflow-y: auto; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.32, .72, .24, 1); }
+  html[data-maqueta="corporativa"] .s-nav.abierta::before { content: ""; position: fixed; inset: 0; background: rgb(10 14 22 / 45%); z-index: 55; }
+  html[data-maqueta="corporativa"] .s-burger { position: relative; z-index: 70; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-burger { border-color: transparent; }
+  html[data-maqueta="corporativa"] .s-links a { color: var(--fondo); font-size: 19px; font-weight: 600; padding: 12px 10px; border-bottom: 1px solid color-mix(in srgb, var(--fondo) 22%, transparent); border-radius: 0; }
+  html[data-maqueta="corporativa"] .s-links a.s-nav-cta { background: var(--fondo); color: var(--acento); border: none; border-radius: 999px; text-align: center; margin-top: 16px; padding: 12px; }
+  html[data-maqueta="corporativa"] .s-links .s-sesion { margin-top: 18px; color: var(--fondo); }
+  html[data-maqueta="corporativa"] .s-links .s-sesion a { border-bottom: none; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > * { animation: corp-entra .45s both; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(2) { animation-delay: .04s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(3) { animation-delay: .08s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(4) { animation-delay: .12s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(5) { animation-delay: .16s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(6) { animation-delay: .2s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(7) { animation-delay: .24s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(8) { animation-delay: .28s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(9) { animation-delay: .32s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(10) { animation-delay: .36s; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > :nth-child(11) { animation-delay: .4s; }
+}
+@media (min-width: 861px) and (max-width: 1150px) {
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links { display: flex; position: fixed; top: 0; left: 0; bottom: 0; width: min(320px, 84vw); flex-direction: column; align-items: stretch; gap: 2px; padding: 84px 22px 24px; background: var(--acento); border: none; box-shadow: 24px 0 48px -24px rgb(10 14 22 / 45%); transform: translateX(-106%); visibility: hidden; transition: transform .38s cubic-bezier(.32, .72, .24, 1), visibility 0s .38s; z-index: 60; overflow-y: auto; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.32, .72, .24, 1); }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta::before { content: ""; position: fixed; inset: 0; background: rgb(10 14 22 / 45%); z-index: 55; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-burger { position: relative; z-index: 70; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-burger { border-color: transparent; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links a { color: var(--fondo); font-size: 19px; font-weight: 600; padding: 12px 10px; border-bottom: 1px solid color-mix(in srgb, var(--fondo) 22%, transparent); border-radius: 0; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links a.s-nav-cta { background: var(--fondo); color: var(--acento); border: none; border-radius: 999px; text-align: center; margin-top: 16px; padding: 12px; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links .s-sesion { margin-top: 18px; color: var(--fondo); }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)) .s-links .s-sesion a { border-bottom: none; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > * { animation: corp-entra .45s both; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(2) { animation-delay: .04s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(3) { animation-delay: .08s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(4) { animation-delay: .12s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(5) { animation-delay: .16s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(6) { animation-delay: .2s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(7) { animation-delay: .24s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(8) { animation-delay: .28s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(9) { animation-delay: .32s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(10) { animation-delay: .36s; }
+  html[data-maqueta="corporativa"] .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(11) { animation-delay: .4s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-maqueta="corporativa"] .revelar { opacity: 1; transform: none; transition: none; }
+  html[data-maqueta="corporativa"] .s-links { transition: none; }
+  html[data-maqueta="corporativa"] .s-nav.abierta .s-links > * { animation: none; }
+  html[data-maqueta="corporativa"] .s-feed-item, html[data-maqueta="corporativa"] .s-articulo { transition: none; }
 }
