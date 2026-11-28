@@ -21,7 +21,7 @@
   }
   var sitio = rs.data;
   document.documentElement.dataset.tema = sitio.tema || "crepusculo";
-  document.documentElement.dataset.maqueta = sitio.maqueta ? (sitio.maqueta === "premium" ? "premium" : sitio.tema || "crepusculo") : (["dorado", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo"));
+  document.documentElement.dataset.maqueta = sitio.maqueta ? (sitio.maqueta === "premium" ? "premium" : sitio.maqueta === "aurora" ? "aurora" : sitio.tema || "crepusculo") : (["dorado", "medianoche", "violeta", "esmeralda", "terracota"].indexOf(sitio.tema || "crepusculo") !== -1 ? "premium" : (sitio.tema || "crepusculo"));
   try { localStorage.setItem("tw_tema_" + sitio.slug, JSON.stringify({ tema: document.documentElement.dataset.tema, maqueta: document.documentElement.dataset.maqueta })); } catch (e) {}
   if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
   if (window.TW && TW.splashSitio) TW.splashSitio(sitio);

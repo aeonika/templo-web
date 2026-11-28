@@ -1543,7 +1543,8 @@
     ];
     var disenosDefs = [
       ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
-      ["premium", "Premium", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."]
+      ["premium", "Gala", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."]
+      ["aurora", "Aurora", "#0d0a14", "#a78bfa", "Sin cajas: las fotos flotan sobre el fondo, el precio va en pastilla sobre la foto y los títulos son modernos. El diseño nuevo."]
     ];
     var paletasDefs = {
       clasica: [
@@ -1559,9 +1560,16 @@
         ["violeta", "Violeta arcano", "#0d0a14", "#a78bfa"],
         ["esmeralda", "Verde esmeralda", "#0a120d", "#63b995"],
         ["terracota", "Claro terracota", "#f7f2e9", "#8a3324"]
+      ],
+      aurora: [
+        ["dorado", "Dorado cálido", "#0d0906", "#c9a45c"],
+        ["medianoche", "Oscuro cyan", "#030305", "#00e5ff"],
+        ["violeta", "Violeta arcano", "#0d0a14", "#a78bfa"],
+        ["esmeralda", "Verde esmeralda", "#0a120d", "#63b995"],
+        ["terracota", "Claro terracota", "#f7f2e9", "#8a3324"]
       ]
     };
-    var maquetaSitio = sitio.maqueta === "premium" ? "premium" : "clasica";
+    var maquetaSitio = ["premium", "aurora"].indexOf(sitio.maqueta) !== -1 ? sitio.maqueta : "clasica";
     var urlSitio = "sitio/" + sitio.slug;
     var urlAbsoluta = new URL(urlSitio, location.href).href;
     var iconosPanel = [["vela", "Vela"], ["luna", "Luna"], ["estrella", "Estrella"], ["carta", "Carta de tarot"], ["libro", "Libro"], ["cristal", "Cristal"], ["ojo", "Ojo"], ["llave", "Llave"], ["pocion", "Poción"], ["planta", "Planta"], ["camion", "Envíos"], ["paquete", "Paquete"], ["remera", "Ropa"], ["comida", "Comida"], ["tarjeta", "Tarjeta / pagos"], ["billete", "Efectivo"], ["reloj", "Horario"], ["pin", "Ubicación"], ["escudo", "Garantía"], ["etiqueta", "Ofertas"], ["regalo", "Regalo"], ["calendario", "Reservas / turnos"], ["check", "Check"], ["corazon", "Corazón"], ["casa", "Local"]];
@@ -1666,13 +1674,13 @@
       "<label>Descripción corta <textarea name='descripcion'>" + esc(sitio.descripcion) + "</textarea></label>" +
       "<label>Quién soy / quiénes somos <textarea name='quienes_somos' class='grande'>" + esc(sitio.quienes_somos) + "</textarea></label></div>" +
       "<div class='p-bloque'><h3>Apariencia</h3>" +
-      "<p class='p-ayuda'>Hay dos diseños. Elegí el diseño y después el color dentro de ese diseño.</p>" +
+      "<p class='p-ayuda'>Hay tres diseños. Elegí el diseño y después el color dentro de ese diseño.</p>" +
       "<div class='temas'>" + disenosDefs.map(function (dd) {
         return "<label class='tema-card'><input type='radio' name='maqueta' value='" + dd[0] + "'" + (maquetaSitio === dd[0] ? " checked" : "") + ">" +
           "<span class='tema-prev' style='--tp-fondo:" + dd[2] + ";--tp-acento:" + dd[3] + "'><span class='tema-barra'></span><span class='tema-linea'></span><span class='tema-linea corta'></span></span>" +
           "<span class='tema-nombre'>Diseño " + dd[1] + "</span><span class='tema-desc'>" + dd[4] + "</span></label>";
       }).join("") + "</div>" +
-      ["clasica", "premium"].map(function (mq) {
+      ["clasica", "premium", "aurora"].map(function (mq) {
         return "<div class='paletas' id='paletas-" + mq + "'" + (maquetaSitio === mq ? "" : " hidden") + ">" +
           paletasDefs[mq].map(function (pd) {
             return "<label class='paleta'><input type='radio' name='tema' value='" + pd[0] + "'" + (sitio.tema === pd[0] ? " checked" : "") + ">" +
@@ -1821,7 +1829,7 @@
     cont.querySelectorAll("[name=maqueta]").forEach(function (r) {
       r.addEventListener("change", function () {
         var mq = r.value;
-        ["clasica", "premium"].forEach(function (x) {
+        ["clasica", "premium", "aurora"].forEach(function (x) {
           var caja = $("#paletas-" + x);
           if (caja) caja.hidden = x !== mq;
         });

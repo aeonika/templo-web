@@ -651,3 +651,43 @@ html[data-maqueta="premium"] .s-feed-item > p:not(.fecha) { font-size: 16.5px; c
 
 /* --- Aula: las lecciones heredan el lomo de los cursos --- */
 html[data-maqueta="premium"] .aula-leccion { border-left: 3px solid color-mix(in srgb, var(--acento) 50%, transparent); }
+
+/* ================= MAQUETA AURORA · galería flotante =================
+   Tercera plantilla, clon de Gala (misma estructura y las mismas
+   paletas) con otro lenguaje de cajas: NO hay cajas. La foto ES la
+   tarjeta — flota sobre el fondo con radio grande y sombra suave —,
+   el texto vive debajo sobre el fondo de la página y el precio va en
+   una pastilla sobre la foto. Títulos en la tipografía del cuerpo
+   (moderna, sin serif). Referencias: Aesop (aire, restraint, la foto
+   manda), Airbnb y Shop (tarjetas flotantes), práctica 2026 de
+   tarjetas (una idea por tarjeta, precio protagonista). */
+html[data-maqueta="aurora"] { --fuente-titulos: "Poppins", system-ui, sans-serif; --radio: 20px; }
+html[data-maqueta="aurora"] .s-lista { gap: 26px; }
+html[data-maqueta="aurora"] .s-seccion h2 { text-align: left; letter-spacing: -0.01em; }
+html[data-maqueta="aurora"] .s-seccion h2::before { content: ""; display: block; width: 34px; height: 3px; border-radius: 2px; background: var(--acento); margin: 0 0 12px; }
+html[data-maqueta="aurora"] .s-seccion h2::after { content: none; }
+html[data-maqueta="aurora"] .s-seccion .bajada { text-align: left; margin-inline: 0; }
+html[data-maqueta="aurora"] .s-hero-texto h1::after { content: none; }
+html[data-maqueta="aurora"] .s-tarjeta { position: relative; background: transparent; border: none; box-shadow: none; overflow: visible; text-align: left; }
+html[data-maqueta="aurora"] .s-tarjeta:hover { transform: none; box-shadow: none; border-color: transparent; }
+html[data-maqueta="aurora"] .s-tarjeta img { aspect-ratio: 4 / 3; border-radius: 20px; box-shadow: 0 18px 38px -18px rgb(0 0 0 / 45%); transition: transform .5s ease, box-shadow .5s ease; }
+html[data-maqueta="aurora"] .s-tarjeta:hover img { transform: scale(1.03); box-shadow: 0 26px 48px -18px rgb(0 0 0 / 55%); }
+html[data-maqueta="aurora"] .s-tarjeta-cuerpo { padding: 14px 2px 0; }
+html[data-maqueta="aurora"] .s-tarjeta h3 { font-size: 17px; font-weight: 650; }
+html[data-maqueta="aurora"] .s-tarjeta h3::before { content: none; display: none; }
+html[data-maqueta="aurora"] .s-tarjeta .s-precio { position: absolute; top: 12px; left: 12px; z-index: 2; background: color-mix(in srgb, var(--fondo) 88%, transparent); backdrop-filter: blur(6px); color: var(--texto); padding: 5px 12px; border-radius: 999px; font-size: 15px; box-shadow: 0 6px 18px -8px rgb(0 0 0 / 50%); }
+html[data-maqueta="aurora"] .s-tarjeta:not(:has(img)) .s-precio { position: static; box-shadow: none; padding: 0; background: none; backdrop-filter: none; }
+html[data-maqueta="aurora"] .btn-acento { border-radius: 999px; }
+html[data-maqueta="aurora"] .s-articulo { background: transparent; border: none; box-shadow: none; }
+html[data-maqueta="aurora"] .s-articulo-img { border-radius: 18px; box-shadow: 0 14px 30px -16px rgb(0 0 0 / 45%); }
+html[data-maqueta="aurora"] .s-doc { background: transparent; border: none; box-shadow: none; }
+html[data-maqueta="aurora"] .s-doc-img { border-radius: 14px; }
+html[data-maqueta="aurora"] .s-feed-item { background: transparent; border: none; box-shadow: none; }
+html[data-maqueta="aurora"] .s-feed-item img { border-radius: 18px; }
+html[data-maqueta="aurora"] .s-detalle-img { border-radius: 24px; box-shadow: 0 22px 44px -20px rgb(0 0 0 / 50%); }
+html[data-maqueta="aurora"] .revelar { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+html[data-maqueta="aurora"] .revelar.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html[data-maqueta="aurora"] .revelar { opacity: 1; transform: none; transition: none; }
+  html[data-maqueta="aurora"] .s-tarjeta img { transition: none; }
+}

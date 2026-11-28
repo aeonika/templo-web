@@ -236,7 +236,7 @@ canvas.qr-mini { width: 72px; height: 72px; flex: none; }
 .c-puntos i { width: 9px; height: 9px; border-radius: 50%; background: var(--color-rule); display: block; }
 .c-marco-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .c-marco iframe { width: 100%; height: 560px; border: 0; display: block; background: var(--color-paper); }
-.temas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: var(--space-md); }
+.temas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: var(--space-md); }
 .tema-card { position: relative; display: grid; gap: 5px; border: 1px solid var(--color-rule); border-radius: var(--radius-inner); padding: 10px; cursor: pointer; }
 .tema-card input { position: absolute; opacity: 0; width: auto; }
 .tema-card:has(input:checked) { border-color: var(--color-accent); box-shadow: var(--glow-vidrio); }
