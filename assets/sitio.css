@@ -824,3 +824,31 @@ html[data-maqueta="corporativa"] .revelar.visible { opacity: 1; transform: none;
 @media (prefers-reduced-motion: reduce) {
   html[data-maqueta="corporativa"] .revelar { opacity: 1; transform: none; transition: none; }
 }
+
+/* ============ CORPORATIVA · el resto de los componentes ============ */
+html[data-maqueta="corporativa"] .btn { border-radius: 999px; }
+html[data-maqueta="corporativa"] .s-badge { border-radius: 999px; letter-spacing: 0.02em; }
+html[data-maqueta="corporativa"] .s-talle { border-radius: 6px; }
+html[data-maqueta="corporativa"] .s-rasgos { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; border: none; }
+html[data-maqueta="corporativa"] .s-rasgo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-rasgo-ico { background: color-mix(in srgb, var(--acento) 12%, transparent); color: var(--acento); border-radius: 10px; padding: 10px; }
+html[data-maqueta="corporativa"] .s-promo { background: var(--tarjeta); border: 1px solid var(--borde); border-left: 4px solid var(--acento); border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-promo img { border-radius: 8px; }
+html[data-maqueta="corporativa"] .s-doc { border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); transition: border-color .2s ease, box-shadow .2s ease; }
+html[data-maqueta="corporativa"] .s-doc:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); box-shadow: 0 12px 32px -16px rgb(31 37 48 / 16%); }
+html[data-maqueta="corporativa"] .s-doc-img { border-radius: 8px; border: 1px solid var(--borde); }
+html[data-maqueta="corporativa"] .s-doc .s-precio { font-weight: 700; font-size: 17px; color: var(--texto); }
+html[data-maqueta="corporativa"] .s-feed-item { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 18px; border-radius: 12px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-feed-item .fecha { grid-column: 1; grid-row: 1; font-size: 12.5px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--acento); margin: 2px 0 0; }
+html[data-maqueta="corporativa"] .s-feed-item > p:not(.fecha) { grid-column: 2; grid-row: 1; }
+html[data-maqueta="corporativa"] .s-feed-item img { grid-column: 2; grid-row: 2; border-radius: 10px; }
+html[data-maqueta="corporativa"] .s-testis-track { gap: 22px; }
+html[data-maqueta="corporativa"] .s-testi { border-radius: 14px; box-shadow: 0 1px 2px rgb(31 37 48 / 5%); }
+html[data-maqueta="corporativa"] .s-testi figcaption { color: var(--texto); }
+html[data-maqueta="corporativa"] .aula-leccion { border-radius: 10px; }
+html[data-maqueta="corporativa"] .aula-leccion:hover { border-color: color-mix(in srgb, var(--acento) 45%, var(--borde)); }
+html[data-maqueta="corporativa"] .aula-leccion .num { background: var(--fondo-2); border-radius: 8px; padding: 4px 9px; color: var(--texto); font-weight: 700; }
+html[data-maqueta="corporativa"] .s-detalle .s-precio { font-size: 26px; font-weight: 700; }
+html[data-maqueta="corporativa"] .pg-modal { border-radius: 18px; }
+html[data-maqueta="corporativa"] .s-pie { background: var(--texto); color: color-mix(in srgb, var(--fondo) 88%, transparent); border-top: none; }
+html[data-maqueta="corporativa"] .s-pie a { color: var(--fondo); }
