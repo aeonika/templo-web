@@ -1543,7 +1543,7 @@
     ];
     var disenosDefs = [
       ["clasica", "Clásica", "#030305", "#00e5ff", "El diseño original: directo y versátil, para cualquier rubro."],
-      ["premium", "Gala", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."]
+      ["premium", "Gala", "#0d0906", "#c9a45c", "Títulos centrados, divisor ornamental y fotos con marco: el diseño de gala."],
       ["aurora", "Aurora", "#0d0a14", "#a78bfa", "Sin cajas: las fotos flotan sobre el fondo, el precio va en pastilla sobre la foto y los títulos son modernos. El diseño nuevo."]
     ];
     var paletasDefs = {
