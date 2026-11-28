@@ -44,7 +44,13 @@
     document.body.style.backgroundPosition = "center top";
     document.body.style.backgroundAttachment = "fixed";
   }
-  if (sitio.acento) document.documentElement.style.setProperty("--acento", sitio.acento);
+  if (sitio.acento) {
+    document.documentElement.style.setProperty("--acento", sitio.acento);
+    var hexA = sitio.acento.replace("#", "");
+    if (hexA.length === 3) hexA = hexA.split("").map(function (c) { return c + c; }).join("");
+    var lumA = (0.2126 * parseInt(hexA.substr(0, 2), 16) + 0.7152 * parseInt(hexA.substr(2, 2), 16) + 0.0722 * parseInt(hexA.substr(4, 2), 16)) / 255;
+    document.documentElement.style.setProperty("--acento-texto", lumA > 0.6 ? "#191407" : "#ffffff");
+  }
   if (sitio.logo_url) {
     var favS = document.querySelector('link[rel="icon"]');
     if (!favS) { favS = document.createElement("link"); favS.rel = "icon"; document.head.appendChild(favS); }

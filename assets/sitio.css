@@ -1036,3 +1036,7 @@ html[data-maqueta="corporativa"] .s-articulo.revelar.visible:hover { transform: 
   .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(10) { animation-delay: .36s; }
   .s-nav:has(.s-links > :nth-child(10)).abierta .s-links > :nth-child(11) { animation-delay: .4s; }
 }
+
+/* El panel lateral se desplaza si hace falta, pero sin barra visible. */
+.s-nav .s-links { scrollbar-width: none; }
+.s-nav .s-links::-webkit-scrollbar { display: none; }
