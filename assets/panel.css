@@ -487,3 +487,11 @@ body.con-drawer { overflow: hidden; }
 .p-auth-sitio img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; flex: none; }
 .p-auth-sitio h2 { margin: 0 0 var(--space-2xs); }
 .p-auth-sitio .p-nota { margin: 0; }
+
+/* Bandeja de mensajes del formulario de contacto */
+.msj-card { border: 1px solid var(--borde, #ddd); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; background: var(--tarjeta, #fff); }
+.msj-card.msj-nuevo { border-left: 4px solid var(--acento, #2e6be6); }
+.msj-card header { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; margin-bottom: 6px; }
+.msj-card header time { opacity: .6; font-size: 13px; margin-left: auto; }
+.msj-card p { margin: 0 0 10px; white-space: pre-wrap; }
+.msj-acciones { display: flex; flex-wrap: wrap; gap: 8px; }

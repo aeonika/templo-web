@@ -1135,6 +1135,21 @@ a.s-dato-val:hover { color: var(--acento); }
 .s-contacto.prep .s-contacto-anim.visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .s-contacto.prep .s-contacto-anim { opacity: 1; transform: none; transition: none; } }
 
+/* Formulario de contacto (dentro de la seccion Contacto). */
+.s-form { position: relative; margin: 36px auto 0; width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 12px; }
+.s-form-tit { text-align: center; font-size: 22px; margin: 0 0 4px; }
+.s-form-fila { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .s-form-fila { grid-template-columns: 1fr; } }
+.s-form input[type="text"], .s-form input[type="email"], .s-form textarea { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1.5px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); color: var(--texto); font: inherit; font-size: 15px; }
+.s-form textarea { resize: vertical; }
+.s-form input:focus, .s-form textarea:focus { outline: 2px solid var(--acento); outline-offset: 1px; }
+.s-form-btn { align-self: center; padding: 12px 30px; border: none; border-radius: 999px; background: var(--acento); color: var(--acento-texto); font-weight: 700; font-size: 15px; cursor: pointer; transition: transform .15s ease, opacity .15s ease; }
+.s-form-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.s-form-btn:disabled { opacity: .6; cursor: wait; }
+.s-hp { position: absolute !important; left: -9999px !important; top: auto; width: 1px; height: 1px; opacity: 0; }
+.s-form-aviso { margin: 4px 0 0; text-align: center; font-weight: 600; padding: 10px 14px; border-radius: var(--radio); border: 1.5px solid #c0392b; color: #e0654f; }
+.s-form-ok { text-align: center; font-size: 18px; font-weight: 700; margin: 0; padding: 26px 16px; border: 1.5px solid var(--acento); border-radius: var(--radio); }
+
 /* Pie: contacto y redes sociales del sitio, en grupos rotulados. */
 .s-pie-bloques { display: flex; flex-wrap: wrap; gap: 18px 44px; justify-content: center; margin-top: 18px; }
 .s-pie-grupo { display: flex; flex-direction: column; align-items: center; gap: 9px; }
@@ -1230,6 +1245,8 @@ html[data-maqueta="urbana"] .s-footer a { color: var(--fondo); }
 html[data-maqueta="urbana"] .s-pie-link { border-radius: 2px; border-color: var(--fondo); border-width: 2px; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; }
 html[data-maqueta="urbana"] .s-contacto-mapa { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 8px 8px 0 var(--borde); }
 html[data-maqueta="urbana"] .s-dato-ico { border-radius: 2px; border: 2px solid var(--borde); }
+html[data-maqueta="urbana"] .s-form input[type="text"], html[data-maqueta="urbana"] .s-form input[type="email"], html[data-maqueta="urbana"] .s-form textarea { border: 2.5px solid var(--borde); border-radius: 2px; }
+html[data-maqueta="urbana"] .s-form-btn { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 5px 5px 0 var(--borde); text-transform: uppercase; }
 html[data-maqueta="urbana"] .s-equipo-card img { border: 2.5px solid var(--borde); border-radius: 2px; box-shadow: 8px 8px 0 var(--borde); }
 html[data-maqueta="urbana"] .s-equipo-card h3 { font-family: var(--fuente-titulos); text-transform: uppercase; }
 

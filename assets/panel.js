@@ -366,7 +366,7 @@
       var la = $("#link-admin");
       if (la) la.hidden = !(rp.data && rp.data.es_admin);
       if (rp.data && rp.data.es_admin) $("#p-usuario").textContent = (user.email || "") + " · Master";
-      refrescarBadgePagos();
+      refrescarBadgePagos(); refrescarBadgeMensajes();
       try { await pintarTab(tabActual); } catch (e) {}
     }
     // El splash se levanta recien con la primera pantalla ya armada:
@@ -571,6 +571,7 @@
     if (tab === "feed") return vistaFeed(cont);
     if (tab === "alumnos") return vistaAlumnos(cont);
     if (tab === "pagos") return vistaComprobantes(cont);
+    if (tab === "mensajes") return vistaMensajes(cont);
     if (tab === "qr") return vistaQR(cont);
   }
 
@@ -584,6 +585,50 @@
     var n = r.count || 0;
     badge.hidden = !n;
     badge.textContent = n;
+  }
+
+  // Contador de mensajes sin leer en el botón del menú.
+  async function refrescarBadgeMensajes() {
+    var badge = document.getElementById("p-badge-mensajes");
+    if (!badge) return;
+    if (!sitio) { badge.hidden = true; return; }
+    var r = await TW.sb.from("mensajes").select("id", { count: "exact", head: true })
+      .eq("sitio_id", sitio.id).eq("leido", false);
+    var n = r.count || 0;
+    badge.hidden = !n;
+    badge.textContent = n;
+  }
+
+  // ============================================================ mensajes
+  async function vistaMensajes(cont) {
+    cont.innerHTML = "<div class='p-encab'><div><h2>Mensajes</h2>" +
+      "<p class='bajada'>Lo que te escriben desde el formulario de contacto de tu sitio. Respondé por email con un toque.</p></div></div><div id='msj-lista'><p class='bajada'>Cargando…</p></div>";
+    var r = await TW.sb.from("mensajes").select("*").eq("sitio_id", sitio.id).order("creado", { ascending: false }).limit(100);
+    var lista = document.getElementById("msj-lista");
+    if (!lista) return;
+    if (r.error) { lista.innerHTML = "<p class='bajada'>No se pudieron cargar los mensajes.</p>"; return; }
+    if (!r.data.length) { lista.innerHTML = "<p class='bajada'>Todavía no llegó ningún mensaje. Cuando alguien escriba desde la sección Contacto de tu sitio, aparece acá.</p>"; return; }
+    lista.innerHTML = r.data.map(function (m) {
+      return "<article class='msj-card" + (m.leido ? "" : " msj-nuevo") + "'>" +
+        "<header><strong>" + esc(m.nombre) + "</strong> <a href='mailto:" + esc(m.email) + "'>" + esc(m.email) + "</a> <time>" + new Date(m.creado).toLocaleString("es-AR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + "</time></header>" +
+        "<p>" + esc(m.mensaje) + "</p>" +
+        "<div class='msj-acciones'><button type='button' class='btn btn-fantasma' data-msj-leido='" + m.id + "' data-valor='" + (m.leido ? "0" : "1") + "'>" + (m.leido ? "Marcar no leído" : "Marcar leído") + "</button>" +
+        "<a class='btn btn-fantasma' href='mailto:" + esc(m.email) + "?subject=" + encodeURIComponent("Re: tu mensaje en " + sitio.nombre) + "'>Responder por email</a>" +
+        "<button type='button' class='btn btn-fantasma' data-msj-borrar='" + m.id + "'>Borrar</button></div></article>";
+    }).join("");
+    lista.querySelectorAll("[data-msj-leido]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        await TW.sb.from("mensajes").update({ leido: b.getAttribute("data-valor") === "1" }).eq("id", b.getAttribute("data-msj-leido"));
+        vistaMensajes(cont); refrescarBadgeMensajes();
+      });
+    });
+    lista.querySelectorAll("[data-msj-borrar]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        if (!window.confirm("¿Borrar este mensaje?")) return;
+        await TW.sb.from("mensajes").delete().eq("id", b.getAttribute("data-msj-borrar"));
+        vistaMensajes(cont); refrescarBadgeMensajes();
+      });
+    });
   }
 
   // ============================================================ comprobantes

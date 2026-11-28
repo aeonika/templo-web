@@ -569,3 +569,18 @@ alter table public.documentos add column if not exists metodos_pago jsonb;
 alter table public.documentos add column if not exists pagos_modo text not null default 'sitio';
 alter table public.documentos add column if not exists instrucciones_pago text not null default '';
 alter table public.comprobantes add column if not exists producto_id uuid references public.productos (id) on delete set null;
+
+-- Mensajes del formulario de contacto (modulo Contacto).
+create table if not exists public.mensajes (
+  id uuid primary key default gen_random_uuid(),
+  sitio_id uuid not null references public.sitios(id) on delete cascade,
+  nombre text not null,
+  email text not null,
+  mensaje text not null,
+  leido boolean not null default false,
+  creado timestamptz not null default now()
+);
+-- RLS: insercion publica acotada (largos + email valido + modulo
+-- Contacto activo en el sitio); lectura/gestion solo del dueno o admin.
+-- Limite anti-spam por trigger: 3 por hora y email, 30 por hora y sitio
+-- (funcion public.limitar_mensajes).

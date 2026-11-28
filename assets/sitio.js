@@ -317,7 +317,14 @@
     BLOQUES.contacto = seccion("contacto", "Contacto", "",
       '<div class="s-contacto' + (mapaSrc ? "" : " sin-mapa") + '"><div class="s-contacto-info">' + filas +
       (chipsRedes ? '<div class="s-contacto-redes s-contacto-anim">' + chipsRedes + "</div>" : "") + "</div>" +
-      (mapaSrc ? '<div class="s-contacto-mapa s-contacto-anim"><iframe src="' + TW.esc(mapaSrc) + '" loading="lazy" title="Mapa" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' : "") + "</div>");
+      (mapaSrc ? '<div class="s-contacto-mapa s-contacto-anim"><iframe src="' + TW.esc(mapaSrc) + '" loading="lazy" title="Mapa" referrerpolicy="no-referrer-when-downgrade"></iframe></div>' : "") + "</div>" +
+      '<form class="s-form s-contacto-anim" id="s-form-contacto" novalidate><h3 class="s-form-tit">Escribinos un mensaje</h3>' +
+      '<div class="s-form-fila"><input type="text" name="nombre" maxlength="80" placeholder="Tu nombre" autocomplete="name">' +
+      '<input type="email" name="email" maxlength="120" placeholder="Tu email" autocomplete="email"></div>' +
+      '<textarea name="mensaje" rows="4" maxlength="2000" placeholder="¿En qué te ayudamos?"></textarea>' +
+      '<input type="text" name="empresa" class="s-hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<button type="submit" class="s-form-btn">Enviar mensaje</button>' +
+      '<p class="s-form-aviso" role="status" hidden></p></form>');
   }
 
   // Promociones
@@ -544,6 +551,30 @@
     } else {
       animContacto.forEach(function (el) { el.classList.add("visible"); });
     }
+  }
+  // Formulario de contacto: defensas invisibles anti-spam (campo trampa
+  // y tiempo minimo) y aviso siempre visible de exito o de error.
+  var formC = document.getElementById("s-form-contacto");
+  if (formC) {
+    var tForm = Date.now();
+    formC.addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      var aviso = formC.querySelector(".s-form-aviso");
+      var btn = formC.querySelector(".s-form-btn");
+      function exito() { formC.innerHTML = '<p class="s-form-ok">¡Mensaje enviado! Gracias por escribirnos; te respondemos a la brevedad.</p>'; }
+      var fd = new FormData(formC);
+      if ((fd.get("empresa") || "").toString().trim() || Date.now() - tForm < 2000) { exito(); return; }
+      var nombre = (fd.get("nombre") || "").toString().trim();
+      var email = (fd.get("email") || "").toString().trim();
+      var mensaje = (fd.get("mensaje") || "").toString().trim();
+      function error(txt) { aviso.hidden = false; aviso.textContent = txt; btn.disabled = false; btn.textContent = "Enviar mensaje"; }
+      if (!nombre || !email || !mensaje) { error("Completá tu nombre, tu email y el mensaje, por favor."); return; }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { error("Revisá el email: parece incompleto."); return; }
+      btn.disabled = true; btn.textContent = "Enviando…"; aviso.hidden = true;
+      var rIns = await TW.sb.from("mensajes").insert({ sitio_id: sitio.id, nombre: nombre.slice(0, 80), email: email.slice(0, 120), mensaje: mensaje.slice(0, 2000) });
+      if (rIns.error) { error("No se pudo enviar el mensaje. Probá de nuevo en un momento" + (sitio.whatsapp ? " o escribinos por WhatsApp." : ".")); return; }
+      exito();
+    });
   }
   if ("IntersectionObserver" in window) {
     var porId = {};
