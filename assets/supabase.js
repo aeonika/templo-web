@@ -122,17 +122,22 @@
         tiktok: { nombre: "TikTok", svg: '<path d="M14.5 3.5v10.8a3.9 3.9 0 1 1-3.15-3.85"/><path d="M14.5 3.5c.35 2.3 1.85 3.9 4.2 4.2"/>' },
         youtube: { nombre: "YouTube", svg: '<rect x="2.8" y="6" width="18.4" height="12.5" rx="3.5"/><path d="M10.2 9.6l4.8 2.65-4.8 2.65z" fill="currentColor" stroke="none"/>' }
       };
-      var partes = [];
+      var ICO_WA = '<path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path fill="currentColor" stroke="none" transform="translate(6.4 6.4) scale(0.48)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>';
+      var ICO_MAIL = '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>';
+      function chip(href, svg, texto, mail) {
+        return '<a class="s-pie-link" href="' + href + '"' + (mail ? "" : ' target="_blank" rel="noopener"') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + svg + "</svg><span>" + texto + "</span></a>";
+      }
+      var grupos = [];
       var contacto = [];
-      if (sitio.whatsapp) contacto.push('<a href="https://wa.me/' + String(sitio.whatsapp).replace(/\D/g, "") + '" target="_blank" rel="noopener">WhatsApp</a>');
-      if (sitio.email) contacto.push('<a href="mailto:' + TW.esc(sitio.email) + '">' + TW.esc(sitio.email) + "</a>");
-      if (contacto.length) partes.push('<p class="s-pie-contacto">' + contacto.join(" · ") + "</p>");
+      if (sitio.whatsapp) contacto.push(chip("https://wa.me/" + String(sitio.whatsapp).replace(/\D/g, ""), ICO_WA, "WhatsApp"));
+      if (sitio.email) contacto.push(chip("mailto:" + TW.esc(sitio.email), ICO_MAIL, TW.esc(sitio.email), true));
+      if (contacto.length) grupos.push('<div class="s-pie-grupo"><span class="s-pie-titulo">Contacto</span><div class="s-pie-links">' + contacto.join("") + "</div></div>");
       var redes = sitio.redes || {};
-      var iconos = Object.keys(REDES).filter(function (k) { return redes[k]; }).map(function (k) {
-        return '<a class="s-red" href="' + TW.esc(redes[k]) + '" target="_blank" rel="noopener" aria-label="' + REDES[k].nombre + '" title="' + REDES[k].nombre + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + REDES[k].svg + "</svg></a>";
+      var sociales = Object.keys(REDES).filter(function (k) { return redes[k]; }).map(function (k) {
+        return chip(TW.esc(redes[k]), REDES[k].svg, REDES[k].nombre);
       }).join("");
-      if (iconos) partes.push('<div class="s-redes">' + iconos + "</div>");
-      return partes.join("");
+      if (sociales) grupos.push('<div class="s-pie-grupo"><span class="s-pie-titulo">Seguinos</span><div class="s-pie-links">' + sociales + "</div></div>");
+      return grupos.length ? '<div class="s-pie-bloques">' + grupos.join("") + "</div>" : "";
     },
     pintarMarca: function (nombre, logo, anterior) {
       if (nombre) {
