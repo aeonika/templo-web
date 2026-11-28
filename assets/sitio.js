@@ -393,13 +393,19 @@
     // En el indice NO se muestran medios de pago: cada documento abre
     // su pantalla de detalle (/documento/<slug>/<id>) con el precio,
     // los medios e instrucciones y el envio de comprobante.
-    BLOQUES.documentos = seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-lista">' +
+    BLOQUES.documentos = seccion("documentos", "Documentos", "Material de estudio del maestro.", '<div class="s-libros">' +
       docs.map(function (d) {
         var gratis = Number(d.precio) === 0;
         var urlDetalle = "/documento/" + encodeURIComponent(sitio.slug) + "/" + d.id;
         var estado = !gratis && misAccesos[d.id] ? '<span class="s-badge">Tuyo</span>' : "";
-        return '<div class="s-doc">' + (d.imagen_url ? '<img class="s-doc-img" src="' + TW.esc(TW.imgUrl(d.imagen_url, 300)) + '" alt="">' : "") + '<div><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3><p>" + TW.esc(TW.textoPlano(d.descripcion)) + "</p></div>" +
-          '<div class="lado"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></div>';
+        var portada = d.imagen_url
+          ? '<img class="s-libro-portada" src="' + TW.esc(TW.imgUrl(d.imagen_url, 400)) + '" alt="">'
+          : '<span class="s-libro-portada s-libro-tapa"><span>' + TW.esc(d.titulo) + "</span></span>";
+        return '<article class="s-libro"><a class="s-libro-escena" href="' + urlDetalle + '" aria-label="' + TW.esc(d.titulo) + '"><span class="s-libro-3d"><span class="s-libro-atras"></span><span class="s-libro-lomo"></span><span class="s-libro-paginas"></span>' + portada + '<span class="s-libro-brillo"></span></span></a>' +
+          '<div class="s-libro-info"><h3><a href="' + urlDetalle + '">' + TW.esc(d.titulo) + "</a></h3>" +
+          (d.descripcion ? "<p>" + TW.esc(TW.textoPlano(d.descripcion)) + "</p>" : "") +
+          '<p class="s-libro-precio"><span class="s-precio">' + TW.precio(d.precio, d.moneda) + "</span>" + estado + "</p>" +
+          '<a class="btn" href="' + urlDetalle + '">Ver detalle</a></div></article>';
       }).join("") + "</div>");
   }
 
@@ -529,7 +535,7 @@
     tick();
   }
   if ((esPremium || esAurora || esCorporativa || (sitio.tema || "") === "marfil") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item");
+    var revelables = main.querySelectorAll(".s-tarjeta, .s-articulo, .s-doc, .s-feed-item, .s-libro");
     var io = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
     }, { threshold: 0.12 });
