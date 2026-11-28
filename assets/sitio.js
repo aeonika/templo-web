@@ -40,10 +40,15 @@
     if (!fondoHex || fondoHex.indexOf("var(") === 0) fondoHex = "#0a0c11";
     var veloA = (esPremium || esAurora) ? "58%" : "84%";
     var veloB = (esPremium || esAurora) ? "74%" : "90%";
-    document.body.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " " + veloA + ", transparent), color-mix(in srgb, " + fondoHex + " " + veloB + ", transparent)), url(\"" + String(TW.imgUrl(sitio.fondo_url, 1600)).replace(/"/g, "") + "\")";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center top";
-    document.body.style.backgroundAttachment = "fixed";
+    // El fondo va en una capa fija propia con alto de viewport grande
+    // (100lvh): background-attachment:fixed sobre el body se reescala
+    // en Chrome de Android cada vez que la barra de direcciones se
+    // muestra u oculta al desplazar (la imagen "respiraba").
+    var capaFondo = document.createElement("div");
+    capaFondo.className = "s-fondo-fijo";
+    capaFondo.setAttribute("aria-hidden", "true");
+    capaFondo.style.backgroundImage = "linear-gradient(color-mix(in srgb, " + fondoHex + " " + veloA + ", transparent), color-mix(in srgb, " + fondoHex + " " + veloB + ", transparent)), url(\"" + String(TW.imgUrl(sitio.fondo_url, 1600)).replace(/"/g, "") + "\")";
+    document.body.insertBefore(capaFondo, document.body.firstChild);
   }
   if (sitio.acento) {
     document.documentElement.style.setProperty("--acento", sitio.acento);
